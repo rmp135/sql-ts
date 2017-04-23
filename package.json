@@ -1,0 +1,23 @@
+{
+  "name": "sql-ts",
+  "version": "0.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "test:build": "tsc -p tsconfig.test.json",
+    "test:run": "jasmine ./__test/{**,*}/*.spec.js",
+    "test": "yarn test:build && yarn test:run"
+  },
+  "dependencies": {
+    "knex": "^0.12.9"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^2.5.47",
+    "@types/knex": "^0.0.46",
+    "@types/rewire": "^2.5.27",
+    "jasmine": "^2.5.3",
+    "rewire": "^2.5.2"
+  }
+}

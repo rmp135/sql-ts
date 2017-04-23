@@ -1,0 +1,13 @@
+{
+  "include": [
+    "src/**/*"
+  ],
+  "compilerOptions": {
+    "target": "es3",
+    "sourceMap": false,
+    "outDir": "__test",
+    "lib": [
+      "es6"
+    ]
+  }
+}
