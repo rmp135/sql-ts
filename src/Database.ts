@@ -1,5 +1,5 @@
 import * as knex from 'knex'
-import { Config } from './index'
+import { Config } from './Typings'
 import Table from './Table'
 
 export default class {

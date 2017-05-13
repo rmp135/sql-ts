@@ -57,5 +57,15 @@ describe('Table', () => {
       const res = table.stringify()
       expect(res).toBe('export interface nameEntity {\n  c1\n  c2\n  c3\n}')
     })
+    it('should replace spaces with underscores', () => {
+      const c1Fn: any = { stringify: jasmine.createSpy('c1').and.returnValue('c1') }
+      const c2Fn: any = { stringify: jasmine.createSpy('c2').and.returnValue('c2') }
+      const c3Fn: any = { stringify: jasmine.createSpy('c3').and.returnValue('c3') }
+
+      const table = new Table.default('table name', {} as any)
+      table.columns = [c1Fn, c2Fn, c3Fn]
+      const res = table.stringify()
+      expect(res).toBe('export interface table_nameEntity {\n  c1\n  c2\n  c3\n}')
+    })
   })
 })

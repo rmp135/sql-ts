@@ -1,5 +1,5 @@
 import * as knex from 'knex'
-import { Config } from './index'
+import { Config } from './Typings'
 import Database from './Database'
 
 export async function buildDatabase (db: knex, config?: Config): Promise<Database> {

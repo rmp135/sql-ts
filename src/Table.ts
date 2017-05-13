@@ -17,7 +17,7 @@ export default class {
     }
   }
   stringify (): string {
-    return `export interface ${this.name}Entity {
+    return `export interface ${this.name.replace(' ', '_')}Entity {
 ${this.columns.map(c => '  ' + c.stringify()).join('\n')}
 }`
   }
