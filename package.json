@@ -11,12 +11,14 @@
     "test": "yarn test:build && yarn test:run"
   },
   "dependencies": {
-    "knex": "^0.12.9"
+    "knex": "^0.13.0",
+    "yargs": "^8.0.1"
   },
   "devDependencies": {
     "@types/jasmine": "^2.5.47",
-    "@types/knex": "^0.0.46",
+    "@types/knex": "^0.0.50",
     "@types/rewire": "^2.5.27",
+    "@types/yargs": "^6.6.0",
     "jasmine": "^2.5.3",
     "rewire": "^2.5.2"
   }
