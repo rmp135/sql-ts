@@ -1,26 +1,28 @@
 import * as knex from 'knex'
 import { buildDatabase } from './DatabaseFactory'
-import * as fs from 'fs'
+import { Config } from './Typings'
 
-const config = require('../config.json') as Config
-
-export interface Config extends knex.Config {
-  tables?: string[],
-  typeOverrides?: {
-    [key: string]: string
-  }
-}
-
-;(async () => {
+async function generate (config: Config): Promise<String> {
   const db = knex(config)
+  let asString = ''
   try {
     const database = await buildDatabase(db, config)
-    const a = database.stringify()
-    fs.writeFileSync('Database.ts', a)
-    console.log(a)
-  } catch (error) {
-    console.log(error)
-  } finally {
-    await db.destroy()
+    asString = database.stringify()
   }
-})()
+  catch (err) {
+    throw err
+  }
+  finally {
+    db.destroy()
+  }
+  return asString
+}
+
+export default {
+  generate
+}
+
+export {
+  generate,
+  Config
+}
