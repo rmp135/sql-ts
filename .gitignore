@@ -1,5 +1,4 @@
 node_modules
 __test
 .vscode
-dist
 yarn-error.log
