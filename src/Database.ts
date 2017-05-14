@@ -37,8 +37,11 @@ export default class {
       }
   }
   async generateTables () {
-    let tables: string[] = this.config.tables
-    if (tables == null) {
+    let tables: string[]
+    if (this.config.tables != null) {
+      const hasTables = await Promise.all(this.config.tables.map(t => this.db.schema.hasTable(t)))
+      tables = this.config.tables.filter((t, index) => hasTables[index])
+    } else  {
       tables = await this.getAllTables()
     }
     this.tables = tables.map(t => new Table(t, this))

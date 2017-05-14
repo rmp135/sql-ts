@@ -37,28 +37,6 @@ describe('Database', () => {
       expect(tables).toEqual(['table', 'table2'])
       done()
     })
-  })
-  describe('getAllTables', () => {
-    it('should get tables for mysql', async (done) => {
-      const mockWhere = jasmine.createSpy('where').and.returnValue([{ table_name: 'table' }, { table_name: 'table2' }])
-      const mockSelect = jasmine.createSpy('select').and.returnValue({ where: mockWhere })
-      const mockDb: any = jasmine.createSpy('db').and.returnValue({ select: mockSelect })
-      mockDb.client = {
-        config: {
-          dialect: 'mysql',
-          connection: {
-            database: 'database'
-          }
-        }
-      }
-      const dat = new  Database(mockDb, {} as any)
-      const tables = await dat.getAllTables()
-      expect(mockDb).toHaveBeenCalledWith('information_schema.tables')
-      expect(mockSelect).toHaveBeenCalledWith('table_name')
-      expect(mockWhere).toHaveBeenCalledWith({ table_schema: 'database' })
-      expect(tables).toEqual(['table', 'table2'])
-      done()
-    })
     it('should get tables for sqlite3', async (done) => {
       const mockWhere = jasmine.createSpy('where').and.returnValue([{ tbl_name: 'table' }, { tbl_name: 'table2' }])
       const mockWhereNot = jasmine.createSpy('whereNot').and.returnValue({ where: mockWhere })
@@ -139,13 +117,20 @@ describe('Database', () => {
           default: mockTable
         }
       })
-      const dat = new MockDatabase.default({} as any, mockConfig)
+      const mockDb = {
+        schema: {
+          hasTable: jasmine.createSpy('hasTable').and.returnValue(Promise.resolve(true))
+        }
+      }
+      const dat = new MockDatabase.default(mockDb as any, mockConfig)
       await dat.generateTables()
-      expect(mockTable.calls.count()).toBe(2)
+      expect(mockDb.schema.hasTable.calls.argsFor(0)).toEqual(['table1'])
+      expect(mockDb.schema.hasTable.calls.argsFor(1)).toEqual(['table2'])
+      expect(mockTable).toHaveBeenCalledTimes(2)
       expect(dat.tables).toEqual([mockTableRet, mockTableRet])
       done()
     })
-    it('should get all tables if not tables were specified', async (done) => {
+    it('should get all tables if no tables were specified', async (done) => {
       const mockConfig = { }
       const mockGetAllTables = jasmine.createSpy('getAllTables').and.returnValue(['table1', 'table2'])
       const mockTableRet: any = { generateColumns: () => { [1, 2, 3] } }
@@ -155,12 +140,42 @@ describe('Database', () => {
           default: mockTable
         }
       })
-      const dat = new MockDatabase.default({} as any, mockConfig)
+      const mockDb = {
+        schema: {
+          hasTable: jasmine.createSpy('hasTable').and.returnValue(Promise.resolve(true))
+        }
+      }
+      const dat = new MockDatabase.default(mockDb as any, mockConfig)
       dat.getAllTables = mockGetAllTables
       await dat.generateTables()
       expect(mockGetAllTables).toHaveBeenCalled()
       expect(mockTable.calls.count()).toBe(2)
       expect(dat.tables).toEqual([mockTableRet, mockTableRet])
+      done()
+    })
+    it('should not generate table definitions if the table is requested but does not exist', async (done) => {
+      const mockConfig = {
+        tables: ['table1', 'table2']
+      }
+      const mockTableRet: any = { generateColumns: () => { [1, 2, 3] } }
+      const mockTable = jasmine.createSpy('table').and.returnValue(mockTableRet)
+      MockDatabase.__set__({
+        Table_1: {
+          default: mockTable
+        }
+      })
+      const mockDb = {
+        schema: {
+          hasTable: jasmine.createSpy('hasTable').and.returnValues(Promise.resolve(false), Promise.resolve(true))
+        }
+      }
+      const dat = new MockDatabase.default(mockDb as any, mockConfig)
+      await dat.generateTables()
+      expect(mockDb.schema.hasTable.calls.argsFor(0)).toEqual(['table1'])
+      expect(mockDb.schema.hasTable.calls.argsFor(1)).toEqual(['table2'])
+      expect(mockTable).toHaveBeenCalledTimes(1)
+      expect(mockTable).toHaveBeenCalledWith('table2', dat)
+      expect(dat.tables).toEqual([mockTableRet])
       done()
     })
   })
