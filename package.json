@@ -1,9 +1,10 @@
 {
-  "name": "sql-ts",
+  "name": "@rmp135/sql-ts",
   "version": "0.0.0",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "license": "MIT",
+  "description": "Generate TypeScript definitions from database schemas.",
   "scripts": {
     "build": "tsc",
     "test:build": "tsc -p tsconfig.test.json",
