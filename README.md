@@ -1,5 +1,7 @@
 # sql-ts
 
+[![Build Status](https://travis-ci.org/rmp135/sql-ts.svg?branch=master)](https://travis-ci.org/rmp135/sql-ts)
+
 Generate TypeScript types from a SQL database.
 
 Supports the following databases: MySQL, Microsoft SQL Server, SQLite and Postgres.
