@@ -83,20 +83,24 @@ var default_1 = (function () {
     default_1.prototype.generateTables = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
-            var tables;
+            var tables, hasTables_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        tables = this.config.tables;
-                        if (!(tables == null)) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.getAllTables()];
+                        if (!(this.config.tables != null)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, Promise.all(this.config.tables.map(function (t) { return _this.db.schema.hasTable(t); }))];
                     case 1:
+                        hasTables_1 = _a.sent();
+                        tables = this.config.tables.filter(function (t, index) { return hasTables_1[index]; });
+                        return [3 /*break*/, 4];
+                    case 2: return [4 /*yield*/, this.getAllTables()];
+                    case 3:
                         tables = _a.sent();
-                        _a.label = 2;
-                    case 2:
+                        _a.label = 4;
+                    case 4:
                         this.tables = tables.map(function (t) { return new Table_1.default(t, _this); });
                         return [4 /*yield*/, Promise.all(this.tables.map(function (t) { return t.generateColumns(); }))];
-                    case 3:
+                    case 5:
                         _a.sent();
                         return [2 /*return*/];
                 }
