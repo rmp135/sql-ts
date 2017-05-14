@@ -21,7 +21,7 @@ Use as a node module, passing the configuration as the first argument.
 The raw string of the definition file will be returned.
 
 ```javascript
-import sqlts from 'sql-ts'
+import sqlts from '@rmp135/sql-ts'
 
 const config = {
   ...
@@ -33,7 +33,7 @@ const definitions = await sqlts.generate(config)
 For those using TypeScript, you can import the Config definition.
 
 ```typescript
-import sqlts, { Config } from 'sql-ts'
+import sqlts, { Config } from '@rmp135/sql-ts'
 
 const config: Config = {
   ...
