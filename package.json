@@ -7,9 +7,8 @@
   "bin": "./bin/sql-ts",
   "scripts": {
     "build": "tsc",
-    "test:build": "tsc -p tsconfig.test.json",
-    "test:run": "jasmine ./__test/{**,*}/*.spec.js",
-    "test": "yarn test:build && yarn test:run"
+    "pretest": "tsc -p tsconfig.test.json",
+    "test": "jasmine ./__test/{**,*}/*.spec.js"
   },
   "dependencies": {
     "knex": "^0.13.0",
