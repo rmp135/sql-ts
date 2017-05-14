@@ -68,6 +68,8 @@ Filter the tables to include only those specified.
 
 ```json
 {
+  "dialect": "...",
+  "connection": {},
   "tables": ["Table1", "Table2"]
 }
 ```
@@ -78,6 +80,8 @@ Override the types on a per column basis.
 
 ```json
 {
+  "dialect": "...",
+  "connection": {},
   "typeOverrides": {
     "Table_1.ColumnName": "string",
     "Table_2.Name": "number"
