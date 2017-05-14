@@ -2,9 +2,12 @@
   "include": [
     "src/**/*"
   ],
+  "exclude": [
+    "src/**/*.spec.*"
+  ],
   "compilerOptions": {
     "target": "es5",
-    "sourceMap": true,
+    "sourceMap": false,
     "outDir": "dist",
     "lib": [
       "es6"
