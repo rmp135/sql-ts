@@ -5,7 +5,6 @@ import * as rewire from 'rewire'
 let RewireDatabase = rewire('./Database')
 const MockDatabase: typeof Database2 & typeof RewireDatabase = <any> RewireDatabase
 
-
 describe('Database', () => {
   describe('Construction', () => {
     it('should populate properties from parameters', () => {
@@ -194,6 +193,25 @@ describe('Database', () => {
       const res = dat.stringify()
       expect(mockStringify.calls.count()).toBe(3)
       expect(res).toBe('1\n\n2\n\n3')
+    })
+  })
+  describe('toObject', () => {
+    it('should convert the databse to a plain object', () => {
+      const dat = new Database({} as any, {} as any)
+      const mocktoObject = jasmine.createSpy('stringify').and.returnValues(1, 2, 3)
+      dat.tables = [{
+          toObject: mocktoObject
+        }, {
+          toObject: mocktoObject
+        }, {
+          toObject: mocktoObject
+        },
+      ] as any
+      const res = dat.toObject()
+      expect(mocktoObject.calls.count()).toBe(3)
+      expect(res).toEqual({
+        tables: [1,2,3]
+      } as any)
     })
   })
 })

@@ -3,13 +3,40 @@ import { Config } from './Typings'
 import Table from './Table'
 
 export default class {
+  /**
+   * The knex object that this Database should connect to.
+   * 
+   * @type {knex}
+   */
   db: knex
+  /**
+   * The configuration for this Database to connect with.
+   * 
+   * @type {Config}
+   */
   config: Config
+  /**
+   * The Tables that this Database contains.
+   * 
+   * @type {Table[]}
+   */
   tables: Table[]
+  /**
+   * A representation of a Database.
+   * 
+   * @param db     The knex object for this Database.
+   * @param config The configuration for this Database to connect via.
+   */
   constructor(db: knex, config?: Config) {
     this.db = db
     this.config = config || {}
   }
+  /**
+   * Query the database for table definitions.
+   * Not implemented for all database schemas.
+   * 
+   * @returns {Promise<string[]>} 
+   */
   async getAllTables (): Promise<string[]> {
       switch (this.db.client.config.dialect) {
         case 'mysql':
@@ -36,6 +63,10 @@ export default class {
           throw new Error(`Fetching all tables is not currently supported for dialect ${this.db.client.config.dialect}.`)
       }
   }
+  /**
+   * Creates Tables based on the configuration and generates their definitions.
+   * 
+   */
   async generateTables () {
     let tables: string[]
     if (this.config.tables != null) {
@@ -47,7 +78,22 @@ export default class {
     this.tables = tables.map(t => new Table(t, this))
     await Promise.all(this.tables.map(t => t.generateColumns()))
   }
+  /**
+   * This Database as a line separated list of TypeScript interface definitions.
+   * 
+   * @returns {string} 
+   */
   stringify (): string {
     return this.tables.map(t => t.stringify()).join('\n\n')
+  }
+  /**
+   * This Database as a plain JavaScript object.
+   * 
+   * @returns
+   */
+  toObject () {
+    return {
+      tables: this.tables.map(t => t.toObject())
+    }
   }
 }

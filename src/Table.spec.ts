@@ -68,4 +68,18 @@ describe('Table', () => {
       expect(res).toBe('export interface table_nameEntity {\n  c1\n  c2\n  c3\n}')
     })
   })
+  describe('toObject', () => {
+    it('should generate a plain object', () => {
+      const table = new Table.default('name', {} as any)
+      const col = {
+        toObject: jasmine.createSpy('col.toObject').and.returnValue({})
+      }
+      table.columns = [col as any]
+      expect(table.toObject()).toEqual({
+        name: 'name',
+        columns: [{}]
+      } as any)
+      expect(col.toObject).toHaveBeenCalled()
+    })
+  })
 })
