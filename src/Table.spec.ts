@@ -9,10 +9,35 @@ const MockTable: typeof Table & typeof RewireTable = <any> RewireTable
 describe('Table', () => {
   describe('Construction', () => {
     it('should set properties from parameters', () => {
-      const database = {} as Database
+      const database = {
+        config: {
+
+        }
+      } as Database
       const table = new Table.default('name', database)
       expect(table.name).toBe('name')
       expect(table.database).toBe(database)
+      expect(table.interfaceName).toBe('nameEntity')
+    })
+    it('should set properties from parameters, replacing the interface name', () => {
+      const database = {
+        config: {
+          interfaceNameFormat: "${table}"
+        }
+      } as Database
+      const table = new Table.default('name', database)
+      expect(table.name).toBe('name')
+      expect(table.database).toBe(database)
+      expect(table.interfaceName).toBe('name')
+    })
+    it('should replace spaces with underscores', () => {
+      const database = {
+        config: {
+          interfaceNameFormat: "${table}Test"
+        }
+      } as Database
+      const table = new Table.default('table name', database)
+      expect(table.interfaceName).toBe('table_nameTest')
     })
   })
   describe('generateColumns', () => {
@@ -36,6 +61,7 @@ describe('Table', () => {
       const mockColumnInfoFn = jasmine.createSpy('columnInfo').and.returnValue(mockColumnInfo)
       const mockdb = jasmine.createSpy('db').and.returnValue({ columnInfo: mockColumnInfoFn })
       const database = {
+        config: { },
         db: mockdb
       } as any
       const table = new MockTable.default('name', database)
@@ -52,25 +78,15 @@ describe('Table', () => {
       const c2Fn: any = { stringify: jasmine.createSpy('c2').and.returnValue('c2') }
       const c3Fn: any = { stringify: jasmine.createSpy('c3').and.returnValue('c3') }
 
-      const table = new Table.default('name', {} as any)
+      const table = new Table.default('name', { config: { } } as any)
       table.columns = [c1Fn, c2Fn, c3Fn]
       const res = table.stringify()
       expect(res).toBe('export interface nameEntity {\n  c1\n  c2\n  c3\n}')
     })
-    it('should replace spaces with underscores', () => {
-      const c1Fn: any = { stringify: jasmine.createSpy('c1').and.returnValue('c1') }
-      const c2Fn: any = { stringify: jasmine.createSpy('c2').and.returnValue('c2') }
-      const c3Fn: any = { stringify: jasmine.createSpy('c3').and.returnValue('c3') }
-
-      const table = new Table.default('table name', {} as any)
-      table.columns = [c1Fn, c2Fn, c3Fn]
-      const res = table.stringify()
-      expect(res).toBe('export interface table_nameEntity {\n  c1\n  c2\n  c3\n}')
-    })
   })
   describe('toObject', () => {
     it('should generate a plain object', () => {
-      const table = new Table.default('name', {} as any)
+      const table = new Table.default('name', { config: { } } as any)
       const col = {
         toObject: jasmine.createSpy('col.toObject').and.returnValue({})
       }

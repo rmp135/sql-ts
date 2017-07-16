@@ -21,6 +21,12 @@ export default class {
    */
   database: Database
   /**
+   * The name of the interface that will be generated from this table.
+   * 
+   * @type {string}
+   */
+  interfaceName: string
+  /**
    * A representation of a Database Table.
    * 
    * @param name     The name of the Table.
@@ -29,6 +35,8 @@ export default class {
   constructor (name: string, database: Database) {
     this.name = name
     this.database = database
+    const interfaceNamePattern = database.config.interfaceNameFormat || '${table}Entity'
+    this.interfaceName = interfaceNamePattern.replace('${table}', this.name.replace(' ', '_'))
   }
   /**
    * Queries the database and generates the Column definitions for this table.
@@ -41,6 +49,10 @@ export default class {
       this.columns.push(new Column(key, value.nullable, value.type, this))
     }
   }
+  safeFileName (): string {
+
+    return ''
+  }
   /**
    * This Table as an exported TypeScript interface definition.
    * Contains all Columns as types.
@@ -48,7 +60,7 @@ export default class {
    * @returns {string} 
    */
   stringify (): string {
-    return `export interface ${this.name.replace(' ', '_')}Entity {
+    return `export interface ${this.interfaceName} {
 ${this.columns.map(c => '  ' + c.stringify()).join('\n')}
 }`
   }
