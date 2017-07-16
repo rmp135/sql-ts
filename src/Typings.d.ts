@@ -8,7 +8,9 @@ import * as knex from 'knex';
  * @extends {knex.Config}
  */
 export interface Config extends knex.Config { 
-  tables?: string[], 
+  tables?: string[],
+  filename?: string,
+  interfaceNameFormat?: string,
   typeOverrides?: { 
     [key: string]: string 
   } 
