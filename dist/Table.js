@@ -37,11 +37,28 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Column_1 = require("./Column");
 var default_1 = (function () {
+    /**
+     * A representation of a Database Table.
+     *
+     * @param name     The name of the Table.
+     * @param database The Database that this Table belongs to.
+     */
     function default_1(name, database) {
+        /**
+         * The Columns that this Table contains.
+         *
+         * @type {Column[]}
+         */
         this.columns = [];
         this.name = name;
         this.database = database;
+        var interfaceNamePattern = database.config.interfaceNameFormat || '${table}Entity';
+        this.interfaceName = interfaceNamePattern.replace('${table}', this.name.replace(' ', '_'));
     }
+    /**
+     * Queries the database and generates the Column definitions for this table.
+     *
+     */
     default_1.prototype.generateColumns = function () {
         return __awaiter(this, void 0, void 0, function () {
             var def, key, value;
@@ -59,8 +76,28 @@ var default_1 = (function () {
             });
         });
     };
+    default_1.prototype.safeFileName = function () {
+        return '';
+    };
+    /**
+     * This Table as an exported TypeScript interface definition.
+     * Contains all Columns as types.
+     *
+     * @returns {string}
+     */
     default_1.prototype.stringify = function () {
-        return "export interface " + this.name.replace(' ', '_') + "Entity {\n" + this.columns.map(function (c) { return '  ' + c.stringify(); }).join('\n') + "\n}";
+        return "export interface " + this.interfaceName + " {\n" + this.columns.map(function (c) { return '  ' + c.stringify(); }).join('\n') + "\n}";
+    };
+    /**
+     * This Table as a plain JavaScript object.
+     *
+     * @returns
+     */
+    default_1.prototype.toObject = function () {
+        return {
+            name: this.name,
+            columns: this.columns.map(function (c) { return c.toObject(); })
+        };
     };
     return default_1;
 }());

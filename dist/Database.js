@@ -37,10 +37,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Table_1 = require("./Table");
 var default_1 = (function () {
+    /**
+     * A representation of a Database.
+     *
+     * @param db     The knex object for this Database.
+     * @param config The configuration for this Database to connect via.
+     */
     function default_1(db, config) {
         this.db = db;
         this.config = config || {};
     }
+    /**
+     * Query the database for table definitions.
+     * Not implemented for all database schemas.
+     *
+     * @returns {Promise<string[]>}
+     */
     default_1.prototype.getAllTables = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _a;
@@ -80,6 +92,10 @@ var default_1 = (function () {
             });
         });
     };
+    /**
+     * Creates Tables based on the configuration and generates their definitions.
+     *
+     */
     default_1.prototype.generateTables = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
@@ -107,8 +123,23 @@ var default_1 = (function () {
             });
         });
     };
+    /**
+     * This Database as a line separated list of TypeScript interface definitions.
+     *
+     * @returns {string}
+     */
     default_1.prototype.stringify = function () {
         return this.tables.map(function (t) { return t.stringify(); }).join('\n\n');
+    };
+    /**
+     * This Database as a plain JavaScript object.
+     *
+     * @returns
+     */
+    default_1.prototype.toObject = function () {
+        return {
+            tables: this.tables.map(function (t) { return t.toObject(); })
+        };
     };
     return default_1;
 }());

@@ -35,36 +35,67 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var knex = require("knex");
 var DatabaseFactory_1 = require("./DatabaseFactory");
+/**
+ * Generates a Database definition as a series of TypeScript interfaces.
+ *
+ * @deprecated
+ * @param {Config} config       The configuration to generate this database with.
+ * @returns {Promise<string>}   The Database definition as a series of TypeScript interfaces.
+ */
 function generate(config) {
     return __awaiter(this, void 0, void 0, function () {
-        var db, asString, database, err_1;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    db = knex(config);
-                    asString = '';
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 3, 4, 5]);
-                    return [4 /*yield*/, DatabaseFactory_1.buildDatabase(db, config)];
-                case 2:
-                    database = _a.sent();
-                    asString = database.stringify();
-                    return [3 /*break*/, 5];
-                case 3:
-                    err_1 = _a.sent();
-                    throw err_1;
-                case 4:
-                    db.destroy();
-                    return [7 /*endfinally*/];
-                case 5: return [2 /*return*/, asString];
+            if (process.env.NODE_ENV !== 'production') {
+                console.warn("Deprecation: 'generate' has been deprecated in favour of 'toTypeScript'.");
             }
+            return [2 /*return*/, toTypeScript(config)];
         });
     });
 }
 exports.generate = generate;
+/**
+ * Generates a Database definition as a plain JavaScript object.
+ *
+ * @param {Config} config       The configuration to generate this database with.
+ * @returns {Promise<Database>} The Database definition as a plain JavaScript object.
+ */
+function toObject(config) {
+    return __awaiter(this, void 0, void 0, function () {
+        var database;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, DatabaseFactory_1.buildDatabase(config)];
+                case 1:
+                    database = _a.sent();
+                    return [2 /*return*/, database.toObject()];
+            }
+        });
+    });
+}
+exports.toObject = toObject;
+/**
+ * Generates a Database definition as a series of TypeScript interfaces.
+ *
+ * @param {Config} config       The configuration to generate this database with.
+ * @returns {Promise<string>}   The Database definition as a series of TypeScript interfaces.
+ */
+function toTypeScript(config) {
+    return __awaiter(this, void 0, void 0, function () {
+        var database;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, DatabaseFactory_1.buildDatabase(config)];
+                case 1:
+                    database = _a.sent();
+                    return [2 /*return*/, database.stringify()];
+            }
+        });
+    });
+}
+exports.toTypeScript = toTypeScript;
 exports.default = {
-    generate: generate
+    generate: generate,
+    toObject: toObject,
+    toTypeScript: toTypeScript
 };

@@ -36,7 +36,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
-var knex = require("knex");
 var fs = require("fs");
 var yargs = require("yargs");
 var path = require("path");
@@ -48,27 +47,18 @@ var args = yargs(process.argv)
     .argv;
 var configPath = path.join(process.cwd(), args.config);
 var config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-var db = knex(config);
 (function () { return __awaiter(_this, void 0, void 0, function () {
-    var asString, outFile, err_1;
+    var asString, fileName, outFile;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, 3, 4]);
-                return [4 /*yield*/, index_1.default.generate(config)];
+            case 0: return [4 /*yield*/, index_1.default.toTypeScript(config)];
             case 1:
                 asString = _a.sent();
-                outFile = path.join(process.cwd(), 'Database.ts');
+                fileName = (config.filename || 'Database') + ".ts";
+                outFile = path.join(process.cwd(), fileName);
                 fs.writeFileSync(outFile, asString);
                 console.log("Definition file written as " + outFile + ".");
-                return [3 /*break*/, 4];
-            case 2:
-                err_1 = _a.sent();
-                throw err_1;
-            case 3:
-                db.destroy();
-                return [7 /*endfinally*/];
-            case 4: return [2 /*return*/];
+                return [2 /*return*/];
         }
     });
 }); })();
