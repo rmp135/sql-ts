@@ -15,9 +15,13 @@ const configPath = path.join(process.cwd(), args.config)
 const config = JSON.parse(fs.readFileSync(configPath, 'utf8')) as Config
 
 ;(async () => {
-  const asString = await sqlts.toTypeScript(config)
-  const fileName = `${config.filename || 'Database'}.ts`
-  const outFile = path.join(process.cwd(), fileName)
-  fs.writeFileSync(outFile, asString)
-  console.log(`Definition file written as ${outFile}.`)
+  try {
+    const asString = await sqlts.toTypeScript(config)
+    const fileName = `${config.filename || 'Database'}.ts`
+    const outFile = path.join(process.cwd(), fileName)
+    fs.writeFileSync(outFile, asString)
+    console.log(`Definition file written as ${outFile}.`)
+  } catch (err) {
+    console.error(err)
+  }
 })()
