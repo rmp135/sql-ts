@@ -48,17 +48,24 @@ var args = yargs(process.argv)
 var configPath = path.join(process.cwd(), args.config);
 var config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 (function () { return __awaiter(_this, void 0, void 0, function () {
-    var asString, fileName, outFile;
+    var asString, fileName, outFile, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, index_1.default.toTypeScript(config)];
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, index_1.default.toTypeScript(config)];
             case 1:
                 asString = _a.sent();
                 fileName = (config.filename || 'Database') + ".ts";
                 outFile = path.join(process.cwd(), fileName);
                 fs.writeFileSync(outFile, asString);
                 console.log("Definition file written as " + outFile + ".");
-                return [2 /*return*/];
+                return [3 /*break*/, 3];
+            case 2:
+                err_1 = _a.sent();
+                console.error(err_1);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
     });
 }); })();
