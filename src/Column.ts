@@ -1,11 +1,5 @@
 import Table from './Table'
-
-const types = {
-  number: ['int', 'numeric', 'integer', 'real', 'smallint', 'decimal', 'float', 'double precision', 'double', 'dec', 'fixed', 'year', 'serial', 'bigserial'],
-  Date: ['datetime', 'timestamp', 'date', 'time', 'timestamp'],
-  boolean: ['bit', 'boolean', 'bool'],
-  Object: ['json']
-}
+import TypeMap from './TypeMap'
 
 export default class {
   /**
@@ -50,7 +44,7 @@ export default class {
     if (overrides[fullName] != null) {
       convertedType = overrides[fullName]
     } else {
-      convertedType = Object.keys(types).find(t => types[t].includes(this.type))
+      convertedType = Object.keys(TypeMap).find(t => TypeMap[t].includes(this.type))
     }
     this.jsType = convertedType === undefined ? 'string' : convertedType
   }
