@@ -80,7 +80,7 @@ var default_1 = (function () {
                     case 4: return [2 /*return*/, _b.sent()];
                     case 5: return [4 /*yield*/, this.db('pg_catalog.pg_tables')
                             .select('tablename')
-                            .where({ schemaname: 'public' })
+                            .whereNotIn('schemaname', ['pg_catalog', 'information_schema'])
                             .map(function (t) { return t.tablename; })];
                     case 6: return [2 /*return*/, _b.sent()];
                     case 7: return [4 /*yield*/, this.db('information_schema.tables')

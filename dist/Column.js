@@ -1,11 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var types = {
-    number: ['int', 'numeric', 'integer', 'real', 'smallint', 'decimal', 'float', 'double precision', 'double', 'dec', 'fixed', 'year', 'serial', 'bigserial'],
-    Date: ['datetime', 'timestamp', 'date', 'time', 'timestamp'],
-    boolean: ['bit', 'boolean', 'bool'],
-    Object: ['json']
-};
+var TypeMap_1 = require("./TypeMap");
 var default_1 = (function () {
     /**
      * A representation of a database column.
@@ -27,7 +22,7 @@ var default_1 = (function () {
             convertedType = overrides[fullName];
         }
         else {
-            convertedType = Object.keys(types).find(function (t) { return types[t].includes(_this.type); });
+            convertedType = Object.keys(TypeMap_1.default).find(function (t) { return TypeMap_1.default[t].includes(_this.type); });
         }
         this.jsType = convertedType === undefined ? 'string' : convertedType;
     }
