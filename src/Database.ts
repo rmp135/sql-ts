@@ -53,7 +53,7 @@ export default class {
         case 'postgres':
           return await this.db('pg_catalog.pg_tables')
           .select('tablename')
-          .where({ schemaname: 'public' })
+          .whereNotIn('schemaname', ['pg_catalog', 'information_schema'])
           .map((t: { tablename: string }) => t.tablename)
         case 'mssql':
           return await this.db('information_schema.tables')

@@ -56,8 +56,8 @@ describe('Database', () => {
       done()
     })
     it('should get tables for postgres', async (done) => {
-      const mockWhere = jasmine.createSpy('where').and.returnValue([{ tablename: 'table' }, { tablename: 'table2' }])
-      const mockSelect = jasmine.createSpy('select').and.returnValue({ where: mockWhere })
+      const mockWhere = jasmine.createSpy('whereNotIn').and.returnValue([{ tablename: 'table' }, { tablename: 'table2' }])
+      const mockSelect = jasmine.createSpy('select').and.returnValue({ whereNotIn: mockWhere })
       const mockDb: any = jasmine.createSpy('db').and.returnValue({ select: mockSelect })
       mockDb.client = {
         config: {
@@ -68,7 +68,7 @@ describe('Database', () => {
       const tables = await dat.getAllTables()
       expect(mockDb).toHaveBeenCalledWith('pg_catalog.pg_tables')
       expect(mockSelect).toHaveBeenCalledWith('tablename')
-      expect(mockWhere).toHaveBeenCalledWith({ schemaname: 'public' })
+      expect(mockWhere).toHaveBeenCalledWith('schemaname', ['pg_catalog', 'information_schema'])
       expect(tables).toEqual(['table', 'table2'])
       done()
     })
