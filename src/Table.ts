@@ -1,3 +1,6 @@
+import { buildAdapter } from './AdapterFactory';
+import * as knex from 'knex';
+import { Config } from './Typings';
 import Column from './Column'
 import Database from './Database'
 
@@ -13,6 +16,8 @@ export default class {
    * 
    * @type {Column[]}
    */
+  schema: string
+
   columns: Column[] = []
   /**
    * The Database that this Table belongs to.
@@ -32,26 +37,20 @@ export default class {
    * @param name     The name of the Table.
    * @param database The Database that this Table belongs to.
    */
-  constructor (name: string, database: Database) {
+  constructor (name: string, schema: string, config: Config) {
     this.name = name
-    this.database = database
-    const interfaceNamePattern = database.config.interfaceNameFormat || '${table}Entity'
+    this.schema = schema
+    const interfaceNamePattern = config.interfaceNameFormat || '${table}Entity'
     this.interfaceName = interfaceNamePattern.replace('${table}', this.name.replace(' ', '_'))
   }
   /**
    * Queries the database and generates the Column definitions for this table.
    * 
    */
-  async generateColumns () {
-    const def = await this.database.db(this.name).columnInfo()
-    for (let key in def) {
-      const value = def[key]
-      this.columns.push(new Column(key, value.nullable, value.type, this))
-    }
-  }
-  safeFileName (): string {
-
-    return ''
+  async generateColumns (db: knex, config: Config) {
+    const adapter = buildAdapter(config.dialect)
+    const columns = await adapter.getAllColumns(db, this.name, this.schema)
+    columns.forEach(c => this.columns.push(new Column(c.name, c.isNullable, c.type, this, config)))
   }
   /**
    * This Table as an exported TypeScript interface definition.
@@ -59,10 +58,11 @@ export default class {
    * 
    * @returns {string} 
    */
-  stringify (): string {
-    return `export interface ${this.interfaceName} {
-${this.columns.map(c => '  ' + c.stringify()).join('\n')}
-}`
+  stringify (includeSchema: boolean = false): string {
+    const schemaSpaces = includeSchema ? '  ' : ''
+    return `${schemaSpaces}export interface ${this.interfaceName} {
+${this.columns.map(c => `${schemaSpaces}  ` + c.stringify()).join('\n')}
+${schemaSpaces}}`
   }
   /**
    * This Table as a plain JavaScript object.
@@ -72,6 +72,7 @@ ${this.columns.map(c => '  ' + c.stringify()).join('\n')}
   toObject () {
     return {
       name: this.name,
+      schema: this.schema,
       columns: this.columns.map(c => c.toObject())
     }
   }

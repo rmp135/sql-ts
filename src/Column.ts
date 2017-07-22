@@ -1,3 +1,4 @@
+import { Config } from './Typings';
 import Table from './Table'
 import TypeMap from './TypeMap'
 
@@ -34,11 +35,11 @@ export default class {
    * @param type     The type of this column, as retrieved from the database schema.
    * @param table    The Table that this column belongs to.
    */
-  constructor (name: string, nullable: boolean, type: string, table: Table) {
+  constructor (name: string, nullable: boolean, type: string, table: Table, config: Config) {
     this.name = name
     this.nullable = nullable
     this.type = type
-    const overrides = table.database.config.typeOverrides || {}
+    const overrides = config.typeOverrides || {}
     const fullName = `${table.name}.${this.name}`
     let convertedType = undefined
     if (overrides[fullName] != null) {

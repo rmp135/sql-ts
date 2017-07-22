@@ -34,7 +34,7 @@ async function toObject (config: Config): Promise<Database> {
  */
 async function toTypeScript (config: Config): Promise<string> {
   const database = await buildDatabase(config)
-  return database.stringify()
+  return database.stringify(config.schemaAsNamespace)
 }
 
 export default {

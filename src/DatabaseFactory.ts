@@ -14,8 +14,8 @@ export async function buildDatabase (config: Config): Promise<Database> {
   let db: knex
   try {
     db = knex(config)
-    database = new Database(db, config)
-    await database.generateTables()
+    database = new Database()
+    await database.generateTables(db, config)
   }
   catch (err) {
     throw err

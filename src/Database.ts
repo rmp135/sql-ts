@@ -1,20 +1,10 @@
-import * as knex from 'knex'
+import { AdapterInterface, TableDefinition } from './Adapters/AdapterInterface';
+import { buildAdapter } from "./AdapterFactory";
+import * as knex from 'knex';
 import { Config } from './Typings'
 import Table from './Table'
 
 export default class {
-  /**
-   * The knex object that this Database should connect to.
-   * 
-   * @type {knex}
-   */
-  db: knex
-  /**
-   * The configuration for this Database to connect with.
-   * 
-   * @type {Config}
-   */
-  config: Config
   /**
    * The Tables that this Database contains.
    * 
@@ -22,69 +12,49 @@ export default class {
    */
   tables: Table[]
   /**
-   * A representation of a Database.
-   * 
-   * @param db     The knex object for this Database.
-   * @param config The configuration for this Database to connect via.
-   */
-  constructor(db: knex, config?: Config) {
-    this.db = db
-    this.config = config || {}
-  }
-  /**
    * Query the database for table definitions.
    * Not implemented for all database schemas.
    * 
    * @returns {Promise<string[]>} 
    */
-  async getAllTables (): Promise<string[]> {
-      switch (this.db.client.config.dialect) {
-        case 'mysql':
-          return await this.db('information_schema.tables')
-          .select('table_name')
-          .where({ table_schema: this.db.client.config.connection.database })
-          .map((t: { table_name: string }) => t.table_name)
-        case 'sqlite3':
-          return await this.db('sqlite_master')
-          .select('tbl_name')
-          .whereNot({ tbl_name: 'sqlite_sequence' })
-          .where({ type: 'table'})
-          .map((t: { tbl_name: string }) => t.tbl_name)
-        case 'postgres':
-          return await this.db('pg_catalog.pg_tables')
-          .select('tablename')
-          .whereNotIn('schemaname', ['pg_catalog', 'information_schema'])
-          .map((t: { tablename: string }) => t.tablename)
-        case 'mssql':
-          return await this.db('information_schema.tables')
-          .select('table_name')
-          .map((t: { table_name: string }) => t.table_name)
-        default:
-          throw new Error(`Fetching all tables is not currently supported for dialect ${this.db.client.config.dialect}.`)
-      }
+  async getAllTables (db: knex, config: Config): Promise<TableDefinition[]> {
+    const adapter = buildAdapter(config.dialect)
+    return await adapter.getAllTables(db, config.schemas || [])
   }
   /**
    * Creates Tables based on the configuration and generates their definitions.
    * 
    */
-  async generateTables () {
-    let tables: string[]
-    if (this.config.tables != null) {
-      const hasTables = await Promise.all(this.config.tables.map(t => this.db.schema.hasTable(t)))
-      tables = this.config.tables.filter((t, index) => hasTables[index])
-    } else  {
-      tables = await this.getAllTables()
-    }
-    this.tables = tables.map(t => new Table(t, this))
-    await Promise.all(this.tables.map(t => t.generateColumns()))
+  async generateTables (db: knex, config: Config) {
+    let tables: TableDefinition[]
+    tables = (await this.getAllTables(db, config))
+    this.tables = tables.map(t => new Table(t.name, t.schema, config))
+    await Promise.all(this.tables.map(t => t.generateColumns(db, config)))
   }
   /**
    * This Database as a line separated list of TypeScript interface definitions.
    * 
    * @returns {string} 
    */
-  stringify (): string {
-    return this.tables.map(t => t.stringify()).join('\n\n')
+  stringify (includeSchema: boolean = false): string {
+    if (includeSchema) {
+      const tablesBySchemas: { [schema: string]: Table[] } = {}
+      for (let table of this.tables) {
+        if (!tablesBySchemas.hasOwnProperty(table.schema)) {
+          tablesBySchemas[table.schema] = []
+        }
+        tablesBySchemas[table.schema].push(table)
+      }
+      const namespaces: string[] = []
+      for (let schema in tablesBySchemas) {
+        const tables = tablesBySchemas[schema]
+        namespaces.push(`export namespace ${schema} {
+${tables.map(t => t.stringify(includeSchema)).join('\n\n')}
+}`)
+      }
+      return namespaces.join('\n\n')
+    }
+    return this.tables.map(t => t.stringify(includeSchema)).join('\n\n')
   }
   /**
    * This Database as a plain JavaScript object.
