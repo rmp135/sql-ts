@@ -16,7 +16,7 @@ describe('Column', () => {
       const column = new MockColumn.default('name', false, 'type', { name: 'tableName' } as any, {} as any)
       expect(column.name).toBe('name')
       expect(column.type).toBe('type')
-      expect(column.jsType).toBe('string')
+      expect(column.jsType).toBe('any')
     })
     it('should populate the class using the config override types', () => {
       MockColumn.__set__({
