@@ -5,6 +5,7 @@
   "license": "MIT",
   "description": "Generate TypeScript definitions from database schemas.",
   "bin": "./bin/sql-ts",
+  "types": "dist/index.d.ts",
   "repository": "rmp135/sql-ts",
   "scripts": {
     "build": "tsc",
