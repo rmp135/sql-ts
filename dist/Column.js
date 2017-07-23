@@ -10,12 +10,12 @@ var default_1 = (function () {
      * @param type     The type of this column, as retrieved from the database schema.
      * @param table    The Table that this column belongs to.
      */
-    function default_1(name, nullable, type, table) {
+    function default_1(name, nullable, type, table, config) {
         var _this = this;
         this.name = name;
         this.nullable = nullable;
         this.type = type;
-        var overrides = table.database.config.typeOverrides || {};
+        var overrides = config.typeOverrides || {};
         var fullName = table.name + "." + this.name;
         var convertedType = undefined;
         if (overrides[fullName] != null) {

@@ -52,8 +52,8 @@ function buildDatabase(config) {
                 case 0:
                     _a.trys.push([0, 2, 3, 4]);
                     db = knex(config);
-                    database = new Database_1.default(db, config);
-                    return [4 /*yield*/, database.generateTables()];
+                    database = new Database_1.default();
+                    return [4 /*yield*/, database.generateTables(db, config)];
                 case 1:
                     _a.sent();
                     return [3 /*break*/, 4];
@@ -61,7 +61,9 @@ function buildDatabase(config) {
                     err_1 = _a.sent();
                     throw err_1;
                 case 3:
-                    db.destroy();
+                    if (db !== undefined) {
+                        db.destroy();
+                    }
                     return [7 /*endfinally*/];
                 case 4: return [2 /*return*/, database];
             }

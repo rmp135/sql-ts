@@ -35,17 +35,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var AdapterFactory_1 = require("./AdapterFactory");
 var Table_1 = require("./Table");
 var default_1 = (function () {
-    /**
-     * A representation of a Database.
-     *
-     * @param db     The knex object for this Database.
-     * @param config The configuration for this Database to connect via.
-     */
-    function default_1(db, config) {
-        this.db = db;
-        this.config = config || {};
+    function default_1() {
+        /**
+         * The Tables that this Database contains.
+         *
+         * @type {Table[]}
+         */
+        this.tables = [];
     }
     /**
      * Query the database for table definitions.
@@ -53,41 +52,15 @@ var default_1 = (function () {
      *
      * @returns {Promise<string[]>}
      */
-    default_1.prototype.getAllTables = function () {
+    default_1.prototype.getAllTables = function (db, config) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var adapter;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
-                        _a = this.db.client.config.dialect;
-                        switch (_a) {
-                            case 'mysql': return [3 /*break*/, 1];
-                            case 'sqlite3': return [3 /*break*/, 3];
-                            case 'postgres': return [3 /*break*/, 5];
-                            case 'mssql': return [3 /*break*/, 7];
-                        }
-                        return [3 /*break*/, 9];
-                    case 1: return [4 /*yield*/, this.db('information_schema.tables')
-                            .select('table_name')
-                            .where({ table_schema: this.db.client.config.connection.database })
-                            .map(function (t) { return t.table_name; })];
-                    case 2: return [2 /*return*/, _b.sent()];
-                    case 3: return [4 /*yield*/, this.db('sqlite_master')
-                            .select('tbl_name')
-                            .whereNot({ tbl_name: 'sqlite_sequence' })
-                            .where({ type: 'table' })
-                            .map(function (t) { return t.tbl_name; })];
-                    case 4: return [2 /*return*/, _b.sent()];
-                    case 5: return [4 /*yield*/, this.db('pg_catalog.pg_tables')
-                            .select('tablename')
-                            .whereNotIn('schemaname', ['pg_catalog', 'information_schema'])
-                            .map(function (t) { return t.tablename; })];
-                    case 6: return [2 /*return*/, _b.sent()];
-                    case 7: return [4 /*yield*/, this.db('information_schema.tables')
-                            .select('table_name')
-                            .map(function (t) { return t.table_name; })];
-                    case 8: return [2 /*return*/, _b.sent()];
-                    case 9: throw new Error("Fetching all tables is not currently supported for dialect " + this.db.client.config.dialect + ".");
+                        adapter = AdapterFactory_1.buildAdapter(config.dialect);
+                        return [4 /*yield*/, adapter.getAllTables(db, config.schemas || [])];
+                    case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         });
@@ -96,27 +69,17 @@ var default_1 = (function () {
      * Creates Tables based on the configuration and generates their definitions.
      *
      */
-    default_1.prototype.generateTables = function () {
+    default_1.prototype.generateTables = function (db, config) {
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
-            var tables, hasTables_1;
+            var tables;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        if (!(this.config.tables != null)) return [3 /*break*/, 2];
-                        return [4 /*yield*/, Promise.all(this.config.tables.map(function (t) { return _this.db.schema.hasTable(t); }))];
+                    case 0: return [4 /*yield*/, this.getAllTables(db, config)];
                     case 1:
-                        hasTables_1 = _a.sent();
-                        tables = this.config.tables.filter(function (t, index) { return hasTables_1[index]; });
-                        return [3 /*break*/, 4];
-                    case 2: return [4 /*yield*/, this.getAllTables()];
-                    case 3:
-                        tables = _a.sent();
-                        _a.label = 4;
-                    case 4:
-                        this.tables = tables.map(function (t) { return new Table_1.default(t, _this); });
-                        return [4 /*yield*/, Promise.all(this.tables.map(function (t) { return t.generateColumns(); }))];
-                    case 5:
+                        tables = (_a.sent());
+                        this.tables = tables.map(function (t) { return new Table_1.default(t.name, t.schema, config); });
+                        return [4 /*yield*/, Promise.all(this.tables.map(function (t) { return t.generateColumns(db, config); }))];
+                    case 2:
                         _a.sent();
                         return [2 /*return*/];
                 }
@@ -128,8 +91,26 @@ var default_1 = (function () {
      *
      * @returns {string}
      */
-    default_1.prototype.stringify = function () {
-        return this.tables.map(function (t) { return t.stringify(); }).join('\n\n');
+    default_1.prototype.stringify = function (includeSchema) {
+        if (includeSchema) {
+            var tablesBySchemas = {};
+            for (var _i = 0, _a = this.tables; _i < _a.length; _i++) {
+                var table = _a[_i];
+                if (!tablesBySchemas.hasOwnProperty(table.schema)) {
+                    tablesBySchemas[table.schema] = [];
+                }
+                tablesBySchemas[table.schema].push(table);
+            }
+            var namespaces = [];
+            for (var schema in tablesBySchemas) {
+                var tables = tablesBySchemas[schema];
+                namespaces.push("export namespace " + schema + " {\n" + tables.map(function (t) { return t.stringify(includeSchema); }).join('\n\n') + "\n}");
+            }
+            return namespaces.join('\n\n');
+        }
+        else {
+            return this.tables.map(function (t) { return t.stringify(includeSchema); }).join('\n\n');
+        }
     };
     /**
      * This Database as a plain JavaScript object.

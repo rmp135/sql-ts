@@ -88,7 +88,7 @@ function toTypeScript(config) {
                 case 0: return [4 /*yield*/, DatabaseFactory_1.buildDatabase(config)];
                 case 1:
                     database = _a.sent();
-                    return [2 /*return*/, database.stringify()];
+                    return [2 /*return*/, database.stringify(config.schemaAsNamespace)];
             }
         });
     });

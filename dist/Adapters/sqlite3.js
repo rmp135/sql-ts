@@ -35,64 +35,40 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var AdapterFactory_1 = require("./AdapterFactory");
-var Column_1 = require("./Column");
 var default_1 = (function () {
-    /**
-     * A representation of a Database Table.
-     *
-     * @param name     The name of the Table.
-     * @param database The Database that this Table belongs to.
-     */
-    function default_1(name, schema, config) {
-        this.columns = [];
-        this.name = name;
-        this.schema = schema;
-        var interfaceNamePattern = config.interfaceNameFormat || '${table}Entity';
-        this.interfaceName = interfaceNamePattern.replace('${table}', this.name.replace(' ', '_'));
+    function default_1() {
     }
-    /**
-     * Queries the database and generates the Column definitions for this table.
-     *
-     */
-    default_1.prototype.generateColumns = function (db, config) {
+    default_1.prototype.getAllTables = function (db, schemas) {
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
-            var adapter, columns;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        adapter = AdapterFactory_1.buildAdapter(config.dialect);
-                        return [4 /*yield*/, adapter.getAllColumns(db, this.name, this.schema)];
-                    case 1:
-                        columns = _a.sent();
-                        columns.forEach(function (c) { return _this.columns.push(new Column_1.default(c.name, c.isNullable, c.type, _this, config)); });
-                        return [2 /*return*/];
+                    case 0: return [4 /*yield*/, db('sqlite_master')
+                            .select('tbl_name AS name')
+                            .whereNot({ tbl_name: 'sqlite_sequence' })
+                            .where({ type: 'table' })
+                            .map(function (t) { return ({ name: t.name, schema: 'main' }); })];
+                    case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         });
     };
-    /**
-     * This Table as an exported TypeScript interface definition.
-     * Contains all Columns as types.
-     *
-     * @returns {string}
-     */
-    default_1.prototype.stringify = function (includeSchema) {
-        var schemaSpaces = includeSchema ? '  ' : '';
-        return schemaSpaces + "export interface " + this.interfaceName + " {\n" + this.columns.map(function (c) { return schemaSpaces + "  " + c.stringify(); }).join('\n') + "\n" + schemaSpaces + "}";
-    };
-    /**
-     * This Table as a plain JavaScript object.
-     *
-     * @returns
-     */
-    default_1.prototype.toObject = function () {
-        return {
-            name: this.name,
-            schema: this.schema,
-            columns: this.columns.map(function (c) { return c.toObject(); })
-        };
+    default_1.prototype.getAllColumns = function (db, table, schema) {
+        return __awaiter(this, void 0, void 0, function () {
+            var def, columns, key, value;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, db(table).columnInfo()];
+                    case 1:
+                        def = _a.sent();
+                        columns = [];
+                        for (key in def) {
+                            value = def[key];
+                            columns.push({ isNullable: value.nullable, name: key, type: value.type });
+                        }
+                        return [2 /*return*/, columns];
+                }
+            });
+        });
     };
     return default_1;
 }());
