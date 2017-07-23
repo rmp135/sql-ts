@@ -8,12 +8,11 @@ export default class implements AdapterInterface {
     .select('TABLE_SCHEMA AS schema')
   }
   async getAllColumns(db: knex, table: string, schema: string): Promise<ColumnDefinition[]> {
-    const def = await db(table).columnInfo()
-    const columns: ColumnDefinition[] = []
-    for (let key in def) {
-      const value = def[key]
-      columns.push({ isNullable: value.nullable, name: key, type: value.type })
-    }
-    return columns
+    return await db('information_schema.columns')
+    .select('COLUMN_NAME AS name')
+    .select(db.raw(`(CASE WHEN IS_NULLABLE = 'NO' THEN 0 ELSE 1 END) AS isNullable`))
+    .select('DATA_TYPE AS type')
+    .where({ table_name: table, table_schema: schema })
+    .map((c: { name: string, type: string, isNullable: string } ) => ({ ...c, isNullable: !!c.isNullable }) as ColumnDefinition)
   }
 }
