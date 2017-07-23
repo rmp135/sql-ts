@@ -153,7 +153,7 @@ Provider   | Source
 Postgres   | The schema that the table belongs to.
 SQL Server | The schema that the table belongs to.
 MySQL      | The database name.
-SQLite     | 'public'
+SQLite     | 'main'
 
 
 ```json
