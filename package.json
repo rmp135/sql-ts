@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsc",
     "pretest": "tsc -p tsconfig.test.json",
-    "test": "jasmine ./__test/{**,*}/*.spec.js"
+    "test": "jasmine ./__test/{**,}/*.spec.js"
   },
   "dependencies": {
     "knex": "^0.13.0",

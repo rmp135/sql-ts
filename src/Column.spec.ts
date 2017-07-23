@@ -1,107 +1,72 @@
-import Column from './Column'
-import Table from './Table'
+import { Config } from './Typings';
+import * as Column from './Column';
+import * as rewire from 'rewire';
+
+let RewireColumn = rewire('./Column')
+const MockColumn: typeof Column & typeof RewireColumn = <any> RewireColumn
 
 describe('Column', () => {
-  describe('Construction', () => {
-    it('should populate properties with the parameters', () => {
-      const table = {
-        database: {
-          config: {
-            typeOverrides: {}
-          }
+  describe('construction', () => {
+    it('should populate the class falling back to string', () => {
+      MockColumn.__set__({
+        TypeMap_1: {
+          default: { }
         }
-      } as Table
-      const col = new Column('name', true, 'type', table)
-      expect(col.name).toBe('name')
-      expect(col.nullable).toBe(true)
-      expect(col.type).toBe('type')
+      })
+      const column = new MockColumn.default('name', false, 'type', { name: 'tableName' } as any, {} as any)
+      expect(column.name).toBe('name')
+      expect(column.type).toBe('type')
+      expect(column.jsType).toBe('string')
     })
-    it('should use the overrides if available', () => {
-      const mockTable = {
-        name: 'table',
-        database: {
-          config: {
-            typeOverrides: {
-              'table.name': 'type'
-            }
-          }
+    it('should populate the class using the config override types', () => {
+      MockColumn.__set__({
+        TypeMap_1: {
+          default: { }
         }
+      })
+      const typeOverrides = {
+        'tableName.name': 'mappedType'
       }
-      const col = new Column('name', false, '', mockTable as any)
-      expect(col.jsType).toBe('type')
+      const column = new MockColumn.default('name', false, 'type', { name: 'tableName' } as any, { typeOverrides } as any)
+      expect(column.name).toBe('name')
+      expect(column.type).toBe('type')
+      expect(column.jsType).toBe('mappedType')
     })
-    it('should use the lookup table', () => {
-      const mockTable = {
-        name: 'table',
-        database: {
-          config: {
+    it('should populate the class using the built in types', () => {
+      MockColumn.__set__({
+        TypeMap_1: {
+          default: {
+            mappedType: 'type'
           }
         }
-      }
-      const col = new Column('name', false, 'numeric', mockTable as any)
-      expect(col.jsType).toBe('number')
-    })
-    it('should fall back to string', () => {
-      const mockTable = {
-        name: 'table',
-        database: {
-          config: {
-          }
-        }
-      }
-      const col = new Column('name', false, 'notatype', mockTable as any)
-      expect(col.jsType).toBe('string')
+      })
+      const column = new MockColumn.default('name', false, 'type', { name: 'tableName' } as any, {} as any)
+      expect(column.name).toBe('name')
+      expect(column.type).toBe('type')
+      expect(column.jsType).toBe('mappedType')
     })
   })
   describe('stringify', () => {
-    it('should convert itself to a nullable string', () => {
-      const mockTable = {
-        name: 'table',
-        database: {
-          config: {
-            typeOverrides: { }
-          }
-        }
-      }
-      const col = new Column('name', true, 'type', mockTable as any)
-      col.jsType = 'jsType'
-      const res = col.stringify()
-      expect(res).toBe('name?: jsType | null')
+    it('should return the column as a nullable property', () => {
+      const column = new MockColumn.default('name', true, 'type', { name: 'tableName' } as any, {} as any)
+      column.jsType = 'mappedType'
+      expect(column.stringify()).toEqual('name?: mappedType | null')
     })
-    it('should convert itself to a none nullable string', () => {
-      const mockTable = {
-        name: 'table',
-        database: {
-          config: {
-            typeOverrides: { }
-          }
-        }
-      }
-      const col = new Column('name', false, 'type', mockTable as any)
-      col.jsType = 'jsType'
-      const res = col.stringify()
-      expect(res).toBe('name?: jsType')
+    it('should return the column as a none nullable property', () => {
+      const column = new MockColumn.default('name', false, 'type', { name: 'tableName' } as any, {} as any)
+      column.jsType = 'mappedType'
+      expect(column.stringify()).toEqual('name?: mappedType')
     })
   })
   describe('toObject', () => {
-    it('should convert itself to a string', () => {
-      const mockTable = {
-        name: 'table',
-        database: {
-          config: {
-            typeOverrides: {
-              'table.name': 'jsType'
-            }
-          }
-        }
-      }
-      const col = new Column('name', false, 'type', mockTable as any)
-      const res = col.toObject()
-      expect(res).toEqual({
+    it('should return the column as an object', () => {
+      const column = new MockColumn.default('name', false, 'type', { name: 'tableName' } as any, {} as any)
+      column.jsType = 'mappedType'
+      expect(column.toObject()).toEqual({
         name: 'name',
         type: 'type',
-        jsType: 'jsType',
-        nullable: false
+        nullable: false,
+        jsType: 'mappedType'
       })
     })
   })

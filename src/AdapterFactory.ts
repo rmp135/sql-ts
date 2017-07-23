@@ -1,6 +1,7 @@
 import { AdapterInterface } from './Adapters/AdapterInterface';
 
 export function buildAdapter (dialect): AdapterInterface {
+  // Use aliases from knex.
   // https://github.com/tgriesser/knex/blob/master/src/index.js
   const aliases = {
     'pg' : 'postgres',

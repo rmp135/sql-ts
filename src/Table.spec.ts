@@ -1,101 +1,123 @@
-import * as Table from './Table'
-import Database from './Database'
-import * as Column from './Column'
-import * as rewire from 'rewire'
+import { Config } from './Typings';
+import * as Table from './Table';
+import * as rewire from 'rewire';
 
 let RewireTable = rewire('./Table')
 const MockTable: typeof Table & typeof RewireTable = <any> RewireTable
 
 describe('Table', () => {
-  describe('Construction', () => {
-    it('should set properties from parameters', () => {
-      const database = {
-        config: {
-
-        }
-      } as Database
-      const table = new Table.default('name', database)
+  describe('construction', () => {
+    it('should set the properties on the table without interfaceNamePattern', () => {
+      const mockConfig: Config = { }
+      const table = new Table.default('name', 'schema', {} as any)
       expect(table.name).toBe('name')
-      expect(table.database).toBe(database)
+      expect(table.schema).toBe('schema')
       expect(table.interfaceName).toBe('nameEntity')
     })
-    it('should set properties from parameters, replacing the interface name', () => {
-      const database = {
-        config: {
-          interfaceNameFormat: "${table}"
-        }
-      } as Database
-      const table = new Table.default('name', database)
+    it('should replace the interfaceNamePattern', () => {
+      const mockConfig: Config = { 
+        interfaceNameFormat: "newName"
+      }
+      const table = new Table.default('name', 'schema', mockConfig)
       expect(table.name).toBe('name')
-      expect(table.database).toBe(database)
-      expect(table.interfaceName).toBe('name')
+      expect(table.schema).toBe('schema')
+      expect(table.interfaceName).toBe('newName')
     })
     it('should replace spaces with underscores', () => {
-      const database = {
-        config: {
-          interfaceNameFormat: "${table}Test"
-        }
-      } as Database
-      const table = new Table.default('table name', database)
-      expect(table.interfaceName).toBe('table_nameTest')
+      const table = new Table.default('new name', 'schema', {} as any)
+      expect(table.name).toBe('new name')
+      expect(table.schema).toBe('schema')
+      expect(table.interfaceName).toBe('new_nameEntity')
+    })
+    it('should replace spaces with underscores and replace the interfaceNamePattern', () => {
+      const mockConfig: Config = { 
+        interfaceNameFormat: "${table}Table"
+      }
+      const table = new Table.default('new name', 'schema', mockConfig)
+      expect(table.name).toBe('new name')
+      expect(table.schema).toBe('schema')
+      expect(table.interfaceName).toBe('new_nameTable')
     })
   })
-  describe('generateColumns', () => {
-    it('should create a column from the columnInfo', async (done) => {
-      const mockColumn = jasmine.createSpy('column')
+  describe('generateColumn', () => {
+    it('should map the result of a retrieved adapater', async (done) => {
+      const mockAdapter = {
+        getAllColumns: jasmine.createSpy('mockAdapter.getAllColumns').and.returnValue(Promise.resolve([
+          { name: 'name1', isNullable: false, type: 'type1' },
+          { name: 'name2', isNullable: true, type: 'type2' }
+        ]))
+      }
+      const mockAdapterFactory = {
+        buildAdapter: jasmine.createSpy('mockAdapterFactory.buildAdapter').and.returnValue(mockAdapter)
+      }
+      const mockColumn = jasmine.createSpy('column').and.returnValue(1)
       MockTable.__set__({
+        AdapterFactory_1: mockAdapterFactory,
         Column_1: {
           default: mockColumn
         }
       })
-      const mockColumnInfo = {
-        col1: {
-          nullable: false,
-          type: 'type'
-        },
-        col2: {
-          nullable: true,
-          type: 'type2'
-        }
-      }
-      const mockColumnInfoFn = jasmine.createSpy('columnInfo').and.returnValue(mockColumnInfo)
-      const mockdb = jasmine.createSpy('db').and.returnValue({ columnInfo: mockColumnInfoFn })
-      const database = {
-        config: { },
-        db: mockdb
+      const mockDb = {} as any
+      const mockConfig = {
+        dialect: 'dialect'
       } as any
-      const table = new MockTable.default('name', database)
-      await table.generateColumns()
-      expect(mockColumn.calls.count()).toBe(2)
-      expect(mockColumn.calls.argsFor(0)).toEqual(['col1', false, 'type', table])
-      expect(mockColumn.calls.argsFor(1)).toEqual(['col2', true, 'type2', table])
+      const table = new MockTable.default('name', 'schema', mockConfig)
+      await table.generateColumns(mockDb, mockConfig)
+      expect(mockAdapterFactory.buildAdapter).toHaveBeenCalledWith('dialect')
+      expect(mockAdapter.getAllColumns).toHaveBeenCalledWith(mockDb, 'name', 'schema')
+      expect(mockColumn.calls.argsFor(0)).toEqual(['name1', false, 'type1', table, mockConfig])
+      expect(mockColumn.calls.argsFor(1)).toEqual(['name2', true, 'type2', table, mockConfig])
+      expect(table.columns.length).toBe(2)
       done()
     })
   })
   describe('stringify', () => {
-    it('should call the stringify methods on all the columns', () => {
-      const c1Fn: any = { stringify: jasmine.createSpy('c1').and.returnValue('c1') }
-      const c2Fn: any = { stringify: jasmine.createSpy('c2').and.returnValue('c2') }
-      const c3Fn: any = { stringify: jasmine.createSpy('c3').and.returnValue('c3') }
-
-      const table = new Table.default('name', { config: { } } as any)
-      table.columns = [c1Fn, c2Fn, c3Fn]
-      const res = table.stringify()
-      expect(res).toBe('export interface nameEntity {\n  c1\n  c2\n  c3\n}')
+    it('should not bump the indenting if schema information if disabled', () => {
+      const table = new Table.default('name', 'schema', {} as any)
+      table.interfaceName = 'mockInterfaceName'
+      const mockCol = {
+        stringify: jasmine.createSpy('mockCol.stringify').and.returnValues('col1', 'col2', 'col3')
+      }
+      table.columns.push(mockCol as any, mockCol as any, mockCol as any)
+      const res = table.stringify(false)
+      expect(mockCol.stringify).toHaveBeenCalled()
+      expect(res).toEqual(`export interface mockInterfaceName {
+  col1
+  col2
+  col3
+}`)
+    })
+    it('should bump the indenting if schema if enabled', () => {
+      const table = new Table.default('name', 'schema', {} as any)
+      table.interfaceName = 'mockInterfaceName'
+      const mockCol = {
+        stringify: jasmine.createSpy('mockCol.stringify').and.returnValues('col1', 'col2', 'col3')
+      }
+      table.columns.push(mockCol as any, mockCol as any, mockCol as any)
+      const res = table.stringify(true)
+      expect(mockCol.stringify).toHaveBeenCalled()
+      expect(mockCol.stringify).toHaveBeenCalledTimes(3)
+      expect(res).toEqual(`  export interface mockInterfaceName {
+    col1
+    col2
+    col3
+  }`)
     })
   })
   describe('toObject', () => {
-    it('should generate a plain object', () => {
-      const table = new Table.default('name', { config: { } } as any)
-      const col = {
-        toObject: jasmine.createSpy('col.toObject').and.returnValue({})
+    it('should return the table as a plain object', () => {
+      const table = new Table.default('name', 'schema', {} as any)
+      const mockCol = {
+        toObject: jasmine.createSpy('mockCol.toObject').and.returnValues('col1', 'col2', 'col3')
       }
-      table.columns = [col as any]
-      expect(table.toObject()).toEqual({
+      table.columns.push(mockCol as any, mockCol as any, mockCol as any)
+      const res = table.toObject()
+      expect(mockCol.toObject).toHaveBeenCalledTimes(3)
+      expect(res).toEqual({
         name: 'name',
-        columns: [{}]
-      } as any)
-      expect(col.toObject).toHaveBeenCalled()
+        schema: 'schema',
+        columns: ['col1', 'col2', 'col3'] as any
+      })
     })
   })
 })
