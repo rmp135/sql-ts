@@ -47,7 +47,7 @@ export default class {
     } else {
       convertedType = Object.keys(TypeMap).find(t => TypeMap[t].includes(this.type))
     }
-    this.jsType = convertedType === undefined ? 'string' : convertedType
+    this.jsType = convertedType === undefined ? 'any' : convertedType
   }
   /**
    * This Column as a TypeScript type definition.
