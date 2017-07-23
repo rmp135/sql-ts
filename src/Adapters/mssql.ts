@@ -3,9 +3,12 @@ import { AdapterInterface, TableDefinition, ColumnDefinition } from './AdapterIn
 
 export default class implements AdapterInterface {
   async getAllTables(db: knex, schemas: string[]): Promise<TableDefinition[]> {
-    return await db('information_schema.tables')
+    const query = db('information_schema.tables')
     .select('TABLE_NAME AS name')
     .select('TABLE_SCHEMA AS schema')
+    if (schemas.length > 0)
+      query.whereIn('TABLE_SCHEMA', schemas)
+    return await query
   }
   async getAllColumns(db: knex, table: string, schema: string): Promise<ColumnDefinition[]> {
     return await db('information_schema.columns')

@@ -18,6 +18,19 @@ describe('mssql', () => {
       expect(res).toEqual([1,2,3] as any)
       done()
     })
+    it('should get all tables from specific schemas', async (done) => {
+      const mockWhereIn = jasmine.createSpy('whereIn')
+      const mockSelectSchema = jasmine.createSpy('select').and.returnValue({ whereIn: mockWhereIn })
+      const mockSelectName = jasmine.createSpy('select').and.returnValue({ select: mockSelectSchema })
+      const mockdb = jasmine.createSpy('db').and.returnValue({ select: mockSelectName })
+      const adapter = new Mockmssql.default();
+      const res = await adapter.getAllTables(mockdb as any, ['schema1', 'schema2'])
+      expect(mockdb).toHaveBeenCalledWith('information_schema.tables')
+      expect(mockSelectName).toHaveBeenCalledWith('TABLE_NAME AS name')
+      expect(mockSelectSchema).toHaveBeenCalledWith('TABLE_SCHEMA AS schema')
+      expect(mockWhereIn).toHaveBeenCalledWith('TABLE_SCHEMA', ['schema1', 'schema2'])
+      done()
+    })
   })
   describe('getAllColumns', () => {
     it('should get all columns', async (done) => {
