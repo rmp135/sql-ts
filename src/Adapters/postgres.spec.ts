@@ -38,7 +38,8 @@ describe('postgres', () => {
   })
   describe('getAllColumns', () => {
     it('should get all tables from the current schema', async (done) => {
-      const mockWhere = jasmine.createSpy('where').and.returnValue(Promise.resolve([1,2,3]))
+      const mockMap = jasmine.createSpy('map').and.returnValue(Promise.resolve([1,2,3]))
+      const mockWhere = jasmine.createSpy('where').and.returnValue({ map: mockMap })
       const mockSelectNullable = jasmine.createSpy('select').and.returnValue({ where: mockWhere })
       const mockSelectType = jasmine.createSpy('select').and.returnValue({ select: mockSelectNullable })
       const mockSelectName = jasmine.createSpy('select').and.returnValue({ select: mockSelectType })

@@ -17,5 +17,6 @@ export default class implements AdapterInterface {
     .select('udt_name AS type')
     .select('is_nullable AS isNullable')
     .where({ table_name: table, table_schema: schema })
+    .map((c: { name: string, type: string, isNullable: string } ) => ({ ...c, isNullable: c.isNullable === 'YES' }) as ColumnDefinition)
   }
 }
