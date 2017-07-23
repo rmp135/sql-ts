@@ -21,7 +21,9 @@ export async function buildDatabase (config: Config): Promise<Database> {
     throw err
   }
   finally {
-    db.destroy()
+    if (db !== undefined) {
+      db.destroy()
+    }
   }
   return database
 }
