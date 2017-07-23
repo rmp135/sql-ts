@@ -10,7 +10,7 @@ export default class {
    * 
    * @type {Table[]}
    */
-  tables: Table[]
+  tables: Table[] = []
   /**
    * Query the database for table definitions.
    * Not implemented for all database schemas.
@@ -36,7 +36,7 @@ export default class {
    * 
    * @returns {string} 
    */
-  stringify (includeSchema: boolean = false): string {
+  stringify (includeSchema: boolean): string {
     if (includeSchema) {
       const tablesBySchemas: { [schema: string]: Table[] } = {}
       for (let table of this.tables) {
@@ -53,8 +53,9 @@ ${tables.map(t => t.stringify(includeSchema)).join('\n\n')}
 }`)
       }
       return namespaces.join('\n\n')
+    } else {
+      return this.tables.map(t => t.stringify(includeSchema)).join('\n\n')
     }
-    return this.tables.map(t => t.stringify(includeSchema)).join('\n\n')
   }
   /**
    * This Database as a plain JavaScript object.
