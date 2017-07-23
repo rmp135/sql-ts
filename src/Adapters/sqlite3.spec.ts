@@ -1,4 +1,4 @@
-import * as sqlite from './sqlite';
+import * as sqlite from './sqlite3';
 import * as rewire from 'rewire';
 
 let Rewiresqlite = rewire('./sqlite')
