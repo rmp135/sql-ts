@@ -24,7 +24,7 @@ var default_1 = (function () {
         else {
             convertedType = Object.keys(TypeMap_1.default).find(function (t) { return TypeMap_1.default[t].includes(_this.type); });
         }
-        this.jsType = convertedType === undefined ? 'string' : convertedType;
+        this.jsType = convertedType === undefined ? 'any' : convertedType;
     }
     /**
      * This Column as a TypeScript type definition.
