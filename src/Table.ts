@@ -58,7 +58,7 @@ export default class {
    * 
    * @returns {string} 
    */
-  stringify (includeSchema: boolean = false): string {
+  stringify (includeSchema: boolean): string {
     const schemaSpaces = includeSchema ? '  ' : ''
     return `${schemaSpaces}export interface ${this.interfaceName} {
 ${this.columns.map(c => `${schemaSpaces}  ` + c.stringify()).join('\n')}
