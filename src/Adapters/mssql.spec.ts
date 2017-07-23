@@ -39,15 +39,12 @@ describe('mssql', () => {
       const mockSelectType = jasmine.createSpy('select').and.returnValue({ where: mockWhere })
       const mockSelectNullable = jasmine.createSpy('select').and.returnValue({ select: mockSelectType })
       const mockSelectName = jasmine.createSpy('select').and.returnValue({ select: mockSelectNullable })
-      const mockRaw = jasmine.createSpy('raw').and.returnValue('rawReturn')
       const mockdb = jasmine.createSpy('db').and.returnValue({ select: mockSelectName })
-      mockdb['raw'] = mockRaw
       const adapter = new Mockmssql.default();
       const res = await adapter.getAllColumns(mockdb as any, 'table', 'schema')
       expect(mockdb).toHaveBeenCalledWith('information_schema.columns')
       expect(mockSelectName).toHaveBeenCalledWith('COLUMN_NAME AS name')
-      expect(mockRaw).toHaveBeenCalledWith(`(CASE WHEN IS_NULLABLE = 'NO' THEN 0 ELSE 1 END) AS isNullable`)
-      expect(mockSelectNullable).toHaveBeenCalledWith('rawReturn')
+      expect(mockSelectNullable).toHaveBeenCalledWith('IS_NULLABLE AS isNullable')
       expect(mockSelectType).toHaveBeenCalledWith('DATA_TYPE AS type')
       expect(mockWhere).toHaveBeenCalledWith({ table_name: 'table', table_schema: 'schema' })
       expect(res).toEqual([1,2,3] as any)
