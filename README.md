@@ -180,13 +180,15 @@ This has no effect on SQLite as the concept of schemas do not exist.
 }
 ```
 
-### Using `mssql` dialect with `msnodesqlv8` driver (Windows only)
+## Bespoke Configuration
+
+### `mssql` dialect with `msnodesqlv8` driver (Windows only)
 
 For instructions to setup the SQL Server Native client installed see [mode-mssql/issue/338](https://github.com/patriksimek/node-mssql/issues/338#issuecomment-278400345)
 
-You will need to get the `connectionString` right. I have only successfully tested connections using the `connectionString`.
+You will need to get the `connectionString` correct as this configuration has only been tested using the `connectionString`.
 
-Sample configuration:
+Sample configuration (replace the `HostName` and `DatabaseName` accordingly).
 
 ```json
 {
