@@ -179,3 +179,21 @@ This has no effect on SQLite as the concept of schemas do not exist.
   "schemas": ["dbo", "schema1"]
 }
 ```
+
+### Using `mssql` dialect with `msnodesqlv8` driver (Windows only)
+
+For instructions to setup the SQL Server Native client installed see [mode-mssql/issue/338](https://github.com/patriksimek/node-mssql/issues/338#issuecomment-278400345)
+
+You will need to get the `connectionString` right. I have only successfully tested connections using the `connectionString`.
+
+Sample configuration:
+
+```json
+{
+    "dialect": "mssql",
+    "connection": {
+        "driver": "msnodesqlv8",
+        "connectionString": "Driver={SQL Server Native Client 10.0};Server=HostName;Database=DatabaseName;Trusted_Connection=yes;"
+    }
+}
+```
