@@ -12,7 +12,7 @@ describe('mssql', () => {
       const mockdb = jasmine.createSpy('db').and.returnValue({ select: mockSelectName })
       const adapter = new Mockmssql.default();
       const res = await adapter.getAllTables(mockdb as any, [])
-      expect(mockdb).toHaveBeenCalledWith('information_schema.tables')
+      expect(mockdb).toHaveBeenCalledWith('INFORMATION_SCHEMA.TABLES')
       expect(mockSelectName).toHaveBeenCalledWith('TABLE_NAME AS name')
       expect(mockSelectSchema).toHaveBeenCalledWith('TABLE_SCHEMA AS schema')
       expect(res).toEqual([1,2,3] as any)
@@ -25,7 +25,7 @@ describe('mssql', () => {
       const mockdb = jasmine.createSpy('db').and.returnValue({ select: mockSelectName })
       const adapter = new Mockmssql.default();
       const res = await adapter.getAllTables(mockdb as any, ['schema1', 'schema2'])
-      expect(mockdb).toHaveBeenCalledWith('information_schema.tables')
+      expect(mockdb).toHaveBeenCalledWith('INFORMATION_SCHEMA.TABLES')
       expect(mockSelectName).toHaveBeenCalledWith('TABLE_NAME AS name')
       expect(mockSelectSchema).toHaveBeenCalledWith('TABLE_SCHEMA AS schema')
       expect(mockWhereIn).toHaveBeenCalledWith('TABLE_SCHEMA', ['schema1', 'schema2'])
@@ -42,7 +42,7 @@ describe('mssql', () => {
       const mockdb = jasmine.createSpy('db').and.returnValue({ select: mockSelectName })
       const adapter = new Mockmssql.default();
       const res = await adapter.getAllColumns(mockdb as any, 'table', 'schema')
-      expect(mockdb).toHaveBeenCalledWith('information_schema.columns')
+      expect(mockdb).toHaveBeenCalledWith('INFORMATION_SCHEMA.COLUMNS')
       expect(mockSelectName).toHaveBeenCalledWith('COLUMN_NAME AS name')
       expect(mockSelectNullable).toHaveBeenCalledWith('IS_NULLABLE AS isNullable')
       expect(mockSelectType).toHaveBeenCalledWith('DATA_TYPE AS type')

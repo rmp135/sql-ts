@@ -3,7 +3,7 @@ import { AdapterInterface, TableDefinition, ColumnDefinition } from './AdapterIn
 
 export default class implements AdapterInterface {
   async getAllTables(db: knex, schemas: string[]): Promise<TableDefinition[]> {
-    const query = db('information_schema.tables')
+    const query = db('INFORMATION_SCHEMA.TABLES')
     .select('TABLE_NAME AS name')
     .select('TABLE_SCHEMA AS schema')
     if (schemas.length > 0)
@@ -11,7 +11,7 @@ export default class implements AdapterInterface {
     return await query
   }
   async getAllColumns(db: knex, table: string, schema: string): Promise<ColumnDefinition[]> {
-    return await db('information_schema.columns')
+    return await db('INFORMATION_SCHEMA.COLUMNS')
     .select('COLUMN_NAME AS name')
     .select('IS_NULLABLE AS isNullable')
     .select('DATA_TYPE AS type')
