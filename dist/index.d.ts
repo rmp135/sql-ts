@@ -21,7 +21,7 @@ declare function toObject(config: Config): Promise<Database>;
  * @returns {Promise<string>}   The Database definition as a series of TypeScript interfaces.
  */
 declare function toTypeScript(config: Config): Promise<string>;
-declare const _default: {
+declare var _default: {
     generate: (config: Config) => Promise<string>;
     toObject: (config: Config) => Promise<Database>;
     toTypeScript: (config: Config) => Promise<string>;

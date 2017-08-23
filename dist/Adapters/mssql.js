@@ -52,7 +52,7 @@ var default_1 = (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        query = db('information_schema.tables')
+                        query = db('INFORMATION_SCHEMA.TABLES')
                             .select('TABLE_NAME AS name')
                             .select('TABLE_SCHEMA AS schema');
                         if (schemas.length > 0)
@@ -67,7 +67,7 @@ var default_1 = (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, db('information_schema.columns')
+                    case 0: return [4 /*yield*/, db('INFORMATION_SCHEMA.COLUMNS')
                             .select('COLUMN_NAME AS name')
                             .select('IS_NULLABLE AS isNullable')
                             .select('DATA_TYPE AS type')

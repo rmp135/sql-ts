@@ -1,4 +1,4 @@
-declare const _default: {
+declare var _default: {
     string: string[];
     number: string[];
     Date: string[];
