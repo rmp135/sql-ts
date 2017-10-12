@@ -1,5 +1,12 @@
 import { AdapterInterface } from './Adapters/AdapterInterface';
 
+/**
+ * Returns an AdapterInterface that matches the dialect.
+ * 
+ * @export
+ * @param {any} dialect The name of SQL adapter that should be returned.
+ * @returns {AdapterInterface} The adapter for connecting to a SQL database.
+ */
 export function buildAdapter (dialect): AdapterInterface {
   // Use aliases from knex.
   // https://github.com/tgriesser/knex/blob/master/src/index.js

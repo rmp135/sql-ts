@@ -19,20 +19,30 @@ export interface Config extends knex.Config {
 } 
 
 /**
- * A Database definition as a plain JavaScript object.
+ * The JSON definition of a column for importing and exporting.
+ * 
+ * @export
+ * @interface Column
+ */
+export interface Column {
+  name: string,
+  type: string,
+  jsType: string,
+  nullable: boolean
+}
+
+export interface Table {
+  name: string,
+  schema: string,
+  columns: Column[]
+}
+
+/**
+ * The JSON definition of a database for importing and exporting.
  * 
  * @export
  * @interface Database
  */
 export interface Database {
-  tables: {
-    name: string,
-    schema: string,
-    columns: {
-      name: string,
-      type: string,
-      jsType: string,
-      nullable: boolean
-    }[]
-  }[]
+  tables: Table[]
 }

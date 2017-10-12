@@ -45,6 +45,37 @@ const definitions: Database = await sqlts.toObject(config)
 // The above type declaration isn't required, but you can import it if you wish.
 ```
 
+### fromObject
+
+Converts the object returned from `toObject` into a TypeScript definition.
+
+```javascript
+import sqlts from '@rmp135/sql-ts'
+
+const config = {
+  ...
+}
+
+const definitions = await sqlts.toObject(config)
+
+const tsString = sqlts.fromObject(config, definitions)
+```
+
+For those using TypeScript, you can import the Config definition.
+
+```typescript
+import sqlts, { Config, Database } from '@rmp135/sql-ts'
+
+const config: Config = {
+  ...
+}
+
+const definitions: Database = await sqlts.toObject(config)
+// The above type declaration isn't required, but you can import it if you wish.
+
+const tsString = sqlts.fromObject(config, definitions)
+```
+
 ### toTypeScript
 
 Retrieves the raw string of the definition file.

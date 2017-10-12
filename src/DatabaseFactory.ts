@@ -1,6 +1,7 @@
-import * as knex from 'knex'
-import { Config } from './Typings'
-import Database from './Database'
+import * as knex from 'knex';
+import { Config, Database } from './Typings';
+import * as DatabaseTasks from './DatabaseTasks'
+import * as TableTasks from './TableTasks'
 
 /**
  * Builds a Database and generates its definitions.
@@ -14,8 +15,9 @@ export async function buildDatabase (config: Config): Promise<Database> {
   let db: knex
   try {
     db = knex(config)
-    database = new Database()
-    await database.generateTables(db, config)
+    database = {
+      tables: await TableTasks.getAllTables(db, config)
+    }
   }
   catch (err) {
     throw err

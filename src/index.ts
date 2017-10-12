@@ -1,19 +1,6 @@
-import { buildDatabase } from './DatabaseFactory'
 import { Config, Database } from './Typings'
-
-/**
- * Generates a Database definition as a series of TypeScript interfaces.
- * 
- * @deprecated
- * @param {Config} config       The configuration to generate this database with.
- * @returns {Promise<string>}   The Database definition as a series of TypeScript interfaces.
- */
-async function generate (config: Config): Promise<string> {
-  if (process.env.NODE_ENV !== 'production') {
-    console.warn("Deprecation: 'generate' has been deprecated in favour of 'toTypeScript'.")
-  }
-  return toTypeScript(config)
-}
+import * as DatabaseFactory from './DatabaseFactory'
+import * as DatabaseTasks from './DatabaseTasks'
 
 /**
  * Generates a Database definition as a plain JavaScript object.
@@ -22,8 +9,7 @@ async function generate (config: Config): Promise<string> {
  * @returns {Promise<Database>} The Database definition as a plain JavaScript object.
  */
 async function toObject (config: Config): Promise<Database> {
-  const database = await buildDatabase(config)
-  return database.toObject()
+  return await DatabaseFactory.buildDatabase(config)
 }
 
 /**
@@ -33,19 +19,29 @@ async function toObject (config: Config): Promise<Database> {
  * @returns {Promise<string>}   The Database definition as a series of TypeScript interfaces.
  */
 async function toTypeScript (config: Config): Promise<string> {
-  const database = await buildDatabase(config)
-  return database.stringify(config.schemaAsNamespace)
+  const database = await toObject(config)
+  return DatabaseTasks.stringifyDatabase(database, config)
+}
+
+/**
+ * Generates TypeScript from an exported database definition.
+ * 
+ * @param database The database object as exported from sql-ts
+ * @param config The configuration to generate the TypeScript from.
+ */
+function fromObject (database: Database, config: Config): string {
+  return DatabaseTasks.stringifyDatabase(database, config)
 }
 
 export default {
-  generate,
   toObject,
+  fromObject,
   toTypeScript
 }
 
 export {
-  generate,
   toObject,
+  fromObject,
   toTypeScript,
   Config,
   Database
