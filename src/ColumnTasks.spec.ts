@@ -2,8 +2,8 @@ import { Column } from './Typings';
 import * as ColumnTasks from './ColumnTasks';
 import * as rewire from 'rewire';
 
-let RewireColumn = rewire('./ColumnTasks')
-const MockColumn: typeof ColumnTasks & typeof RewireColumn = <any> RewireColumn
+let RewireColumnTasks = rewire('./ColumnTasks')
+const MockColumnTasks: typeof ColumnTasks & typeof RewireColumnTasks = <any> RewireColumnTasks
 
 describe('ColumnTasks', () => {
   describe('stringifyColumn', () => {
@@ -28,36 +28,6 @@ describe('ColumnTasks', () => {
       expect(result).toEqual('name?: jsType')
     })
   })
-  describe('convertType', () => {
-    it('should use the built in types', () => {
-      MockColumn.__with__({
-        TypeMap_1: {
-          default: {
-            'type': ['tofind']
-          }
-        }
-      })(() => {
-        const result = MockColumn.convertType('table', 'column', 'tofind', {})
-        expect(result).toBe('type')
-      })
-    })
-    it('should use a type override if available', () => {
-      const result = MockColumn.convertType('table', 'column', 'tofind', { typeOverrides: { 'table.column': 'type' } })
-      expect(result).toBe('type')
-    })
-    it('should use any if no override exists', () => {
-      MockColumn.__with__({
-        TypeMap_1: {
-          default: {
-            'type': ['tofind1']
-          }
-        }
-      })(() => {
-        const result = MockColumn.convertType('table', 'column', 'tofind', { typeOverrides: { 'table.column1': 'type' } })
-        expect(result).toBe('any')
-      })
-    })
-  })
   describe('getColumnsForTable', () => {
     it('should return all columns for a table', () => {
       const mockColumns = [
@@ -73,8 +43,13 @@ describe('ColumnTasks', () => {
       const mockAdapterFactory = {
         buildAdapter: jasmine.createSpy('buildAdapter').and.returnValue(mockAdapter)
       }
-      MockColumn.__with__({
-        AdapterFactory_1: mockAdapterFactory
+      const mockColumnSubTasks = {
+        convertType: jasmine.createSpy('convertType').and.returnValue('convertedtype'),
+        generateFullColumnName: jasmine.createSpy('generateFullColumnName').and.returnValue('columnname')
+      }
+      MockColumnTasks.__with__({
+        AdapterFactory: mockAdapterFactory,
+        ColumnSubTasks: mockColumnSubTasks
       })(async () => {
         const db = {}
         const table = {
@@ -84,11 +59,13 @@ describe('ColumnTasks', () => {
         const config = {
           dialect: 'dialect'
         }
-        const result = await MockColumn.getColumnsForTable(db as any, table as any, config as any)
+        const result = await MockColumnTasks.getColumnsForTable(db as any, table as any, config as any)
         expect(mockAdapterFactory.buildAdapter).toHaveBeenCalledWith('dialect')
+        expect(mockColumnSubTasks.generateFullColumnName).toHaveBeenCalledWith('name', 'schema', 'cname')
+        expect(mockColumnSubTasks).toHaveBeenCalledWith('columnname', 'ctype', config)
         expect(result).toEqual([
           {
-            jsType: 'any',
+            jsType: 'convertedtype',
             type: 'ctype',
             nullable: false,
             name: 'cname',
