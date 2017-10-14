@@ -1,21 +1,9 @@
-import { buildAdapter } from './AdapterFactory';
-import * as knex from 'Knex';
-import { TableDefinition } from './Adapters/AdapterInterface';
-import { Column, Config, Table } from './Typings';
+import * as AdapterFactory from './AdapterFactory'
+import * as knex from 'Knex'
+import { TableDefinition } from './Adapters/AdapterInterface'
+import { Column, Config, Table } from './Typings'
 import * as ColumnTasks from './ColumnTasks'
-
-/**
- * Converts a table name to an interface name given a configuration.
- * 
- * @export
- * @param {string} name The name of the table.
- * @param {Config} config The configuration to use.
- * @returns 
- */
-export function generateInterfaceName (name: string, config: Config): string {
-  const interfaceNamePattern = config.interfaceNameFormat || '${table}Entity'
-  return interfaceNamePattern.replace('${table}', name.replace(/ /g, '_'))
-}
+import * as TableSubTasks from './TableSubTasks'
 
 /**
  * Returns all tables from a given database using a configuration.
@@ -26,7 +14,7 @@ export function generateInterfaceName (name: string, config: Config): string {
  * @returns {Promise<Table[]>} 
  */
 export async function getAllTables (db: knex, config: Config): Promise<Table[]> {
-  const adapter = buildAdapter(config.dialect)
+  const adapter = AdapterFactory.buildAdapter(config.dialect)
   const allTables = await adapter.getAllTables(db, config.schemas || [])
   const tables =  await Promise.all(allTables.map(async table => ({
     columns: await ColumnTasks.getColumnsForTable(db, table, config),
@@ -45,6 +33,6 @@ export async function getAllTables (db: knex, config: Config): Promise<Table[]> 
  * @returns {string} 
  */
 export function stringifyTable (table: Table, config: Config): string {
-  return `export interface ${generateInterfaceName(table.name, config)} {
+  return `export interface ${TableSubTasks.generateInterfaceName(table.name, config)} {
 ${table.columns.map(c => `  ${ColumnTasks.stringifyColumn(c)}`).join('\n')}
 }`}

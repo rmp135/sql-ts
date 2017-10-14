@@ -5,25 +5,6 @@ let RewireTableTasks = rewire('./TableTasks')
 const MockTableTasks: typeof TableTasks & typeof RewireTableTasks = <any> RewireTableTasks
 
 describe('TableTasks', () => {
-  describe('generateTableNames', () => {
-    it('should generate the default table name', () => {
-      const mockConfig = { }
-      const result = MockTableTasks.generateInterfaceName('name', mockConfig)
-      expect(result).toBe('nameEntity')
-    })
-    it('should generate a configuration supplied format', () => {
-      const mockConfig = {
-        interfaceNameFormat: '${table}Name'
-      }
-      const result = MockTableTasks.generateInterfaceName('name', mockConfig)
-      expect(result).toBe('nameName')
-    })
-    it('should replace spaces with underscores', () => {
-      const mockConfig = { }
-      const result = MockTableTasks.generateInterfaceName('n a m e', mockConfig)
-      expect(result).toBe('n_a_m_eEntity')
-    })
-  })
   describe('getAllTables', () => {
     it('should return all tables from a database', (done) => {
       const mockTables = [
@@ -46,7 +27,7 @@ describe('TableTasks', () => {
         getColumnsForTable: jasmine.createSpy('getColumnsForTable').and.returnValues(Promise.resolve(['column1']), Promise.resolve(['column2', 'column3']))
       }
       MockTableTasks.__with__({
-        AdapterFactory_1: mockAdapterFactory,
+        AdapterFactory: mockAdapterFactory,
         ColumnTasks: mockColumnTasks
       })(async () => {
         const mockDB = {}
@@ -93,7 +74,7 @@ describe('TableTasks', () => {
         getColumnsForTable: jasmine.createSpy('getColumnsForTable').and.returnValues(Promise.resolve(['column1']), Promise.resolve(['column2', 'column3']))
       }
       MockTableTasks.__with__({
-        AdapterFactory_1: mockAdapterFactory,
+        AdapterFactory: mockAdapterFactory,
         ColumnTasks: mockColumnTasks
       })(async () => {
         const mockDB = {}
@@ -123,8 +104,12 @@ describe('TableTasks', () => {
       const mockColumnTasks = {
         stringifyColumn: jasmine.createSpy('stringifyColumn').and.returnValues('column 1 string', 'column 2 string', 'column 3 string')
       }
+      const mockTableSubTasks = {
+        generateInterfaceName: jasmine.createSpy('generateInterfaceName').and.returnValue('interfacename')
+      }
       MockTableTasks.__with__({
-        ColumnTasks: mockColumnTasks
+        ColumnTasks: mockColumnTasks,
+        TableSubTasks: mockTableSubTasks
       })(() => {
         const mockTable = {
           name: 'tablename',
@@ -137,7 +122,7 @@ describe('TableTasks', () => {
         expect(mockColumnTasks.stringifyColumn.calls.argsFor(0)).toEqual([mockTable.columns[0]])
         expect(mockColumnTasks.stringifyColumn.calls.argsFor(1)).toEqual([mockTable.columns[1]])
         expect(mockColumnTasks.stringifyColumn.calls.argsFor(2)).toEqual([mockTable.columns[2]])
-        expect(result).toBe(`export interface tablenameEntity {
+        expect(result).toBe(`export interface interfacename {
   column 1 string
   column 2 string
   column 3 string
