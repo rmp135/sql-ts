@@ -20,7 +20,7 @@ declare function toTypeScript(config: Config): Promise<string>;
  * @param config The configuration to generate the TypeScript from.
  */
 declare function fromObject(database: Database, config: Config): string;
-declare var _default: {
+declare const _default: {
     toObject: (config: Config) => Promise<Database>;
     fromObject: (database: Database, config: Config) => string;
     toTypeScript: (config: Config) => Promise<string>;

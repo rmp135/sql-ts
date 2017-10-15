@@ -1,6 +1,6 @@
 /// <reference types="knex" />
 import { TableDefinition } from './Adapters/AdapterInterface';
-import * as knex from 'Knex';
+import * as knex from 'knex';
 import { Column, Config } from './Typings';
 /**
  * Converts a Column into a TypeScript type definition.

@@ -1,5 +1,5 @@
 /// <reference types="knex" />
-import * as knex from 'Knex';
+import * as knex from 'knex';
 import { Config, Table } from './Typings';
 /**
  * Returns all tables from a given database using a configuration.

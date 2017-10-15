@@ -35,7 +35,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var default_1 = (function () {
+var default_1 = /** @class */ (function () {
     function default_1() {
     }
     default_1.prototype.getAllTables = function (db, schemas) {
