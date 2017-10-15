@@ -35,65 +35,59 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var AdapterFactory_1 = require("./AdapterFactory");
-var Column_1 = require("./Column");
-var default_1 = (function () {
-    /**
-     * A representation of a Database Table.
-     *
-     * @param name     The name of the Table.
-     * @param database The Database that this Table belongs to.
-     */
-    function default_1(name, schema, config) {
-        this.columns = [];
-        this.name = name;
-        this.schema = schema;
-        var interfaceNamePattern = config.interfaceNameFormat || '${table}Entity';
-        this.interfaceName = interfaceNamePattern.replace('${table}', this.name.replace(' ', '_'));
-    }
-    /**
-     * Queries the database and generates the Column definitions for this table.
-     *
-     */
-    default_1.prototype.generateColumns = function (db, config) {
-        return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
-            var adapter, columns;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        adapter = AdapterFactory_1.buildAdapter(config.dialect);
-                        return [4 /*yield*/, adapter.getAllColumns(db, this.name, this.schema)];
-                    case 1:
-                        columns = _a.sent();
-                        columns.forEach(function (c) { return _this.columns.push(new Column_1.default(c.name, c.isNullable, c.type, _this, config)); });
-                        return [2 /*return*/];
-                }
-            });
+var AdapterFactory = require("./AdapterFactory");
+var ColumnTasks = require("./ColumnTasks");
+var TableSubTasks = require("./TableSubTasks");
+/**
+ * Returns all tables from a given database using a configuration.
+ *
+ * @export
+ * @param {knex} db The knex context to use.
+ * @param {Config} config The configuration to use.
+ * @returns {Promise<Table[]>}
+ */
+function getAllTables(db, config) {
+    return __awaiter(this, void 0, void 0, function () {
+        var _this = this;
+        var adapter, allTables, tables;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    adapter = AdapterFactory.buildAdapter(config.dialect);
+                    return [4 /*yield*/, adapter.getAllTables(db, config.schemas || [])];
+                case 1:
+                    allTables = _a.sent();
+                    return [4 /*yield*/, Promise.all(allTables.map(function (table) { return __awaiter(_this, void 0, void 0, function () {
+                            var _a;
+                            return __generator(this, function (_b) {
+                                switch (_b.label) {
+                                    case 0:
+                                        _a = {};
+                                        return [4 /*yield*/, ColumnTasks.getColumnsForTable(db, table, config)];
+                                    case 1: return [2 /*return*/, (_a.columns = _b.sent(),
+                                            _a.name = table.name,
+                                            _a.schema = table.schema,
+                                            _a)];
+                                }
+                            });
+                        }); }))];
+                case 2:
+                    tables = _a.sent();
+                    return [2 /*return*/, tables];
+            }
         });
-    };
-    /**
-     * This Table as an exported TypeScript interface definition.
-     * Contains all Columns as types.
-     *
-     * @returns {string}
-     */
-    default_1.prototype.stringify = function (includeSchema) {
-        var schemaSpaces = includeSchema ? '  ' : '';
-        return schemaSpaces + "export interface " + this.interfaceName + " {\n" + this.columns.map(function (c) { return schemaSpaces + "  " + c.stringify(); }).join('\n') + "\n" + schemaSpaces + "}";
-    };
-    /**
-     * This Table as a plain JavaScript object.
-     *
-     * @returns
-     */
-    default_1.prototype.toObject = function () {
-        return {
-            name: this.name,
-            schema: this.schema,
-            columns: this.columns.map(function (c) { return c.toObject(); })
-        };
-    };
-    return default_1;
-}());
-exports.default = default_1;
+    });
+}
+exports.getAllTables = getAllTables;
+/**
+ * Returns the Table as a TypeScript interface.
+ *
+ * @export
+ * @param {Table} table The Table to create the interface for.
+ * @param {Config} config The configuration to use.
+ * @returns {string}
+ */
+function stringifyTable(table, config) {
+    return "export interface " + TableSubTasks.generateInterfaceName(table.name, config) + " {\n" + table.columns.map(function (c) { return "  " + ColumnTasks.stringifyColumn(c); }).join('\n') + "\n}";
+}
+exports.stringifyTable = stringifyTable;

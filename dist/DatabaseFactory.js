@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var knex = require("knex");
-var Database_1 = require("./Database");
+var TableTasks = require("./TableTasks");
 /**
  * Builds a Database and generates its definitions.
  *
@@ -46,19 +46,20 @@ var Database_1 = require("./Database");
  */
 function buildDatabase(config) {
     return __awaiter(this, void 0, void 0, function () {
-        var database, db, err_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var database, db, _a, err_1;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
-                    _a.trys.push([0, 2, 3, 4]);
+                    _b.trys.push([0, 2, 3, 4]);
                     db = knex(config);
-                    database = new Database_1.default();
-                    return [4 /*yield*/, database.generateTables(db, config)];
+                    _a = {};
+                    return [4 /*yield*/, TableTasks.getAllTables(db, config)];
                 case 1:
-                    _a.sent();
+                    database = (_a.tables = _b.sent(),
+                        _a);
                     return [3 /*break*/, 4];
                 case 2:
-                    err_1 = _a.sent();
+                    err_1 = _b.sent();
                     throw err_1;
                 case 3:
                     if (db !== undefined) {

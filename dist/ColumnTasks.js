@@ -35,57 +35,46 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var DatabaseFactory = require("./DatabaseFactory");
-var DatabaseTasks = require("./DatabaseTasks");
+var AdapterFactory = require("./AdapterFactory");
+var ColumnSubTasks = require("./ColumnSubTasks");
 /**
- * Generates a Database definition as a plain JavaScript object.
+ * Converts a Column into a TypeScript type definition.
  *
- * @param {Config} config       The configuration to generate this database with.
- * @returns {Promise<Database>} The Database definition as a plain JavaScript object.
+ * @export
+ * @param {Column} column The Column to generate the type definition for.
+ * @returns {string}
  */
-function toObject(config) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, DatabaseFactory.buildDatabase(config)];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
-    });
+function stringifyColumn(column) {
+    return column.name + "?: " + column.jsType + (column.nullable ? ' | null' : '');
 }
-exports.toObject = toObject;
+exports.stringifyColumn = stringifyColumn;
 /**
- * Generates a Database definition as a series of TypeScript interfaces.
+ * Returns all columns in a given Table using a knex context.
  *
- * @param {Config} config       The configuration to generate this database with.
- * @returns {Promise<string>}   The Database definition as a series of TypeScript interfaces.
+ * @export
+ * @param {knex} db The knex config to use.
+ * @param {TableDefinition} table The table to return columns for.
+ * @param {Config} config The configuration to use.
+ * @returns {Promise<Column[]>}
  */
-function toTypeScript(config) {
+function getColumnsForTable(db, table, config) {
     return __awaiter(this, void 0, void 0, function () {
-        var database;
+        var adapter, columns;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, toObject(config)];
+                case 0:
+                    adapter = AdapterFactory.buildAdapter(config.dialect);
+                    return [4 /*yield*/, adapter.getAllColumns(db, table.name, table.schema)];
                 case 1:
-                    database = _a.sent();
-                    return [2 /*return*/, DatabaseTasks.stringifyDatabase(database, config)];
+                    columns = _a.sent();
+                    return [2 /*return*/, columns.map(function (c) { return ({
+                            jsType: ColumnSubTasks.convertType(ColumnSubTasks.generateFullColumnName(table.name, table.schema, c.name), c.type, config),
+                            nullable: c.isNullable,
+                            name: c.name,
+                            type: c.type
+                        }); })];
             }
         });
     });
 }
-exports.toTypeScript = toTypeScript;
-/**
- * Generates TypeScript from an exported database definition.
- *
- * @param database The database object as exported from sql-ts
- * @param config The configuration to generate the TypeScript from.
- */
-function fromObject(database, config) {
-    return DatabaseTasks.stringifyDatabase(database, config);
-}
-exports.fromObject = fromObject;
-exports.default = {
-    toObject: toObject,
-    fromObject: fromObject,
-    toTypeScript: toTypeScript
-};
+exports.getColumnsForTable = getColumnsForTable;

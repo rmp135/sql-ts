@@ -1,5 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Returns an AdapterInterface that matches the dialect.
+ *
+ * @export
+ * @param {any} dialect The name of SQL adapter that should be returned.
+ * @returns {AdapterInterface} The adapter for connecting to a SQL database.
+ */
 function buildAdapter(dialect) {
     // Use aliases from knex.
     // https://github.com/tgriesser/knex/blob/master/src/index.js
