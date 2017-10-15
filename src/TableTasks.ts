@@ -1,5 +1,5 @@
 import * as AdapterFactory from './AdapterFactory'
-import * as knex from 'Knex'
+import * as knex from 'knex'
 import { TableDefinition } from './Adapters/AdapterInterface'
 import { Column, Config, Table } from './Typings'
 import * as ColumnTasks from './ColumnTasks'

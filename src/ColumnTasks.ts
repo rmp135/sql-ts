@@ -1,6 +1,6 @@
 import { TableDefinition } from './Adapters/AdapterInterface'
 import * as AdapterFactory from './AdapterFactory'
-import * as knex from 'Knex'
+import * as knex from 'knex'
 import { Column, Config } from './Typings'
 import TypeMap from './TypeMap'
 import * as ColumnSubTasks from './ColumnSubTasks'
