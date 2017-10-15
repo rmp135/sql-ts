@@ -136,15 +136,15 @@ Filter the tables to include only those specified.
 
 ### typeOverrides
 
-Override the types on a per column basis.
+Override the types on a per column basis. This requires the full name of the column in the format `table.schema.column`. See [interfaceNameFormat](##interfaceNameFormat) for schema naming conventions. Omit the schema for databases that do not use them.
 
 ```json
 {
   "dialect": "...",
   "connection": {},
   "typeOverrides": {
-    "Table_1.ColumnName": "string",
-    "Table_2.Name": "number"
+    "Table_1.dbo.ColumnName": "string",
+    "Table_2.dbo.Name": "number"
   }
 }
 ```
