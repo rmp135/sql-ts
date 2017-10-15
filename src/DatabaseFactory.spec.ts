@@ -1,5 +1,5 @@
 import * as DatabaseFactory from './DatabaseFactory';
-import * as rewire from 'rewire';
+const rewire = require('rewire')
 
 let RewireDatabaseFactory = rewire('./DatabaseFactory')
 const MockDatabaseFactory: typeof DatabaseFactory & typeof RewireDatabaseFactory = <any> RewireDatabaseFactory

@@ -1,5 +1,5 @@
 import * as index from './index';
-import * as rewire from 'rewire';
+const rewire = require('rewire')
 
 let Rewireindex = rewire('./index')
 const Mockindex: typeof index & typeof Rewireindex = <any> Rewireindex

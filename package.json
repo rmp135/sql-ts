@@ -14,15 +14,15 @@
   },
   "dependencies": {
     "knex": "^0.13.0",
-    "yargs": "^8.0.1"
+    "yargs": "^9.0.1"
   },
   "devDependencies": {
-    "@types/jasmine": "^2.5.47",
-    "@types/knex": "^0.0.50",
-    "@types/rewire": "^2.5.27",
-    "@types/yargs": "^6.6.0",
-    "jasmine": "^2.5.3",
+    "@types/jasmine": "^2.6.0",
+    "@types/knex": "^0.0.62",
+    "@types/rewire": "^2.5.28",
+    "@types/yargs": "^8.0.2",
+    "jasmine": "^2.8.0",
     "rewire": "^2.5.2",
-    "typescript": "^2.3.2"
+    "typescript": "^2.5.3"
   }
 }

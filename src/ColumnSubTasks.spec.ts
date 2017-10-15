@@ -1,5 +1,5 @@
 import * as ColumnSubTasks from './ColumnSubTasks'
-import * as rewire from 'rewire'
+const rewire = require('rewire')
 
 let RewireColumnSubTasks = rewire('./ColumnSubTasks')
 const MockColumnSubTasks: typeof ColumnSubTasks & typeof RewireColumnSubTasks = <any> RewireColumnSubTasks

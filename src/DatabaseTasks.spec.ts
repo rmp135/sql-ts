@@ -1,5 +1,5 @@
 import * as DatabaseTasks from './DatabaseTasks';
-import * as rewire from 'rewire';
+const rewire = require('rewire')
 
 let RewireDatabaseTasks = rewire('./DatabaseTasks')
 const MockDatabaseTasks: typeof DatabaseTasks & typeof RewireDatabaseTasks = <any> RewireDatabaseTasks

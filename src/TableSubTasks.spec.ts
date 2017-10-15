@@ -1,5 +1,5 @@
 import * as TableSubTasks from './TableSubTasks';
-import * as rewire from 'rewire';
+const rewire = require('rewire')
 
 let RewireTableSubTasks = rewire('./TableSubTasks')
 const MockTableSubTasks: typeof TableSubTasks & typeof RewireTableSubTasks = <any> RewireTableSubTasks

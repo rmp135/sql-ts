@@ -1,5 +1,5 @@
 import * as sqlite from './sqlite3';
-import * as rewire from 'rewire';
+const rewire = require('rewire')
 
 let Rewiresqlite = rewire('./sqlite3')
 const Mocksqlite: typeof sqlite & typeof Rewiresqlite = <any> Rewiresqlite

@@ -1,5 +1,5 @@
 import * as mssql from './mssql';
-import * as rewire from 'rewire';
+const rewire = require('rewire')
 
 let Rewiremssql = rewire('./mssql')
 const Mockmssql: typeof mssql & typeof Rewiremssql = <any> Rewiremssql

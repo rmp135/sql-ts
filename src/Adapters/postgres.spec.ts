@@ -1,5 +1,5 @@
 import * as postgres from './postgres';
-import * as rewire from 'rewire';
+const rewire = require('rewire')
 
 let Rewirepostgres = rewire('./postgres')
 const Mockpostgres: typeof postgres & typeof Rewirepostgres = <any> Rewirepostgres

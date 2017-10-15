@@ -1,6 +1,6 @@
 import { Column } from './Typings';
 import * as ColumnTasks from './ColumnTasks';
-import * as rewire from 'rewire';
+const rewire = require('rewire')
 
 let RewireColumnTasks = rewire('./ColumnTasks')
 const MockColumnTasks: typeof ColumnTasks & typeof RewireColumnTasks = <any> RewireColumnTasks

@@ -1,5 +1,5 @@
 import * as mysql from './mysql';
-import * as rewire from 'rewire';
+const rewire = require('rewire')
 
 let Rewiremysql = rewire('./mysql')
 const Mockmysql: typeof mysql & typeof Rewiremysql = <any> Rewiremysql
