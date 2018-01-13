@@ -178,7 +178,7 @@ Specifies the name that the file should be saved as. Defaults to "Database.ts". 
 
 ### interfaceNameFormat
 
-Specifies the pattern the the exported interface names will take. The token "${table}" will be replaced with the table name. Defaults to "${table}Entity".
+Specifies the pattern that the exported interface names will take. The token "${table}" will be replaced with the table name. Defaults to "${table}Entity".
 
 The below will export interfaces with such names as `UserModel` and `LogModel` for tables with names `User` and `Log` respectively.
 
@@ -212,7 +212,7 @@ SQLite     | 'main'
 
 ## schemas
 
-Specifies which schemas to import. This has not effect on SQLite databases. If MySQL is connected to without specifying a database, this can be used to import different databases. Default `[]` (all schemas).
+Specifies which schemas to import. This has no effect on SQLite databases. If MySQL is connected to without specifying a database, this can be used to import from multiple databases. Default `[]` (all schemas).
 
 Note for Postgres users: The default schema on Postgres is `public` which is a reserved keyword in TypeScript. You may need to use the `noImplicitUseStrict` flag when transpiling.
 
