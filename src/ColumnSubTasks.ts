@@ -31,9 +31,12 @@ export function generateFullColumnName (tableName: string, schemaName: string, c
 export function convertType (fullname: string, type: string, config: Config): string {
   let convertedType = undefined
   const overrides = config.typeOverrides || {}
-  if (overrides[fullname] != null) {
-    convertedType = overrides[fullname]
-  } else {
+  const userTypeMap = config.typeMap || {}
+  convertedType = overrides[fullname]
+  if (convertedType == null) {
+    convertedType = Object.keys(userTypeMap).find(t => userTypeMap[t].includes(type))
+  }
+  if (convertedType == null) {
     convertedType = Object.keys(TypeMap).find(t => TypeMap[t].includes(type))
   }
   return convertedType === undefined ? 'any' : convertedType

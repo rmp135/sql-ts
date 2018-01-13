@@ -13,6 +13,9 @@ export interface Config extends knex.Config {
   interfaceNameFormat?: string,
   schemaAsNamespace?: boolean,
   schemas?: string[],
+  typeMap?: {
+    [key: string]: string[]
+  }
   typeOverrides?: { 
     [key: string]: string 
   } 

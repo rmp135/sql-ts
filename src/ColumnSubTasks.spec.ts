@@ -19,9 +19,37 @@ describe('ColumnSubTasks', () => {
         expect(result).toBe('type')
       })
     })
+    it('should use the user type map if available', () => {
+      const result = MockColumnSubTasks.convertType('columnname', 'tofind', { typeMap: { type: ['tofind'] } })
+      expect(result).toBe('type')
+    })
+    it('should use the user type map even if available in the global map', () => {
+      MockColumnSubTasks.__with__({
+        TypeMap_1: {
+          default: {
+            'globaltype': ['tofind']
+          }
+        }
+      })(() => {
+        const result = MockColumnSubTasks.convertType('columnname', 'tofind', { typeMap: { type: ['tofind'] } })
+        expect(result).toBe('type')
+      })
+    })
     it('should use a type override if available', () => {
       const result = MockColumnSubTasks.convertType('columnname', 'tofind', { typeOverrides: { 'columnname': 'type' } })
       expect(result).toBe('type')
+    })
+    it('should use the type override if available in the other maps', () => {
+      MockColumnSubTasks.__with__({
+        TypeMap_1: {
+          default: {
+            'globaltype': ['tofind']
+          }
+        }
+      })(() => {
+        const result = MockColumnSubTasks.convertType('columnname', 'tofind', { typeOverrides: { 'columnname': 'overridetype' }, typeMap: { usertype: ['tofind'] } })
+        expect(result).toBe('overridetype')
+      })
     })
     it('should use any if no override exists', () => {
       MockColumnSubTasks.__with__({

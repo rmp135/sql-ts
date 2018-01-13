@@ -149,6 +149,20 @@ Override the types on a per column basis. This requires the full name of the col
 }
 ```
 
+### typeMap
+
+Adds additional types to the type resolution. The order in which types are resolved is `typeOverrides` (see above), this `typeMap`, then the global TypeMap file before defaulting to `any`.
+
+```json
+{
+  "dialect": "...",
+  "connection": {},
+  "typeMap": {
+    "number": ["decimal", "float"],
+    "string": ["nvarchar", "varchar"]
+  }
+}
+
 ### filename
 
 Specifies the name that the file should be saved as. Defaults to "Database.ts". The .ts extensions is not required.
