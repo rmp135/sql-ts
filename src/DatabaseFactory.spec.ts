@@ -1,3 +1,4 @@
+import 'jasmine'
 import * as DatabaseFactory from './DatabaseFactory';
 const rewire = require('rewire')
 

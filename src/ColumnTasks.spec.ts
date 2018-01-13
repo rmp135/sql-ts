@@ -1,3 +1,4 @@
+import 'jasmine'
 import { Column } from './Typings';
 import * as ColumnTasks from './ColumnTasks';
 const rewire = require('rewire')

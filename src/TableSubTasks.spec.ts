@@ -1,3 +1,4 @@
+import 'jasmine'
 import * as TableSubTasks from './TableSubTasks';
 const rewire = require('rewire')
 

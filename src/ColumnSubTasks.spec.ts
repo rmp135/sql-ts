@@ -1,3 +1,4 @@
+import 'jasmine'
 import * as ColumnSubTasks from './ColumnSubTasks'
 const rewire = require('rewire')
 

@@ -1,3 +1,4 @@
+import 'jasmine'
 import * as DatabaseTasks from './DatabaseTasks';
 const rewire = require('rewire')
 

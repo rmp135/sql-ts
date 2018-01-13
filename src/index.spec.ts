@@ -1,3 +1,4 @@
+import 'jasmine'
 import * as index from './index';
 const rewire = require('rewire')
 
