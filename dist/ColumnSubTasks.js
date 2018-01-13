@@ -31,10 +31,12 @@ exports.generateFullColumnName = generateFullColumnName;
 function convertType(fullname, type, config) {
     var convertedType = undefined;
     var overrides = config.typeOverrides || {};
-    if (overrides[fullname] != null) {
-        convertedType = overrides[fullname];
+    var userTypeMap = config.typeMap || {};
+    convertedType = overrides[fullname];
+    if (convertedType == null) {
+        convertedType = Object.keys(userTypeMap).find(function (t) { return userTypeMap[t].includes(type); });
     }
-    else {
+    if (convertedType == null) {
         convertedType = Object.keys(TypeMap_1.default).find(function (t) { return TypeMap_1.default[t].includes(type); });
     }
     return convertedType === undefined ? 'any' : convertedType;
