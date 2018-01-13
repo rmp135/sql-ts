@@ -162,6 +162,7 @@ Adds additional types to the type resolution. The order in which types are resol
     "string": ["nvarchar", "varchar"]
   }
 }
+```
 
 ### filename
 
