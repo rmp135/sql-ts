@@ -2,6 +2,7 @@ import * as knex from 'knex';
 import { Config, Database } from './Typings';
 import * as DatabaseTasks from './DatabaseTasks'
 import * as TableTasks from './TableTasks'
+import * as EnumTasks from './EnumTasks'
 
 /**
  * Builds a Database and generates its definitions.
@@ -16,7 +17,8 @@ export async function buildDatabase (config: Config): Promise<Database> {
   try {
     db = knex(config)
     database = {
-      tables: await TableTasks.getAllTables(db, config)
+      tables: await TableTasks.getAllTables(db, config),
+      enums: await EnumTasks.getAllEnumTables(db, config)
     }
   }
   catch (err) {

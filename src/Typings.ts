@@ -11,6 +11,7 @@ export interface Config extends knex.Config {
   tables?: string[],
   filename?: string,
   interfaceNameFormat?: string,
+  enumNameFormat?: string,
   schemaAsNamespace?: boolean,
   schemas?: string[],
   typeMap?: {
@@ -18,7 +19,12 @@ export interface Config extends knex.Config {
   }
   typeOverrides?: { 
     [key: string]: string 
-  } 
+  }
+  enumTables?: {
+    [key: string]: {
+      [key: string]: string
+    }
+  }
 } 
 
 /**
@@ -40,6 +46,15 @@ export interface Table {
   columns: Column[]
 }
 
+export interface EnumTable {
+  table: string,
+  schema: string,
+  enums: {
+    id: number,
+    value: string
+  }[]
+}
+
 /**
  * The JSON definition of a database for importing and exporting.
  * 
@@ -47,5 +62,6 @@ export interface Table {
  * @interface Database
  */
 export interface Database {
-  tables: Table[]
+  tables: Table[],
+  enums: EnumTable[]
 }

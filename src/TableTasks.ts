@@ -1,9 +1,9 @@
-import * as AdapterFactory from './AdapterFactory'
-import * as knex from 'knex'
+import * as AdapterFactory from './AdapterFactory';
+import * as knex from 'knex';
 import { TableDefinition } from './Adapters/AdapterInterface'
-import { Column, Config, Table } from './Typings'
-import * as ColumnTasks from './ColumnTasks'
-import * as TableSubTasks from './TableSubTasks'
+import { Column, Config, EnumTable, Table } from './Typings';
+import * as ColumnTasks from './ColumnTasks';
+import * as TableSubTasks from './TableSubTasks';
 
 /**
  * Returns all tables from a given database using a configuration.
@@ -16,7 +16,7 @@ import * as TableSubTasks from './TableSubTasks'
 export async function getAllTables (db: knex, config: Config): Promise<Table[]> {
   const adapter = AdapterFactory.buildAdapter(config.dialect)
   const allTables = await adapter.getAllTables(db, config.schemas || [])
-  const tables =  await Promise.all(allTables.map(async table => ({
+  const tables =  await Promise.all(allTables.map(async table => ({ //TODO: Remove promise.all?
     columns: await ColumnTasks.getColumnsForTable(db, table, config),
     name: table.name,
     schema: table.schema,

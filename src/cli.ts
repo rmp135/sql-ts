@@ -3,6 +3,8 @@ import * as fs from 'fs'
 import * as yargs from 'yargs'
 import * as path from 'path'
 import sqlts, { Config } from './index'
+import * as tasks from './EnumTasks'
+import * as knex from 'knex'
 
 const args = yargs(process.argv)
 .alias('c', 'config')
@@ -16,6 +18,8 @@ const config = JSON.parse(fs.readFileSync(configPath, 'utf8')) as Config
 
 ;(async () => {
   try {
+    // const s = await tasks.getAllEnumTables(db, config)
+    
     const output = await sqlts.toTypeScript(config)
     const fileName = `${config.filename || 'Database'}.ts`
     const final = `/*

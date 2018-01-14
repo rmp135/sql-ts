@@ -1,5 +1,6 @@
-import * as knex from 'knex'
-import { AdapterInterface, TableDefinition, ColumnDefinition } from './AdapterInterface'
+import { EnumTable } from '../Typings';
+import * as knex from 'knex';
+import { AdapterInterface, ColumnDefinition, TableDefinition } from './AdapterInterface';
 
 export default class implements AdapterInterface {
   async getAllTables(db: knex, schemas: string[]): Promise<TableDefinition[]> {
@@ -17,5 +18,14 @@ export default class implements AdapterInterface {
       columns.push({ isNullable: value.nullable, name: key, type: value.type })
     }
     return columns
+  }
+  async getEnumsForTable(db: knex, schema: string, table: string, idColumn: string, valueColumn: any): Promise<EnumTable> {
+    return {
+      table: table,
+      schema: 'main',
+      enums: await db(table)
+      .select(`${idColumn} AS id`)
+      .select(`${valueColumn} AS value`)
+    }
   }
 }
