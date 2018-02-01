@@ -58,7 +58,7 @@ const config = {
 
 const definitions = await sqlts.toObject(config)
 
-const tsString = sqlts.fromObject(config, definitions)
+const tsString = sqlts.fromObject(definitions, config)
 ```
 
 For those using TypeScript, you can import the Config definition.
@@ -73,7 +73,7 @@ const config: Config = {
 const definitions: Database = await sqlts.toObject(config)
 // The above type declaration isn't required, but you can import it if you wish.
 
-const tsString = sqlts.fromObject(config, definitions)
+const tsString = sqlts.fromObject(definitions, config)
 ```
 
 ### toTypeScript
