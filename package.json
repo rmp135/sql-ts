@@ -1,12 +1,15 @@
 {
   "name": "@rmp135/sql-ts",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "main": "./dist/index.js",
   "license": "MIT",
   "description": "Generate TypeScript definitions from database schemas.",
   "bin": "./bin/sql-ts",
   "types": "dist/index.d.ts",
   "repository": "rmp135/sql-ts",
+  "author": {
+    "name": "Ryan Poole"
+  },
   "scripts": {
     "build": "tsc",
     "pretest": "tsc -p tsconfig.test.json",
