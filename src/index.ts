@@ -1,4 +1,4 @@
-import { Config, Database } from './Typings'
+import { Config, Column, Table, Database } from './Typings'
 import * as DatabaseFactory from './DatabaseFactory'
 import * as DatabaseTasks from './DatabaseTasks'
 
@@ -44,5 +44,7 @@ export {
   fromObject,
   toTypeScript,
   Config,
+  Column,
+  Table,
   Database
 }

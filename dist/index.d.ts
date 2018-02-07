@@ -1,4 +1,4 @@
-import { Config, Database } from './Typings';
+import { Config, Column, Table, Database } from './Typings';
 /**
  * Generates a Database definition as a plain JavaScript object.
  *
@@ -26,4 +26,4 @@ declare const _default: {
     toTypeScript: (config: Config) => Promise<string>;
 };
 export default _default;
-export { toObject, fromObject, toTypeScript, Config, Database };
+export { toObject, fromObject, toTypeScript, Config, Column, Table, Database };
