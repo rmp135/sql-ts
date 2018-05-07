@@ -16,16 +16,16 @@
     "test": "jasmine ./__test/{**,}/*.spec.js"
   },
   "dependencies": {
-    "knex": "^0.13.0",
-    "yargs": "^9.0.1"
+    "knex": "^0.14.6",
+    "yargs": "^11.0.0"
   },
   "devDependencies": {
     "@types/jasmine": "^2.6.0",
-    "@types/knex": "^0.0.62",
+    "@types/knex": "^0.14.12",
     "@types/rewire": "^2.5.28",
-    "@types/yargs": "^8.0.2",
-    "jasmine": "^2.8.0",
-    "rewire": "^2.5.2",
+    "@types/yargs": "^11.0.0",
+    "jasmine": "^3.1.0",
+    "rewire": "^4.0.1",
     "typescript": "^2.5.3"
   }
 }
