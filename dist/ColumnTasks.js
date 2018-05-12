@@ -42,10 +42,15 @@ var ColumnSubTasks = require("./ColumnSubTasks");
  *
  * @export
  * @param {Column} column The Column to generate the type definition for.
+ * @param {Config} config The configuration to use.
  * @returns {string}
  */
-function stringifyColumn(column) {
-    return column.name + "?: " + column.jsType + (column.nullable ? ' | null' : '');
+function stringifyColumn(column, config) {
+    var optionality = config.propertyOptionality === 'required' ? '' : '?';
+    if (config.propertyOptionality == 'dynamic') {
+        optionality = column.optional ? '?' : '';
+    }
+    return "" + column.name + optionality + ": " + column.jsType + (column.nullable ? ' | null' : '');
 }
 exports.stringifyColumn = stringifyColumn;
 /**
@@ -53,7 +58,7 @@ exports.stringifyColumn = stringifyColumn;
  *
  * @export
  * @param {knex} db The knex config to use.
- * @param {TableDefinition} table The table to return columns for.
+ * @param {TableDefinition} table The table to return columns for..
  * @param {Config} config The configuration to use.
  * @returns {Promise<Column[]>}
  */
@@ -71,7 +76,8 @@ function getColumnsForTable(db, table, config) {
                             jsType: ColumnSubTasks.convertType(ColumnSubTasks.generateFullColumnName(table.name, table.schema, c.name), c.type, config),
                             nullable: c.isNullable,
                             name: c.name,
-                            type: c.type
+                            type: c.type,
+                            optional: c.isOptional
                         }); })];
             }
         });

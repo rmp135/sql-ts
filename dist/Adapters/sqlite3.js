@@ -54,18 +54,16 @@ var default_1 = /** @class */ (function () {
     };
     default_1.prototype.getAllColumns = function (db, table, schema) {
         return __awaiter(this, void 0, void 0, function () {
-            var def, columns, key, value;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, db(table).columnInfo()];
-                    case 1:
-                        def = _a.sent();
-                        columns = [];
-                        for (key in def) {
-                            value = def[key];
-                            columns.push({ isNullable: value.nullable, name: key, type: value.type });
-                        }
-                        return [2 /*return*/, columns];
+                    case 0: return [4 /*yield*/, db.raw("pragma table_info(" + table + ")")
+                            .map(function (c) { return ({
+                            name: c.name,
+                            isNullable: c.notn === 0,
+                            type: (c.type.includes('(') ? c.type.split('(')[0] : c.type).toLowerCase(),
+                            isOptional: c.dflt != null || c.pk == 1
+                        }); })];
+                    case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         });

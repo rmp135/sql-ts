@@ -11,6 +11,7 @@ export interface ColumnDefinition {
     name: string;
     type: string;
     isNullable: boolean;
+    isOptional: boolean;
 }
 export interface AdapterInterface {
     getAllTables(db: knex, schemas: string[]): Promise<TableDefinition[]>;

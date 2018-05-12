@@ -52,10 +52,10 @@ var default_1 = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        query = db("pg_catalog.pg_tables")
-                            .select("schemaname AS schema")
-                            .select("tablename AS name")
-                            .whereNotIn("schemaname", ["pg_catalog", "information_schema"]);
+                        query = db('pg_catalog.pg_tables')
+                            .select('schemaname AS schema')
+                            .select('tablename AS name')
+                            .whereNotIn('schemaname', ['pg_catalog', 'information_schema']);
                         if (schemas.length > 0)
                             query.whereIn('schemaname', schemas);
                         return [4 /*yield*/, query];
@@ -72,8 +72,9 @@ var default_1 = /** @class */ (function () {
                             .select('column_name AS name')
                             .select('udt_name AS type')
                             .select('is_nullable AS isNullable')
+                            .select(db.raw('(CASE WHEN column_default IS NOT NULL THEN 1 ELSE 0 END) AS isoptional'))
                             .where({ table_name: table, table_schema: schema })
-                            .map(function (c) { return (__assign({}, c, { isNullable: c.isNullable === 'YES' })); })];
+                            .map(function (c) { return (__assign({}, c, { isNullable: c.isNullable === 'YES', isOptional: c.isoptional === 1 })); })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });

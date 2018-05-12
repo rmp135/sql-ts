@@ -88,6 +88,6 @@ exports.getAllTables = getAllTables;
  * @returns {string}
  */
 function stringifyTable(table, config) {
-    return "export interface " + TableSubTasks.generateInterfaceName(table.name, config) + " {\n" + table.columns.map(function (c) { return "  " + ColumnTasks.stringifyColumn(c); }).join('\n') + "\n}";
+    return "export interface " + TableSubTasks.generateInterfaceName(table.name, config) + " {\n" + table.columns.map(function (c) { return "  " + ColumnTasks.stringifyColumn(c, config); }).join('\n') + "\n}";
 }
 exports.stringifyTable = stringifyTable;

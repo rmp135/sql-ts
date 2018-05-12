@@ -70,9 +70,10 @@ var default_1 = /** @class */ (function () {
                     case 0: return [4 /*yield*/, db('INFORMATION_SCHEMA.COLUMNS')
                             .select('COLUMN_NAME AS name')
                             .select('IS_NULLABLE AS isNullable')
+                            .select(db.raw('CASE WHEN COLUMNPROPERTY(object_id(TABLE_SCHEMA+\'.\'+TABLE_NAME), COLUMN_NAME, \'IsIdentity\') = 1 OR COLUMN_DEFAULT IS NOT NULL THEN 1 ELSE 0 END AS isOptional'))
                             .select('DATA_TYPE AS type')
                             .where({ table_name: table, table_schema: schema })
-                            .map(function (c) { return (__assign({}, c, { isNullable: c.isNullable === 'YES' })); })];
+                            .map(function (c) { return (__assign({}, c, { isNullable: c.isNullable === 'YES', isOptional: c.isOptional === 1 })); })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });

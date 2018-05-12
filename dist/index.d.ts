@@ -21,9 +21,9 @@ declare function toTypeScript(config: Config): Promise<string>;
  */
 declare function fromObject(database: Database, config: Config): string;
 declare const _default: {
-    toObject: (config: Config) => Promise<Database>;
-    fromObject: (database: Database, config: Config) => string;
-    toTypeScript: (config: Config) => Promise<string>;
+    toObject: typeof toObject;
+    fromObject: typeof fromObject;
+    toTypeScript: typeof toTypeScript;
 };
 export default _default;
 export { toObject, fromObject, toTypeScript, Config, Column, Table, Database };
