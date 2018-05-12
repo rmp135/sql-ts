@@ -23,26 +23,138 @@ describe('sqlite', () => {
     })
   })
   describe('getAllColumns', () => {
-    it('should get all columns using knex', async (done) => {
-      const mockColumns = {
-        col1: {
-          type: 'col1type',
-          nullable: false
-        },
-        col2: {
-          type: 'col2type',
-          nullable: true
-        },
-      }
-      const mockColumnInfo = jasmine.createSpy('columnInfo').and.returnValue(Promise.resolve(mockColumns))
-      const mockdb = jasmine.createSpy('db').and.returnValue({ columnInfo: mockColumnInfo })
+    it('should get all columns', async (done) => {
+      const mockTables = [
+        {
+          name: 'name1',
+          notn: 0,
+          type: 'type(123)',
+          dflt: null,
+          pk: 0
+        }
+      ]
+      const mockRaw = jasmine.createSpy('raw').and.returnValue(mockTables)
+      const mockdb = jasmine.createSpy('db')
+      mockdb['raw'] = mockRaw
+
       const adapter = new Mocksqlite.default();
       const res = await adapter.getAllColumns(mockdb as any, 'table', 'schema')
-      expect(mockdb).toHaveBeenCalledWith('table')
-      expect(mockColumnInfo).toHaveBeenCalled()
+      expect(mockRaw).toHaveBeenCalledWith('pragma table_info(table)')
       expect(res).toEqual([
-        { name: 'col1', type: 'col1type', isNullable: false },
-        { name: 'col2', type: 'col2type', isNullable: true }
+        {
+          name: 'name1',
+          isNullable: true,
+          type: 'type',
+          isOptional: false
+        }
+      ])
+      done()
+    })
+    it('should get all columns with default', async (done) => {
+      const mockTables = [
+        {
+          name: 'name1',
+          notn: 0,
+          type: 'type',
+          dflt: 1234,
+          pk: 0
+        }
+      ]
+      const mockRaw = jasmine.createSpy('raw').and.returnValue(mockTables)
+      const mockdb = jasmine.createSpy('db')
+      mockdb['raw'] = mockRaw
+
+      const adapter = new Mocksqlite.default();
+      const res = await adapter.getAllColumns(mockdb as any, 'table', 'schema')
+      expect(mockRaw).toHaveBeenCalledWith('pragma table_info(table)')
+      expect(res).toEqual([
+        {
+          name: 'name1',
+          isNullable: true,
+          type: 'type',
+          isOptional: true
+        }
+      ])
+      done()
+    })
+    it('should get all columns with primary key', async (done) => {
+      const mockTables = [
+        {
+          name: 'name1',
+          notn: 0,
+          type: 'type',
+          dflt: null,
+          pk: 1
+        }
+      ]
+      const mockRaw = jasmine.createSpy('raw').and.returnValue(mockTables)
+      const mockdb = jasmine.createSpy('db')
+      mockdb['raw'] = mockRaw
+
+      const adapter = new Mocksqlite.default();
+      const res = await adapter.getAllColumns(mockdb as any, 'table', 'schema')
+      expect(mockRaw).toHaveBeenCalledWith('pragma table_info(table)')
+      expect(res).toEqual([
+        {
+          name: 'name1',
+          isNullable: true,
+          type: 'type',
+          isOptional: true
+        }
+      ])
+      done()
+    })
+    it('should get all columns not nullable', async (done) => {
+      const mockTables = [
+        {
+          name: 'name1',
+          notn: 1,
+          type: 'type',
+          dflt: null,
+          pk: 0
+        }
+      ]
+      const mockRaw = jasmine.createSpy('raw').and.returnValue(mockTables)
+      const mockdb = jasmine.createSpy('db')
+      mockdb['raw'] = mockRaw
+
+      const adapter = new Mocksqlite.default();
+      const res = await adapter.getAllColumns(mockdb as any, 'table', 'schema')
+      expect(mockRaw).toHaveBeenCalledWith('pragma table_info(table)')
+      expect(res).toEqual([
+        {
+          name: 'name1',
+          isNullable: false,
+          type: 'type',
+          isOptional: false
+        }
+      ])
+      done()
+    })
+    it('should get all columns with parentheses', async (done) => {
+      const mockTables = [
+        {
+          name: 'name1',
+          notn: 0,
+          type: 'type(123,33)',
+          dflt: null,
+          pk: 0
+        }
+      ]
+      const mockRaw = jasmine.createSpy('raw').and.returnValue(mockTables)
+      const mockdb = jasmine.createSpy('db')
+      mockdb['raw'] = mockRaw
+
+      const adapter = new Mocksqlite.default();
+      const res = await adapter.getAllColumns(mockdb as any, 'table', 'schema')
+      expect(mockRaw).toHaveBeenCalledWith('pragma table_info(table)')
+      expect(res).toEqual([
+        {
+          name: 'name1',
+          isNullable: true,
+          type: 'type',
+          isOptional: false
+        }
       ])
       done()
     })

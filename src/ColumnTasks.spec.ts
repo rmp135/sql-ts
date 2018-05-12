@@ -1,5 +1,5 @@
 import 'jasmine'
-import { Column } from './Typings';
+import { Column, Config } from './Typings';
 import * as ColumnTasks from './ColumnTasks';
 const rewire = require('rewire')
 
@@ -13,19 +13,123 @@ describe('ColumnTasks', () => {
         name: 'name',
         jsType: 'jsType',
         nullable: true,
+        optional: false,
         type: 'type'
       }
-      let result = ColumnTasks.stringifyColumn(mockColumn)
-      expect(result).toEqual('name?: jsType | null')
+      const config: Config = {
+        propertyOptionality: 'required'
+      }
+      let result = ColumnTasks.stringifyColumn(mockColumn, config)
+      expect(result).toEqual('name: jsType | null')
     })
     it('should handle not nullable', () => {
       const mockColumn: Column = {
         name: 'name',
         jsType: 'jsType',
         nullable: false,
+        optional: false,
         type: 'type'
       }
-      let result = ColumnTasks.stringifyColumn(mockColumn)
+      const config: Config = {
+        propertyOptionality: 'required'
+      }
+      let result = ColumnTasks.stringifyColumn(mockColumn, config)
+      expect(result).toEqual('name: jsType')
+    })
+    it('should handle required optionality columns with optional column', () => {
+      const mockColumn: Column = {
+        name: 'name',
+        jsType: 'jsType',
+        nullable: false,
+        optional: true,
+        type: 'type'
+      }
+      const config: Config = {
+        propertyOptionality: 'required'
+      }
+      let result = ColumnTasks.stringifyColumn(mockColumn, config)
+      expect(result).toEqual('name: jsType')
+    })
+    it('should handle required optionality columns with required column', () => {
+      const mockColumn: Column = {
+        name: 'name',
+        jsType: 'jsType',
+        nullable: false,
+        optional: false,
+        type: 'type'
+      }
+      const config: Config = {
+        propertyOptionality: 'required'
+      }
+      let result = ColumnTasks.stringifyColumn(mockColumn, config)
+      expect(result).toEqual('name: jsType')
+    })
+    it('should handle optional optionality columns with optional column', () => {
+      const mockColumn: Column = {
+        name: 'name',
+        jsType: 'jsType',
+        nullable: false,
+        optional: true,
+        type: 'type'
+      }
+      const config: Config = {
+        propertyOptionality: 'optional'
+      }
+      let result = ColumnTasks.stringifyColumn(mockColumn, config)
+      expect(result).toEqual('name?: jsType')
+    })
+    it('should handle required optionality columns with optional column', () => {
+      const mockColumn: Column = {
+        name: 'name',
+        jsType: 'jsType',
+        nullable: false,
+        optional: false,
+        type: 'type'
+      }
+      const config: Config = {
+        propertyOptionality: 'optional'
+      }
+      let result = ColumnTasks.stringifyColumn(mockColumn, config)
+      expect(result).toEqual('name?: jsType')
+    })
+    it('should handle dynamic optionality columns with required column', () => {
+      const mockColumn: Column = {
+        name: 'name',
+        jsType: 'jsType',
+        nullable: false,
+        optional: false,
+        type: 'type'
+      }
+      const config: Config = {
+        propertyOptionality: 'dynamic'
+      }
+      let result = ColumnTasks.stringifyColumn(mockColumn, config)
+      expect(result).toEqual('name: jsType')
+    })
+    it('should handle dynamic optionality columns with optional column', () => {
+      const mockColumn: Column = {
+        name: 'name',
+        jsType: 'jsType',
+        nullable: false,
+        optional: true,
+        type: 'type'
+      }
+      const config: Config = {
+        propertyOptionality: 'dynamic'
+      }
+      let result = ColumnTasks.stringifyColumn(mockColumn, config)
+      expect(result).toEqual('name?: jsType')
+    })
+    it('should handle null optionality columns with optional column', () => {
+      const mockColumn: Column = {
+        name: 'name',
+        jsType: 'jsType',
+        nullable: false,
+        optional: true,
+        type: 'type'
+      }
+      const config: Config = { }
+      let result = ColumnTasks.stringifyColumn(mockColumn, config)
       expect(result).toEqual('name?: jsType')
     })
   })

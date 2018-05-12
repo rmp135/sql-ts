@@ -226,6 +226,17 @@ This has no effect on SQLite as the concept of schemas do not exist.
 }
 ```
 
+## propertyOptionality
+
+Determines whether properties are optional. Valid options are `optional` (all properties are optional), `required` (all properties are required) and `dynamic` (optionality will be determined by whether the column has a default value or is a primary key). Default `optional`.
+
+```json
+{
+  "dialect": "...",
+  "connection": {},
+  "propertyOptionality": "dynamic"
+}
+
 ## Bespoke Configuration
 
 ### `mssql` dialect with `msnodesqlv8` driver (Windows only)

@@ -1,5 +1,7 @@
 import * as knex from 'knex'; 
 
+export type optionality = 'required' | 'optional' | 'dynamic'
+
 /**
  * The configuration file for creating new databases.
  * 
@@ -18,7 +20,8 @@ export interface Config extends knex.Config {
   }
   typeOverrides?: { 
     [key: string]: string 
-  } 
+  },
+  propertyOptionality?: optionality
 } 
 
 /**
@@ -31,6 +34,7 @@ export interface Column {
   name: string,
   type: string,
   jsType: string,
+  optional: boolean,
   nullable: boolean
 }
 

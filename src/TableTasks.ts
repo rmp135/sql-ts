@@ -34,5 +34,5 @@ export async function getAllTables (db: knex, config: Config): Promise<Table[]> 
  */
 export function stringifyTable (table: Table, config: Config): string {
   return `export interface ${TableSubTasks.generateInterfaceName(table.name, config)} {
-${table.columns.map(c => `  ${ColumnTasks.stringifyColumn(c)}`).join('\n')}
+${table.columns.map(c => `  ${ColumnTasks.stringifyColumn(c, config)}`).join('\n')}
 }`}

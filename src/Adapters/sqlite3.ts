@@ -10,12 +10,14 @@ export default class implements AdapterInterface {
     .map((t: { name: string }) => ({ name: t.name, schema: 'main' }))
   }
   async getAllColumns(db: knex, table: string, schema: string): Promise<ColumnDefinition[]> {
-    const def = await db(table).columnInfo()
-    const columns: ColumnDefinition[] = []
-    for (let key in def) {
-      const value = def[key]
-      columns.push({ isNullable: value.nullable, name: key, type: value.type })
-    }
-    return columns
+    return await db.raw(`pragma table_info(${table})`)
+    .map((c: { name: string, type: String, notn: number, dflt: any, pk: number }) => (
+      {
+        name: c.name,
+        isNullable: c.notn === 0,
+        type: (c.type.includes('(') ? c.type.split('(')[0] : c.type).toLowerCase(),
+        isOptional: c.dflt != null || c.pk == 1
+      }
+    ))
   }
 }

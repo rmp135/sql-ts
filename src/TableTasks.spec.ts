@@ -120,9 +120,9 @@ describe('TableTasks', () => {
 
         }
         const result = MockTableTasks.stringifyTable(mockTable as any, mockConfig as any)
-        expect(mockColumnTasks.stringifyColumn.calls.argsFor(0)).toEqual([mockTable.columns[0]])
-        expect(mockColumnTasks.stringifyColumn.calls.argsFor(1)).toEqual([mockTable.columns[1]])
-        expect(mockColumnTasks.stringifyColumn.calls.argsFor(2)).toEqual([mockTable.columns[2]])
+        expect(mockColumnTasks.stringifyColumn.calls.argsFor(0)).toEqual([mockTable.columns[0], mockConfig])
+        expect(mockColumnTasks.stringifyColumn.calls.argsFor(1)).toEqual([mockTable.columns[1], mockConfig])
+        expect(mockColumnTasks.stringifyColumn.calls.argsFor(2)).toEqual([mockTable.columns[2], mockConfig])
         expect(result).toBe(`export interface interfacename {
   column 1 string
   column 2 string

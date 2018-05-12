@@ -1,7 +1,7 @@
 import { TableDefinition } from './Adapters/AdapterInterface'
 import * as AdapterFactory from './AdapterFactory'
 import * as knex from 'knex'
-import { Column, Config } from './Typings'
+import { Column, Config, optionality } from './Typings'
 import TypeMap from './TypeMap'
 import * as ColumnSubTasks from './ColumnSubTasks'
 
@@ -10,10 +10,15 @@ import * as ColumnSubTasks from './ColumnSubTasks'
  * 
  * @export
  * @param {Column} column The Column to generate the type definition for.
+ * @param {Config} config The configuration to use.
  * @returns {string} 
  */
-export function stringifyColumn (column: Column): string {
-  return `${column.name}?: ${column.jsType}${column.nullable ? ' | null' : ''}`
+export function stringifyColumn (column: Column, config: Config): string {
+  let optionality = config.propertyOptionality === 'required' ? '' : '?'
+  if (config.propertyOptionality == 'dynamic') {
+    optionality = column.optional ? '?' : ''
+  }
+  return `${column.name}${optionality}: ${column.jsType}${column.nullable ? ' | null' : ''}`
 }
 
 /**
@@ -21,7 +26,7 @@ export function stringifyColumn (column: Column): string {
  * 
  * @export
  * @param {knex} db The knex config to use.
- * @param {TableDefinition} table The table to return columns for.
+ * @param {TableDefinition} table The table to return columns for..
  * @param {Config} config The configuration to use.
  * @returns {Promise<Column[]>} 
  */
@@ -32,6 +37,7 @@ export async function getColumnsForTable (db: knex, table: TableDefinition, conf
     jsType: ColumnSubTasks.convertType(ColumnSubTasks.generateFullColumnName(table.name, table.schema, c.name), c.type, config),
     nullable: c.isNullable,
     name: c.name,
-    type: c.type
+    type: c.type,
+    optional: c.isOptional
   } as Column))
 }

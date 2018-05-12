@@ -40,16 +40,21 @@ describe('postgres', () => {
     it('should get all tables from the current schema', async (done) => {
       const mockMap = jasmine.createSpy('map').and.returnValue(Promise.resolve([1,2,3]))
       const mockWhere = jasmine.createSpy('where').and.returnValue({ map: mockMap })
-      const mockSelectNullable = jasmine.createSpy('select').and.returnValue({ where: mockWhere })
+      const mockSelectOptional = jasmine.createSpy('select').and.returnValue({ where: mockWhere })
+      const mockSelectNullable = jasmine.createSpy('select').and.returnValue({ select: mockSelectOptional })
       const mockSelectType = jasmine.createSpy('select').and.returnValue({ select: mockSelectNullable })
       const mockSelectName = jasmine.createSpy('select').and.returnValue({ select: mockSelectType })
       const mockdb = jasmine.createSpy('db').and.returnValue({ select: mockSelectName })
+      const mockRaw = jasmine.createSpy('raw').and.returnValue('mockrawreturn')
+      mockdb['raw'] = mockRaw
       const adapter = new Mockpostgres.default();
       const res = await adapter.getAllColumns(mockdb as any, 'table', 'schema')
       expect(mockdb).toHaveBeenCalledWith('information_schema.columns')
       expect(mockSelectName).toHaveBeenCalledWith('column_name AS name')
       expect(mockSelectType).toHaveBeenCalledWith('udt_name AS type')
+      expect(mockRaw).toHaveBeenCalledWith('(CASE WHEN column_default IS NOT NULL THEN 1 ELSE 0 END) AS isoptional')
       expect(mockSelectNullable).toHaveBeenCalledWith('is_nullable AS isNullable')
+      expect(mockSelectOptional).toHaveBeenCalledWith('mockrawreturn')
       expect(mockWhere).toHaveBeenCalledWith({ table_name: 'table', table_schema: 'schema' })
       expect(res).toEqual([1,2,3] as any)
       done()
