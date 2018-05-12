@@ -210,7 +210,7 @@ SQLite     | 'main'
 }
 ```
 
-## schemas
+### schemas
 
 Specifies which schemas to import. This has no effect on SQLite databases. If MySQL is connected to without specifying a database, this can be used to import from multiple databases. Default `[]` (all schemas).
 
@@ -226,9 +226,9 @@ This has no effect on SQLite as the concept of schemas do not exist.
 }
 ```
 
-## propertyOptionality
+### propertyOptionality
 
-Determines whether properties are optional. Valid options are `optional` (all properties are optional), `required` (all properties are required) and `dynamic` (optionality will be determined by whether the column has a default value or is a primary key). Default `optional`.
+Determines whether properties are optional. Valid values are `optional` (all properties are optional), `required` (all properties are required) and `dynamic` (optionality will be determined by whether the column has a default value or is a primary key). Default `optional`.
 
 ```json
 {
@@ -236,6 +236,7 @@ Determines whether properties are optional. Valid options are `optional` (all pr
   "connection": {},
   "propertyOptionality": "dynamic"
 }
+```
 
 ## Bespoke Configuration
 
