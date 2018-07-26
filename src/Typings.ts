@@ -51,6 +51,14 @@ export interface Table {
   columns: Column[]
 
   /**
+   * This string is a class or interface that this definition should extend
+   *
+   * @type {string}
+   * @memberof Table
+   */
+  extends?: string
+
+  /**
    *  This array of string will be added as properties to the object
    *  when it is exported
    *

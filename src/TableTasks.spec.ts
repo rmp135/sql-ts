@@ -186,5 +186,34 @@ describe('TableTasks', () => {
 }`)
       })
     })
+
+    it('can be extended', () => {
+      const mockColumnTasks = {
+        stringifyColumn: jasmine.createSpy('stringifyColumn').and.returnValues('column 1 string')
+      }
+      const mockTableSubTasks = {
+        generateInterfaceName: jasmine.createSpy('generateInterfaceName').and.returnValue('interfacename')
+      }
+      MockTableTasks.__with__({
+        ColumnTasks: mockColumnTasks,
+        TableSubTasks: mockTableSubTasks
+      })(() => {
+        const mockTable: Table = {
+          name: 'tablename',
+          columns: [{name: 'columnName', type: 'string', jsType: 'string', optional: true, nullable: true}],
+          schema: 'schemaName',
+          extends: 'testInterface'
+        }
+        const mockConfig = {
+        }
+        mockTable.additionalProperties = ['extra property']
+        const result = MockTableTasks.stringifyTable(mockTable as any, mockConfig as any)
+        expect(result).toBe(`export interface interfacename extends testInterface { 
+  extra property
+
+  column 1 string
+}`)
+      })
+    })
   })
 })
