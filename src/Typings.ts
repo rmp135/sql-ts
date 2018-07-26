@@ -21,7 +21,8 @@ export interface Config extends knex.Config {
   typeOverrides?: { 
     [key: string]: string 
   },
-  propertyOptionality?: optionality
+  propertyOptionality?: optionality,
+  createClasses?: boolean
 } 
 
 /**

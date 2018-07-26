@@ -20,6 +20,7 @@ export interface Config extends knex.Config {
         [key: string]: string;
     };
     propertyOptionality?: optionality;
+    createClasses?: boolean;
 }
 /**
  * The JSON definition of a column for importing and exporting.

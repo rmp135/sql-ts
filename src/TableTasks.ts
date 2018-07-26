@@ -33,6 +33,7 @@ export async function getAllTables (db: knex, config: Config): Promise<Table[]> 
  * @returns {string} 
  */
 export function stringifyTable (table: Table, config: Config): string {
-  return `export interface ${TableSubTasks.generateInterfaceName(table.name, config)} {
+  const createTableAs = config.createClasses ? 'class' : 'interface';
+  return `export ${createTableAs} ${TableSubTasks.generateInterfaceName(table.name, config)} {
 ${table.columns.map(c => `  ${ColumnTasks.stringifyColumn(c, config)}`).join('\n')}
 }`}

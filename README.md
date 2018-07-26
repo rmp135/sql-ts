@@ -238,6 +238,18 @@ Determines whether properties are optional. Valid values are `optional` (all pro
 }
 ```
 
+### createClasses
+
+Allows creation of concrete classes instead of interfaces. Valid values are `true` or `false`. This property is optional and defaults to `false`
+
+```json
+{
+  "dialect": "...",
+  "connection": {},
+  "createClasses": true
+}
+```
+
 ## Bespoke Configuration
 
 ### `mssql` dialect with `msnodesqlv8` driver (Windows only)
