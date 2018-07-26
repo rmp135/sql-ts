@@ -93,8 +93,3 @@ function stringifyTable(table, config) {
     return "export " + createTableAs + " " + TableSubTasks.generateInterfaceName(table.name, config) + " { " + additionalProperties + "\n" + table.columns.map(function (c) { return "  " + ColumnTasks.stringifyColumn(c, config); }).join('\n') + "\n}";
 }
 exports.stringifyTable = stringifyTable;
-function createClassProperties(table, config) {
-    if (!config.createClasses)
-        return '';
-    return "\n  static get TABLE_NAME() { return '" + table.name + "'; }\n  ";
-}

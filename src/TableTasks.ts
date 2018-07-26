@@ -34,7 +34,7 @@ export async function getAllTables (db: knex, config: Config): Promise<Table[]> 
  */
 export function stringifyTable (table: Table, config: Config): string {
   const createTableAs = config.createClasses ? 'class' : 'interface';
-  const additionalProperties = table.additionalProperties ? `\n\t${table.additionalProperties.join('\n')}\n` : ''
+  const additionalProperties = table.additionalProperties ? `\n  ${table.additionalProperties.join('\n')}\n` : ''
   return `export ${createTableAs} ${TableSubTasks.generateInterfaceName(table.name, config)} { ${additionalProperties}
 ${table.columns.map(c => `  ${ColumnTasks.stringifyColumn(c, config)}`).join('\n')}
 }`}
