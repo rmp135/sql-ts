@@ -39,6 +39,7 @@ export interface Table {
     name: string;
     schema: string;
     columns: Column[];
+    additionalProperties?: string[];
 }
 /**
  * The JSON definition of a database for importing and exporting.

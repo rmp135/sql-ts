@@ -47,7 +47,7 @@ const definitions: Database = await sqlts.toObject(config)
 
 ### fromObject
 
-Converts the object returned from `toObject` into a TypeScript definition.
+Converts the object returned from `toObject` into a TypeScript definition. This can be used to manipulate the database definitions before they are converted into strings or files, which allows for greater control over the generated typescript.
 
 ```javascript
 import sqlts from '@rmp135/sql-ts'

@@ -39,10 +39,25 @@ export interface Column {
   nullable: boolean
 }
 
+/**
+ * The JSON definition of a taboe for importing and exporting.
+ * 
+ * @export
+ * @interface Table
+ */
 export interface Table {
   name: string,
   schema: string,
   columns: Column[]
+
+  /**
+   *  This array of string will be added as properties to the object
+   *  when it is exported
+   *
+   * @type {string[]}
+   * @memberof Table
+   */
+  additionalProperties?: string[],
 }
 
 /**
