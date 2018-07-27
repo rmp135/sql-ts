@@ -177,10 +177,11 @@ describe('TableTasks', () => {
         }
         const mockConfig = {
         }
-        mockTable.additionalProperties = ['extra property']
+        mockTable.additionalProperties = ['extra property 1', 'extra property 2']
         const result = MockTableTasks.stringifyTable(mockTable as any, mockConfig as any)
         expect(result).toBe(`export interface interfacename { 
-  extra property
+  extra property 1
+  extra property 2
 
   column 1 string
 }`)
