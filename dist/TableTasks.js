@@ -90,7 +90,7 @@ exports.getAllTables = getAllTables;
 function stringifyTable(table, config) {
     var createTableAs = config.createClasses ? 'class' : 'interface';
     var extend = table.extends ? " extends " + table.extends : '';
-    var additionalProperties = table.additionalProperties ? "\n  " + table.additionalProperties.join('\n') + "\n" : '';
+    var additionalProperties = table.additionalProperties ? "\n  " + table.additionalProperties.join('\n  ') + "\n" : '';
     return "export " + createTableAs + " " + TableSubTasks.generateInterfaceName(table.name, config) + extend + " { " + additionalProperties + "\n" + table.columns.map(function (c) { return "  " + ColumnTasks.stringifyColumn(c, config); }).join('\n') + "\n}";
 }
 exports.stringifyTable = stringifyTable;
