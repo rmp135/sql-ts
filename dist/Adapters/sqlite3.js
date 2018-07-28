@@ -14,8 +14,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
         while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
                 case 0: case 1: t = op; break;
                 case 4: _.label++; return { value: op[1], done: false };
@@ -59,7 +59,7 @@ var default_1 = /** @class */ (function () {
                     case 0: return [4 /*yield*/, db.raw("pragma table_info(" + table + ")")
                             .map(function (c) { return ({
                             name: c.name,
-                            isNullable: c.notn === 0,
+                            isNullable: c.notnull === 0,
                             type: (c.type.includes('(') ? c.type.split('(')[0] : c.type).toLowerCase(),
                             isOptional: c.dflt != null || c.pk == 1
                         }); })];

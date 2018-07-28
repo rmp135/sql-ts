@@ -14,8 +14,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
         while (_) try {
-            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [0, t.value];
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
                 case 0: case 1: t = op; break;
                 case 4: _.label++; return { value: op[1], done: false };
@@ -48,8 +48,8 @@ var TableSubTasks = require("./TableSubTasks");
  */
 function getAllTables(db, config) {
     return __awaiter(this, void 0, void 0, function () {
-        var _this = this;
         var adapter, allTables, tables;
+        var _this = this;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -67,6 +67,8 @@ function getAllTables(db, config) {
                                     case 1: return [2 /*return*/, (_a.columns = _b.sent(),
                                             _a.name = table.name,
                                             _a.schema = table.schema,
+                                            _a.additionalProperties = [],
+                                            _a.extends = '',
                                             _a)];
                                 }
                             });
@@ -90,7 +92,7 @@ exports.getAllTables = getAllTables;
 function stringifyTable(table, config) {
     var createTableAs = config.createClasses ? 'class' : 'interface';
     var extend = table.extends ? " extends " + table.extends : '';
-    var additionalProperties = table.additionalProperties ? "\n  " + table.additionalProperties.join('\n  ') + "\n" : '';
+    var additionalProperties = table.additionalProperties && table.additionalProperties.length > 0 ? "\n  " + table.additionalProperties.join('\n  ') + "\n" : '';
     return "export " + createTableAs + " " + TableSubTasks.generateInterfaceName(table.name, config) + extend + " { " + additionalProperties + "\n" + table.columns.map(function (c) { return "  " + ColumnTasks.stringifyColumn(c, config); }).join('\n') + "\n}";
 }
 exports.stringifyTable = stringifyTable;

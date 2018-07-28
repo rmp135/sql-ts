@@ -1,4 +1,3 @@
-/// <reference types="knex" />
 import * as knex from 'knex';
 export interface DatabaseDefinition {
     tables: TableDefinition[];
