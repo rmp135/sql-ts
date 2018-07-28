@@ -32,18 +32,12 @@ const config = {
 const definitions = await sqlts.toObject(config)
 ```
 
-For those using TypeScript, you can import the Config definition.
+Each table definition generated from sql-ts can be manually extended with further properties that are not generated from tables.
 
-```typescript
-import sqlts, { Config, Database } from '@rmp135/sql-ts'
-
-const config: Config = {
-  ...
-}
-
-const definitions: Database = await sqlts.toObject(config)
-// The above type declaration isn't required, but you can import it if you wish.
-```
+- additionalProperties:
+  - A string array of additional properties to be assigned to the exported TypeScript definition.
+- extends
+  - Extends the generated TypeScript interface / class with the given string. 
 
 ### fromObject
 
@@ -63,19 +57,6 @@ const tsString = sqlts.fromObject(definitions, config)
 
 For those using TypeScript, you can import the Config definition.
 
-```typescript
-import sqlts, { Config, Database } from '@rmp135/sql-ts'
-
-const config: Config = {
-  ...
-}
-
-const definitions: Database = await sqlts.toObject(config)
-// The above type declaration isn't required, but you can import it if you wish.
-
-const tsString = sqlts.fromObject(definitions, config)
-```
-
 ### toTypeScript
 
 Retrieves the raw string of the definition file.
@@ -84,18 +65,6 @@ Retrieves the raw string of the definition file.
 import sqlts from '@rmp135/sql-ts'
 
 const config = {
-  ...
-}
-
-const definitions = await sqlts.toTypeScript(config)
-```
-
-For those using TypeScript, you can import the Config definition.
-
-```typescript
-import sqlts, { Config } from '@rmp135/sql-ts'
-
-const config: Config = {
   ...
 }
 
@@ -240,7 +209,7 @@ Determines whether properties are optional. Valid values are `optional` (all pro
 
 ### createClasses
 
-Allows creation of concrete classes instead of interfaces. Valid values are `true` or `false`. This property is optional and defaults to `false`
+Allows creation of concrete classes instead of interfaces. Valid values are `true` or `false`. This property is optional and defaults to `false`.
 
 ```json
 {
