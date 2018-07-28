@@ -44,12 +44,16 @@ describe('TableTasks', () => {
           {
             columns: ['column1'],
             name: 'table1name',
-            schema: 'table1schema'
+            schema: 'table1schema',
+            extends: '',
+            additionalProperties: []
           },
           {
             columns: ['column2', 'column3'],
             name: 'table2name',
-            schema: 'table2schema'
+            schema: 'table2schema',
+            extends: '',
+            additionalProperties: []
           }
         ] as any)
         done()
@@ -89,12 +93,16 @@ describe('TableTasks', () => {
           {
             columns: ['column1'],
             name: 'table1name',
-            schema: 'table1schema'
+            schema: 'table1schema',
+            extends: '',
+            additionalProperties: []
           },
           {
             columns: ['column2', 'column3'],
             name: 'table2name',
-            schema: 'table2schema'
+            schema: 'table2schema',
+            extends: '',
+            additionalProperties: []
           }
         ] as any)
         done()

@@ -20,6 +20,8 @@ export async function getAllTables (db: knex, config: Config): Promise<Table[]> 
     columns: await ColumnTasks.getColumnsForTable(db, table, config),
     name: table.name,
     schema: table.schema,
+    additionalProperties: [],
+    extends: ''
   } as Table)))
   return tables
 }
