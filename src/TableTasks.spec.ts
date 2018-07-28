@@ -1,5 +1,6 @@
 import 'jasmine'
 import * as TableTasks from './TableTasks';
+import { Table } from './Typings'
 const rewire = require('rewire')
 
 let RewireTableTasks = rewire('./TableTasks')
@@ -123,10 +124,95 @@ describe('TableTasks', () => {
         expect(mockColumnTasks.stringifyColumn.calls.argsFor(0)).toEqual([mockTable.columns[0], mockConfig])
         expect(mockColumnTasks.stringifyColumn.calls.argsFor(1)).toEqual([mockTable.columns[1], mockConfig])
         expect(mockColumnTasks.stringifyColumn.calls.argsFor(2)).toEqual([mockTable.columns[2], mockConfig])
-        expect(result).toBe(`export interface interfacename {
+        expect(result).toBe(`export interface interfacename { 
   column 1 string
   column 2 string
   column 3 string
+}`)
+      })
+    })
+
+    it('can create tables as classes', () => {
+      const mockColumnTasks = {
+        stringifyColumn: jasmine.createSpy('stringifyColumn').and.returnValues('column 1 string', 'column 2 string', 'column 3 string')
+      }
+      const mockTableSubTasks = {
+        generateInterfaceName: jasmine.createSpy('generateInterfaceName').and.returnValue('interfacename')
+      }
+      MockTableTasks.__with__({
+        ColumnTasks: mockColumnTasks,
+        TableSubTasks: mockTableSubTasks
+      })(() => {
+        const mockTable = {
+          name: 'tablename',
+          columns: [1,2,3]
+        }
+        const mockConfig = {
+          createClasses: true
+        }
+        const result = MockTableTasks.stringifyTable(mockTable as any, mockConfig as any)
+        expect(result).toBe(`export class interfacename { 
+  column 1 string
+  column 2 string
+  column 3 string
+}`)
+      })
+    })
+
+    it('accepts additional properties for definitions', () => {
+      const mockColumnTasks = {
+        stringifyColumn: jasmine.createSpy('stringifyColumn').and.returnValues('column 1 string')
+      }
+      const mockTableSubTasks = {
+        generateInterfaceName: jasmine.createSpy('generateInterfaceName').and.returnValue('interfacename')
+      }
+      MockTableTasks.__with__({
+        ColumnTasks: mockColumnTasks,
+        TableSubTasks: mockTableSubTasks
+      })(() => {
+        const mockTable: Table = {
+          name: 'tablename',
+          columns: [{name: 'columnName', type: 'string', jsType: 'string', optional: true, nullable: true}],
+          schema: 'schemaName'
+        }
+        const mockConfig = {
+        }
+        mockTable.additionalProperties = ['extra property 1', 'extra property 2']
+        const result = MockTableTasks.stringifyTable(mockTable as any, mockConfig as any)
+        expect(result).toBe(`export interface interfacename { 
+  extra property 1
+  extra property 2
+
+  column 1 string
+}`)
+      })
+    })
+
+    it('can be extended', () => {
+      const mockColumnTasks = {
+        stringifyColumn: jasmine.createSpy('stringifyColumn').and.returnValues('column 1 string')
+      }
+      const mockTableSubTasks = {
+        generateInterfaceName: jasmine.createSpy('generateInterfaceName').and.returnValue('interfacename')
+      }
+      MockTableTasks.__with__({
+        ColumnTasks: mockColumnTasks,
+        TableSubTasks: mockTableSubTasks
+      })(() => {
+        const mockTable: Table = {
+          name: 'tablename',
+          columns: [{name: 'columnName', type: 'string', jsType: 'string', optional: true, nullable: true}],
+          schema: 'schemaName',
+          extends: 'testInterface'
+        }
+        const mockConfig = {
+        }
+        mockTable.additionalProperties = ['extra property']
+        const result = MockTableTasks.stringifyTable(mockTable as any, mockConfig as any)
+        expect(result).toBe(`export interface interfacename extends testInterface { 
+  extra property
+
+  column 1 string
 }`)
       })
     })
