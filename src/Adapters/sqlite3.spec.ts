@@ -27,7 +27,7 @@ describe('sqlite', () => {
       const mockTables = [
         {
           name: 'name1',
-          notn: 0,
+          notnull: 0,
           type: 'type(123)',
           dflt: null,
           pk: 0
@@ -54,7 +54,7 @@ describe('sqlite', () => {
       const mockTables = [
         {
           name: 'name1',
-          notn: 0,
+          notnull: 0,
           type: 'type',
           dflt: 1234,
           pk: 0
@@ -81,7 +81,7 @@ describe('sqlite', () => {
       const mockTables = [
         {
           name: 'name1',
-          notn: 0,
+          notnull: 0,
           type: 'type',
           dflt: null,
           pk: 1
@@ -108,7 +108,7 @@ describe('sqlite', () => {
       const mockTables = [
         {
           name: 'name1',
-          notn: 1,
+          notnull: 1,
           type: 'type',
           dflt: null,
           pk: 0
@@ -135,7 +135,7 @@ describe('sqlite', () => {
       const mockTables = [
         {
           name: 'name1',
-          notn: 0,
+          notnull: 0,
           type: 'type(123,33)',
           dflt: null,
           pk: 0
