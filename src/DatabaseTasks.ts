@@ -1,5 +1,7 @@
 import { Config, Database, Table } from './Typings';
 import * as TableTasks from './TableTasks';
+import * as Mustache from 'mustache'
+import * as fs from 'fs';
 
 /**
  * Converts a Database definition to TypeScript.
@@ -10,7 +12,10 @@ import * as TableTasks from './TableTasks';
  * @returns A TypeScript definiion, optionally wrapped in a namespace.
  */
 export function stringifyDatabase (database: Database, config: Config) {
-  if (config.schemaAsNamespace) {
+  if(config.template) {
+    const template = fs.readFileSync(config.template).toString();
+    return Mustache.render(template, database);
+  } else if (config.schemaAsNamespace) {
     const schemaMap = new Map<string, Table[]>()
     for (let table of database.tables) {
       if (!schemaMap.has(table.schema)) {

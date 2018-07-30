@@ -176,6 +176,18 @@ Specifies the name that the file should be saved as. Defaults to "Database.ts". 
 }
 ```
 
+### template
+
+Specifies the path to a mustache template file. The database object created by the toObject function will be passed to this template for rendering. By preprocessing the database object, you can provide additional properties to your template. If this is not provided a default format will be used.  See [default.mustache](dist/default.mustache) for a default template.
+
+```json
+{
+  "dialect": "...",
+  "connection": {},
+  "template": "path/to/template.mustache"
+}
+```
+
 ### interfaceNameFormat
 
 Specifies the pattern that the exported interface names will take. The token "${table}" will be replaced with the table name. Defaults to "${table}Entity".
