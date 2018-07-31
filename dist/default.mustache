@@ -1,0 +1,7 @@
+{{#tables}}
+export interface {{name}}Entity {
+  {{#columns}}
+  {{name}}{{#optional}}?{{/optional}}: {{jsType}}{{#nullable}} | null{{/nullable}}
+  {{/columns}}
+}
+{{/tables}}

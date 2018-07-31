@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var TableTasks = require("./TableTasks");
+var Mustache = require("mustache");
+var fs = require("fs");
 /**
  * Converts a Database definition to TypeScript.
  *
@@ -10,7 +12,11 @@ var TableTasks = require("./TableTasks");
  * @returns A TypeScript definiion, optionally wrapped in a namespace.
  */
 function stringifyDatabase(database, config) {
-    if (config.schemaAsNamespace) {
+    if (config.template) {
+        var template = fs.readFileSync(config.template).toString();
+        return Mustache.render(template, database);
+    }
+    else if (config.schemaAsNamespace) {
         var schemaMap = new Map();
         for (var _i = 0, _a = database.tables; _i < _a.length; _i++) {
             var table = _a[_i];

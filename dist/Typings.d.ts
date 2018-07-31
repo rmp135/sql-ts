@@ -10,6 +10,7 @@ export declare type optionality = 'required' | 'optional' | 'dynamic';
 export interface Config extends knex.Config {
     tables?: string[];
     filename?: string;
+    template?: string;
     interfaceNameFormat?: string;
     schemaAsNamespace?: boolean;
     schemas?: string[];
