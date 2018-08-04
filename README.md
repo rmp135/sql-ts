@@ -32,13 +32,6 @@ const config = {
 const definitions = await sqlts.toObject(config)
 ```
 
-Each table definition generated from sql-ts can be manually extended with further properties that are not generated from tables.
-
-- additionalProperties:
-  - A string array of additional properties to be assigned to the exported TypeScript definition.
-- extends
-  - Extends the generated TypeScript interface / class with the given string. 
-
 ### fromObject
 
 Converts the object returned from `toObject` into a TypeScript definition. This can be used to manipulate the database definitions before they are converted into strings or files, which allows for greater control over the generated typescript.
@@ -105,15 +98,15 @@ Filter the tables to include only those specified.
 
 ### typeOverrides
 
-Override the types on a per column basis. This requires the full name of the column in the format `table.schema.column`. See [interfaceNameFormat](##interfaceNameFormat) for schema naming conventions. Omit the schema for databases that do not use them.
+Override the types on a per column basis. This requires the full name of the column in the format `schema.table.column`. See [interfaceNameFormat](##interfaceNameFormat) for schema naming conventions. Omit the schema for databases that do not use them.
 
 ```json
 {
   "dialect": "...",
   "connection": {},
   "typeOverrides": {
-    "Table_1.dbo.ColumnName": "string",
-    "Table_2.dbo.Name": "number"
+    "dbo.Table_1.ColumnName": "string",
+    "dbo.Table_1.Name": "number"
   }
 }
 ```
@@ -195,27 +188,43 @@ This has no effect on SQLite as the concept of schemas do not exist.
 }
 ```
 
-### propertyOptionality
+### additionalProperties
 
-Determines whether properties are optional. Valid values are `optional` (all properties are optional), `required` (all properties are required) and `dynamic` (optionality will be determined by whether the column has a default value or is a primary key). Default `optional`.
+Specifies additional properties to be assigned to the output TypeScript file. Key is in the format `schema.table` and the value is a list of raw strings. 
 
 ```json
 {
   "dialect": "...",
   "connection": {},
-  "propertyOptionality": "dynamic"
+  "additionalProperties": {
+    "dbo.Table_1": ["propertyOne: string", "propertyTwo?: number | null"]
+  }
 }
 ```
 
-### createClasses
+### extends
 
-Allows creation of concrete classes instead of interfaces. Valid values are `true` or `false`. This property is optional and defaults to `false`.
+Specifies the superclass than should be applied to the generated interface. Key is in the format `schema.table` and the value is the extension to apply. The following would generate `export interface Table_1 extends Extension, AnotherExtension { }`
 
 ```json
 {
   "dialect": "...",
   "connection": {},
-  "createClasses": true
+  "extends": {
+    "dbo.Table_1": "Extension, AnotherExtension"
+  }
+}
+```
+
+### template
+
+Specifies the [handlebars](https://handlebarsjs.com) template to use when creating the output TypeScript file relative to the current working directory. See [dist/template.handlebars](./dist/template.handlebars) for the default template. 
+
+```json
+{
+  "dialect": "...",
+  "connection": {},
+  "template": "./template.handlebars"
 }
 ```
 

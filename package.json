@@ -12,18 +12,24 @@
   },
   "scripts": {
     "build": "tsc",
+    "prebuild": "copyfiles -f ./src/template.handlebars ./dist/",
     "pretest": "tsc -p tsconfig.test.json",
     "test": "jasmine ./__test/{**,}/*.spec.js"
   },
   "dependencies": {
+    "handlebars": "^4.0.11",
     "knex": "^0.14.6",
+    "lodash": "^4.17.10",
     "yargs": "^11.0.0"
   },
   "devDependencies": {
+    "@types/handlebars": "^4.0.39",
     "@types/jasmine": "^2.6.0",
     "@types/knex": "^0.14.12",
+    "@types/lodash": "^4.14.116",
     "@types/rewire": "^2.5.28",
     "@types/yargs": "^11.0.0",
+    "copyfiles": "^2.0.0",
     "jasmine": "^3.1.0",
     "rewire": "^4.0.1",
     "typescript": "^2.5.3"

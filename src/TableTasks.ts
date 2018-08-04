@@ -20,24 +20,21 @@ export async function getAllTables (db: knex, config: Config): Promise<Table[]> 
     columns: await ColumnTasks.getColumnsForTable(db, table, config),
     name: table.name,
     schema: table.schema,
-    additionalProperties: [],
-    extends: ''
+    additionalProperties: TableSubTasks.getAdditionalProperties(table.name, table.schema, config),
+    extends: TableSubTasks.getExtends(table.name, table.schema, config)
   } as Table)))
   return tables
 }
 
 /**
- * Returns the Table as a TypeScript interface.
+ * Converts a table name to an interface name given a configuration.
  * 
  * @export
- * @param {Table} table The Table to create the interface for.
+ * @param {string} name The name of the table.
  * @param {Config} config The configuration to use.
- * @returns {string} 
+ * @returns 
  */
-export function stringifyTable (table: Table, config: Config): string {
-  const createTableAs = config.createClasses ? 'class' : 'interface';
-  const extend = table.extends ? ` extends ${table.extends}` : '';
-  const additionalProperties = table.additionalProperties && table.additionalProperties.length > 0 ? `\n  ${table.additionalProperties.join('\n  ')}\n` : ''
-  return `export ${createTableAs} ${TableSubTasks.generateInterfaceName(table.name, config)}${extend} { ${additionalProperties}
-${table.columns.map(c => `  ${ColumnTasks.stringifyColumn(c, config)}`).join('\n')}
-}`}
+export function generateInterfaceName (name: string, config: Config): string {
+  const interfaceNamePattern = config.interfaceNameFormat || '${table}Entity'
+  return interfaceNamePattern.replace('${table}', name.replace(/ /g, '_'))
+}
