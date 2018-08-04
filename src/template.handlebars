@@ -4,7 +4,7 @@ export interface {{interfaceName}} {{#if extends}}extends {{extends}} {{/if}}{
   {{prop}}
   {{/each}}
   {{#each columns}}
-  {{name}}{{#if optional}}{{else}}?{{/if}}: {{jsType}} {{#if nullable}}| null {{/if}}
+  {{propertyName}}{{#if optional}}{{else}}?{{/if}}: {{propertyType}} {{#if nullable}}| null {{/if}}
   {{/each}}
 }
 {{/inline}}

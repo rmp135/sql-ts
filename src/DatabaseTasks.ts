@@ -26,7 +26,8 @@ export function stringifyDatabase (database: Database, config: Config) {
       columns: t.columns.map(c => {
         return {
           ...c,
-          jsType: ColumnTasks.convertType(t.name, t.schema, c.name, c.type, config)
+          propertyName: c.name.replace(/ /g,''),
+          propertyType: ColumnTasks.convertType(t.name, t.schema, c.name, c.type, config)
         }
       })
     }
