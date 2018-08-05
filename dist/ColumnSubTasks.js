@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var TypeMap_1 = require("./TypeMap");
 /**
  * Generates the full column name comprised of the table, schema and column.
  *
@@ -13,32 +12,9 @@ var TypeMap_1 = require("./TypeMap");
 function generateFullColumnName(tableName, schemaName, columnName) {
     var result = tableName;
     if (schemaName != null && schemaName !== '') {
-        result += "." + schemaName;
+        result = schemaName + "." + result;
     }
     result += "." + columnName;
     return result;
 }
 exports.generateFullColumnName = generateFullColumnName;
-/**
- * Converts a database type to that of a JavaScript type.
- *
- * @export
- * @param {string} fullname The complete name of the column.
- * @param {string} type The name of the type from the database.
- * @param {Config} config The configuration object.
- * @returns {string}
- */
-function convertType(fullname, type, config) {
-    var convertedType = undefined;
-    var overrides = config.typeOverrides || {};
-    var userTypeMap = config.typeMap || {};
-    convertedType = overrides[fullname];
-    if (convertedType == null) {
-        convertedType = Object.keys(userTypeMap).find(function (t) { return userTypeMap[t].includes(type); });
-    }
-    if (convertedType == null) {
-        convertedType = Object.keys(TypeMap_1.default).find(function (t) { return TypeMap_1.default[t].includes(type); });
-    }
-    return convertedType === undefined ? 'any' : convertedType;
-}
-exports.convertType = convertType;

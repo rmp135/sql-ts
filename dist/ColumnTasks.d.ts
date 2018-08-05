@@ -1,15 +1,7 @@
+/// <reference types="knex" />
 import { TableDefinition } from './Adapters/AdapterInterface';
 import * as knex from 'knex';
 import { Column, Config } from './Typings';
-/**
- * Converts a Column into a TypeScript type definition.
- *
- * @export
- * @param {Column} column The Column to generate the type definition for.
- * @param {Config} config The configuration to use.
- * @returns {string}
- */
-export declare function stringifyColumn(column: Column, config: Config): string;
 /**
  * Returns all columns in a given Table using a knex context.
  *
@@ -20,3 +12,15 @@ export declare function stringifyColumn(column: Column, config: Config): string;
  * @returns {Promise<Column[]>}
  */
 export declare function getColumnsForTable(db: knex, table: TableDefinition, config: Config): Promise<Column[]>;
+/**
+ * Converts a database type to that of a JavaScript type.
+ *
+ * @export
+ * @param {string} tableName The name of the table.
+ * @param {string} schemaName The schema of the table.
+ * @param {string} columnName The column name.
+ * @param {string} type The name of the type from the database.
+ * @param {Config} config The configuration object.
+ * @returns {string}
+ */
+export declare function convertType(tableName: string, schema: string, columnName: string, type: string, config: Config): string;

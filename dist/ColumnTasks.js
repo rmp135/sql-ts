@@ -14,8 +14,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
         while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
+            if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [0, t.value];
             switch (op[0]) {
                 case 0: case 1: t = op; break;
                 case 4: _.label++; return { value: op[1], done: false };
@@ -36,23 +36,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var AdapterFactory = require("./AdapterFactory");
+var TypeMap_1 = require("./TypeMap");
 var ColumnSubTasks = require("./ColumnSubTasks");
-/**
- * Converts a Column into a TypeScript type definition.
- *
- * @export
- * @param {Column} column The Column to generate the type definition for.
- * @param {Config} config The configuration to use.
- * @returns {string}
- */
-function stringifyColumn(column, config) {
-    var optionality = config.propertyOptionality === 'required' ? '' : '?';
-    if (config.propertyOptionality == 'dynamic') {
-        optionality = column.optional ? '?' : '';
-    }
-    return "" + column.name + optionality + ": " + column.jsType + (column.nullable ? ' | null' : '');
-}
-exports.stringifyColumn = stringifyColumn;
 /**
  * Returns all columns in a given Table using a knex context.
  *
@@ -73,7 +58,6 @@ function getColumnsForTable(db, table, config) {
                 case 1:
                     columns = _a.sent();
                     return [2 /*return*/, columns.map(function (c) { return ({
-                            jsType: ColumnSubTasks.convertType(ColumnSubTasks.generateFullColumnName(table.name, table.schema, c.name), c.type, config),
                             nullable: c.isNullable,
                             name: c.name,
                             type: c.type,
@@ -84,3 +68,29 @@ function getColumnsForTable(db, table, config) {
     });
 }
 exports.getColumnsForTable = getColumnsForTable;
+/**
+ * Converts a database type to that of a JavaScript type.
+ *
+ * @export
+ * @param {string} tableName The name of the table.
+ * @param {string} schemaName The schema of the table.
+ * @param {string} columnName The column name.
+ * @param {string} type The name of the type from the database.
+ * @param {Config} config The configuration object.
+ * @returns {string}
+ */
+function convertType(tableName, schema, columnName, type, config) {
+    var fullname = ColumnSubTasks.generateFullColumnName(tableName, schema, columnName);
+    var convertedType = undefined;
+    var overrides = config.typeOverrides || {};
+    var userTypeMap = config.typeMap || {};
+    convertedType = overrides[fullname];
+    if (convertedType == null) {
+        convertedType = Object.keys(userTypeMap).find(function (t) { return userTypeMap[t].includes(type); });
+    }
+    if (convertedType == null) {
+        convertedType = Object.keys(TypeMap_1.default).find(function (t) { return TypeMap_1.default[t].includes(type); });
+    }
+    return convertedType === undefined ? 'any' : convertedType;
+}
+exports.convertType = convertType;

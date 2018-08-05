@@ -1,3 +1,4 @@
+/// <reference types="knex" />
 import * as knex from 'knex';
 import { Config, Table } from './Typings';
 /**
@@ -10,11 +11,11 @@ import { Config, Table } from './Typings';
  */
 export declare function getAllTables(db: knex, config: Config): Promise<Table[]>;
 /**
- * Returns the Table as a TypeScript interface.
+ * Converts a table name to an interface name given a configuration.
  *
  * @export
- * @param {Table} table The Table to create the interface for.
+ * @param {string} name The name of the table.
  * @param {Config} config The configuration to use.
- * @returns {string}
+ * @returns
  */
-export declare function stringifyTable(table: Table, config: Config): string;
+export declare function generateInterfaceName(name: string, config: Config): string;
