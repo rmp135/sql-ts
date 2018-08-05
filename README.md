@@ -98,7 +98,7 @@ Filter the tables to include only those specified.
 
 ### typeOverrides
 
-Override the types on a per column basis. This requires the full name of the column in the format `schema.table.column`. See [interfaceNameFormat](##interfaceNameFormat) for schema naming conventions. Omit the schema for databases that do not use them.
+Override the types on a per column basis. This requires the full name of the column in the format `schema.table.column`. See [interfaceNameFormat](#interfacenameformat) for schema naming conventions. Omit the schema for databases that do not use them.
 
 ```json
 {
