@@ -19,19 +19,26 @@ export function stringifyDatabase (database: Database, config: Config) {
   if (config.template !== undefined)
     template = fs.readFileSync(config.template, 'utf-8')
   const compiler = handlebars.compile(template)
-  const tables = database.tables.map(t => {
-    return {
-      ...t,
-      interfaceName: TableTasks.generateInterfaceName(t.name, config),
-      columns: t.columns.map(c => {
-        return {
-          ...c,
-          propertyName: c.name.replace(/ /g,''),
-          propertyType: ColumnTasks.convertType(t.name, t.schema, c.name, c.type, config)
-        }
-      })
-    }
-  })
+  const tables = decorateDatabase(database, config).tables
   const grouped = _.groupBy(tables, t => t.schema)
   return compiler({ grouped, tables, config })
+}
+
+export function decorateDatabase(database: Database, config) {
+  return {
+    ...database, 
+    tables: database.tables.map(t => {
+      return {
+        ...t,
+        interfaceName: TableTasks.generateInterfaceName(t.name, config),
+        columns: t.columns.map(c => {
+          return {
+            ...c,
+            propertyName: c.name.replace(/ /g,''),
+            propertyType: ColumnTasks.convertType(t.name, t.schema, c.name, c.type, config)
+          }
+        })
+      }
+    })  
+  }
 }
