@@ -8,7 +8,7 @@ const Mockindex: typeof index & typeof Rewireindex = <any> Rewireindex
 describe('index', () => {
   describe('toObject', () => {
     it('should return an object from a database', (done) => {
-      const mockDatabase = { }
+      const mockDatabase = { tables: [] }
       const mockDatabaseFactory = {
         buildDatabase: jasmine.createSpy('buildDatabase').and.returnValue(Promise.resolve(mockDatabase))
       }
@@ -17,7 +17,7 @@ describe('index', () => {
       })(async () => {
         const mockConfig = { }
         const result = await Mockindex.toObject(mockConfig)
-        expect(result).toBe(mockDatabase as any)
+        expect(result).toEqual(mockDatabase as any)
         expect(mockDatabaseFactory.buildDatabase).toHaveBeenCalledWith(mockConfig)
         done()
       })
@@ -47,7 +47,8 @@ describe('index', () => {
         buildDatabase: jasmine.createSpy('buildDatabase').and.returnValue(Promise.resolve(mockDatabase)),
       }
       const mockDatabaseTasks = {
-        stringifyDatabase: jasmine.createSpy('stringifyDatabase').and.returnValue('database string')
+        stringifyDatabase: jasmine.createSpy('stringifyDatabase').and.returnValue('database string'),
+        decorateDatabase: jasmine.createSpy('decorateDatabase').and.returnValue(mockDatabase)
       }
       Mockindex.__with__({
         DatabaseFactory: mockDatabaseFactory,

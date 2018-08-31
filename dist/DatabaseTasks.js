@@ -27,12 +27,15 @@ function stringifyDatabase(database, config) {
     if (config.template !== undefined)
         template = fs.readFileSync(config.template, 'utf-8');
     var compiler = handlebars.compile(template);
-    var tables = database.tables.map(function (t) {
-        return __assign({}, t, { interfaceName: TableTasks.generateInterfaceName(t.name, config), columns: t.columns.map(function (c) {
-                return __assign({}, c, { propertyName: c.name.replace(/ /g, ''), propertyType: ColumnTasks.convertType(t.name, t.schema, c.name, c.type, config) });
-            }) });
-    });
-    var grouped = _.groupBy(tables, function (t) { return t.schema; });
-    return compiler({ grouped: grouped, tables: tables, config: config });
+    var grouped = _.groupBy(database.tables, function (t) { return t.schema; });
+    return compiler({ grouped: grouped, tables: database.tables, config: config });
 }
 exports.stringifyDatabase = stringifyDatabase;
+function decorateDatabase(database, config) {
+    return __assign({}, database, { tables: database.tables.map(function (t) {
+            return __assign({}, t, { interfaceName: TableTasks.generateInterfaceName(t.name, config), columns: t.columns.map(function (c) {
+                    return __assign({}, c, { propertyName: c.name.replace(/ /g, ''), propertyType: ColumnTasks.convertType(t.name, t.schema, c.name, c.type, config) });
+                }) });
+        }) });
+}
+exports.decorateDatabase = decorateDatabase;

@@ -9,7 +9,8 @@ import * as DatabaseTasks from './DatabaseTasks'
  * @returns {Promise<Database>} The Database definition as a plain JavaScript object.
  */
 async function toObject (config: Config): Promise<Database> {
-  return await DatabaseFactory.buildDatabase(config)
+  const database = await DatabaseFactory.buildDatabase(config)
+  return DatabaseTasks.decorateDatabase(database, config);
 }
 
 /**

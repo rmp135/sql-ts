@@ -19,9 +19,8 @@ export function stringifyDatabase (database: Database, config: Config) {
   if (config.template !== undefined)
     template = fs.readFileSync(config.template, 'utf-8')
   const compiler = handlebars.compile(template)
-  const tables = decorateDatabase(database, config).tables
-  const grouped = _.groupBy(tables, t => t.schema)
-  return compiler({ grouped, tables, config })
+  const grouped = _.groupBy(database.tables, t => t.schema)
+  return compiler({ grouped, tables: database.tables, config })
 }
 
 export function decorateDatabase(database: Database, config) {

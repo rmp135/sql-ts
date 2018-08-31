@@ -45,10 +45,13 @@ var DatabaseTasks = require("./DatabaseTasks");
  */
 function toObject(config) {
     return __awaiter(this, void 0, void 0, function () {
+        var database;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, DatabaseFactory.buildDatabase(config)];
-                case 1: return [2 /*return*/, _a.sent()];
+                case 1:
+                    database = _a.sent();
+                    return [2 /*return*/, DatabaseTasks.decorateDatabase(database, config)];
             }
         });
     });
