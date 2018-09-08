@@ -1,4 +1,4 @@
-import { Config, Database, Table } from './Typings';
+import { Config, Database, Table, DecoratedTable, DecoratedDatabase } from './Typings';
 import * as TableTasks from './TableTasks';
 import * as handlebars from 'handlebars'
 import * as _ from 'lodash'
@@ -14,7 +14,7 @@ import * as ColumnTasks from './ColumnTasks';
  * @param {Config} config The configuration to use.
  * @returns A TypeScript definition, optionally wrapped in a namespace.
  */
-export function stringifyDatabase (database: Database, config: Config) {
+export function stringifyDatabase (database: Database, config: Config): string {
   let template = fs.readFileSync(path.join(__dirname, './template.handlebars'), 'utf-8')
   if (config.template !== undefined)
     template = fs.readFileSync(config.template, 'utf-8')
@@ -23,9 +23,16 @@ export function stringifyDatabase (database: Database, config: Config) {
   return compiler({ grouped, tables: database.tables, config })
 }
 
-export function decorateDatabase(database: Database, config) {
+/**
+ * Decorates the database object before sending to template compiler.
+ *
+ * @export
+ * @param {Database} database The Database definition.
+ * @param {Config} config The configuration to use.
+ * @returns The decorated database definition.
+ */
+export function decorateDatabase(database: Database, config: Config): DecoratedDatabase {
   return {
-    ...database, 
     tables: database.tables.map(t => {
       return {
         ...t,

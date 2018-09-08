@@ -71,11 +71,43 @@ export interface Table {
 }
 
 /**
- * The JSON definition of a database for importing and exporting.
+ * The JSON definition of a database.
  * 
  * @export
  * @interface Database
  */
 export interface Database {
   tables: Table[]
+}
+
+/**
+ * JSON definition of a database with additional fields.
+ *
+ * @export
+ * @interface DecoratedDatabase
+ */
+export interface DecoratedDatabase {
+  tables: DecoratedTable[]
+}
+
+/**
+ * JSON definition of a database table with additional fields.
+ *
+ * @export
+ * @interface DecoratedDatabase
+ */
+export interface DecoratedTable extends Table {
+  interfaceName: string
+  columns: DecoratedColumn[]
+}
+
+/**
+ * JSON definition of a database column with additional fields.
+ *
+ * @export
+ * @interface DecoratedDatabase
+ */
+export interface DecoratedColumn extends Column {
+  propertyName: string
+  propertyType: string
 }

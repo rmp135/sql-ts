@@ -1,4 +1,4 @@
-import { Config, Column, Table, Database } from './Typings'
+import { Config, Column, Table, Database, DecoratedDatabase } from './Typings'
 import * as DatabaseFactory from './DatabaseFactory'
 import * as DatabaseTasks from './DatabaseTasks'
 
@@ -6,9 +6,9 @@ import * as DatabaseTasks from './DatabaseTasks'
  * Generates a Database definition as a plain JavaScript object.
  * 
  * @param {Config} config       The configuration to generate this database with.
- * @returns {Promise<Database>} The Database definition as a plain JavaScript object.
+ * @returns {Promise<DecoratedDatabase>} The Database definition as a plain JavaScript object.
  */
-async function toObject (config: Config): Promise<Database> {
+async function toObject (config: Config): Promise<DecoratedDatabase> {
   const database = await DatabaseFactory.buildDatabase(config)
   return DatabaseTasks.decorateDatabase(database, config);
 }
@@ -30,7 +30,7 @@ async function toTypeScript (config: Config): Promise<string> {
  * @param database The database object as exported from sql-ts
  * @param config The configuration to generate the TypeScript from.
  */
-function fromObject (database: Database, config: Config): string {
+function fromObject (database: DecoratedDatabase, config: Config): string {
   return DatabaseTasks.stringifyDatabase(database, config)
 }
 
