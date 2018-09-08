@@ -25,7 +25,7 @@
   "devDependencies": {
     "@types/handlebars": "^4.0.39",
     "@types/jasmine": "^2.6.0",
-    "@types/knex": "^0.14.12",
+    "@types/knex": "^0.14.23",
     "@types/lodash": "^4.14.116",
     "@types/rewire": "^2.5.28",
     "@types/yargs": "^11.0.0",
