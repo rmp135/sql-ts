@@ -1,11 +1,11 @@
-import { Config, Column, Table, Database } from './Typings';
+import { Config, Column, Table, Database, DecoratedDatabase } from './Typings';
 /**
  * Generates a Database definition as a plain JavaScript object.
  *
  * @param {Config} config       The configuration to generate this database with.
- * @returns {Promise<Database>} The Database definition as a plain JavaScript object.
+ * @returns {Promise<DecoratedDatabase>} The Database definition as a plain JavaScript object.
  */
-declare function toObject(config: Config): Promise<Database>;
+declare function toObject(config: Config): Promise<DecoratedDatabase>;
 /**
  * Generates a Database definition as a series of TypeScript interfaces.
  *
@@ -19,7 +19,7 @@ declare function toTypeScript(config: Config): Promise<string>;
  * @param database The database object as exported from sql-ts
  * @param config The configuration to generate the TypeScript from.
  */
-declare function fromObject(database: Database, config: Config): string;
+declare function fromObject(database: DecoratedDatabase, config: Config): string;
 declare const _default: {
     toObject: typeof toObject;
     fromObject: typeof fromObject;

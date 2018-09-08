@@ -31,11 +31,21 @@ function stringifyDatabase(database, config) {
     return compiler({ grouped: grouped, tables: database.tables, config: config });
 }
 exports.stringifyDatabase = stringifyDatabase;
+/**
+ * Decorates the database object before sending to template compiler.
+ *
+ * @export
+ * @param {Database} database The Database definition.
+ * @param {Config} config The configuration to use.
+ * @returns The decorated database definition.
+ */
 function decorateDatabase(database, config) {
-    return __assign({}, database, { tables: database.tables.map(function (t) {
+    return {
+        tables: database.tables.map(function (t) {
             return __assign({}, t, { interfaceName: TableTasks.generateInterfaceName(t.name, config), columns: t.columns.map(function (c) {
                     return __assign({}, c, { propertyName: c.name.replace(/ /g, ''), propertyType: ColumnTasks.convertType(t.name, t.schema, c.name, c.type, config) });
                 }) });
-        }) });
+        })
+    };
 }
 exports.decorateDatabase = decorateDatabase;

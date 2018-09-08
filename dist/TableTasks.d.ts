@@ -1,4 +1,3 @@
-/// <reference types="knex" />
 import * as knex from 'knex';
 import { Config, Table } from './Typings';
 /**
