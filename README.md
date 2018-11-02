@@ -72,7 +72,7 @@ For example, to connect to a mysql server, use the following.
 
 ```json
 {
-  "dialect": "mssql",
+  "dialect": "mysql",
   "connection": {
     "host": "localhost",
     "database": "database",
