@@ -14,7 +14,7 @@ import * as TableSubTasks from './TableSubTasks'
  * @returns {Promise<Table[]>} 
  */
 export async function getAllTables (db: knex, config: Config): Promise<Table[]> {
-  const adapter = AdapterFactory.buildAdapter(config.dialect)
+  const adapter = AdapterFactory.buildAdapter(config)
   const allTables = await adapter.getAllTables(db, config.schemas || [])
   const tables =  await Promise.all(allTables.map(async table => ({
     columns: await ColumnTasks.getColumnsForTable(db, table, config),

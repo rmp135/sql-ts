@@ -15,7 +15,7 @@ import * as ColumnSubTasks from './ColumnSubTasks'
  * @returns {Promise<Column[]>} 
  */
 export async function getColumnsForTable (db: knex, table: TableDefinition, config: Config): Promise<Column[]> {
-  const adapter = AdapterFactory.buildAdapter(config.dialect)
+  const adapter = AdapterFactory.buildAdapter(config)
   const columns = await adapter.getAllColumns(db, table.name, table.schema)
   return columns.map(c => ({
     nullable: c.isNullable,
