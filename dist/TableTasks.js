@@ -53,7 +53,7 @@ function getAllTables(db, config) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    adapter = AdapterFactory.buildAdapter(config.dialect);
+                    adapter = AdapterFactory.buildAdapter(config);
                     return [4 /*yield*/, adapter.getAllTables(db, config.schemas || [])];
                 case 1:
                     allTables = _a.sent();

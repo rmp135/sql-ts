@@ -10,7 +10,6 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var TableTasks = require("./TableTasks");
 var handlebars = require("handlebars");
-var _ = require("lodash");
 var fs = require("fs");
 var path = require("path");
 var ColumnTasks = require("./ColumnTasks");
@@ -27,7 +26,14 @@ function stringifyDatabase(database, config) {
     if (config.template !== undefined)
         template = fs.readFileSync(config.template, 'utf-8');
     var compiler = handlebars.compile(template);
-    var grouped = _.groupBy(database.tables, function (t) { return t.schema; });
+    var grouped = {};
+    for (var _i = 0, _a = database.tables; _i < _a.length; _i++) {
+        var t = _a[_i];
+        if (grouped[t.schema] === undefined) {
+            grouped[t.schema] = [];
+        }
+        grouped[t.schema].push(t);
+    }
     return compiler({ grouped: grouped, tables: database.tables, config: config });
 }
 exports.stringifyDatabase = stringifyDatabase;

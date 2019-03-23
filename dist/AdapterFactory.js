@@ -7,7 +7,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @param {any} dialect The name of SQL adapter that should be returned.
  * @returns {AdapterInterface} The adapter for connecting to a SQL database.
  */
-function buildAdapter(dialect) {
+function buildAdapter(config) {
+    var dialect = config.dialect || config.client.toString();
     // Use aliases from knex.
     // https://github.com/tgriesser/knex/blob/master/src/index.js
     var aliases = {
