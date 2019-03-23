@@ -1,7 +1,6 @@
-import { Config, Database, Table, DecoratedTable, DecoratedDatabase } from './Typings';
+import { Config, Database, Table, DecoratedDatabase } from './Typings';
 import * as TableTasks from './TableTasks';
 import * as handlebars from 'handlebars'
-import * as _ from 'lodash'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as ColumnTasks from './ColumnTasks';
@@ -19,7 +18,13 @@ export function stringifyDatabase (database: Database, config: Config): string {
   if (config.template !== undefined)
     template = fs.readFileSync(config.template, 'utf-8')
   const compiler = handlebars.compile(template)
-  const grouped = _.groupBy(database.tables, t => t.schema)
+  const grouped : {[key:string]: Table[]} = {}
+  for (let t of database.tables) {
+    if (grouped[t.schema] === undefined) {
+      grouped[t.schema] = []
+    }
+    grouped[t.schema].push(t)
+  }
   return compiler({ grouped, tables: database.tables, config })
 }
 

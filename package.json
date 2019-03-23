@@ -19,14 +19,12 @@
   "dependencies": {
     "handlebars": "^4.0.11",
     "knex": "^0.14.6",
-    "lodash": "^4.17.10",
     "yargs": "^11.0.0"
   },
   "devDependencies": {
     "@types/handlebars": "^4.0.39",
     "@types/jasmine": "^2.6.0",
     "@types/knex": "^0.14.23",
-    "@types/lodash": "^4.14.116",
     "@types/rewire": "^2.5.28",
     "@types/yargs": "^11.0.0",
     "copyfiles": "^2.0.0",
