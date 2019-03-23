@@ -129,7 +129,7 @@ describe('ColumnTasks', () => {
           dialect: 'dialect'
         }
         const result = await MockColumnTasks.getColumnsForTable(db as any, table as any, config as any)
-        expect(mockAdapterFactory.buildAdapter).toHaveBeenCalledWith('dialect')
+        expect(mockAdapterFactory.buildAdapter).toHaveBeenCalledWith(config)
         expect(mockAdapter.getAllColumns).toHaveBeenCalledWith(db, 'name', 'schema')
         expect(result).toEqual([
           {
