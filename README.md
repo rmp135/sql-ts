@@ -6,17 +6,43 @@ Generate TypeScript types from a SQL database.
 
 Supports the following databases: MySQL, Microsoft SQL Server, SQLite and Postgres.
 
+## Installation
+
+Install into your project using npm / yarn.
+
+`npm install sql-ts`
+
+Install your relevant SQL driver. Refer to the [knex documentation](http://knexjs.org/#Installation-node) to determine which driver you should install.
+
+For example `npm install mysql`.
+
+Create a configuration file, for example `mysql.json`. This will mirror connection details from knex. The `dialect` or `client` property will determine the SQL type.
+
+The most basic MySQL setup is below, modify as appropriate. Additional options can be applied by referring to the [Config](#config).
+
+```json
+{
+  "dialect":"mysql",
+  "connection": {
+    "host": "localhost",
+    "user": "user",
+    "password": "password",
+    "database" : "my_database"
+  }
+}
+```
+
 ## Usage
 
-Use as a global module and provide a configuration file.
+Run `sql-ts` with the path of the configuration file created above.
 
 `sql-ts -c ./config.json`
 
-The file will be exported with the filename `Database.ts` (or with the name specified in the configuration below) at the current working directory. Warning: if this file exists, it will be overwritten.
+The file will be exported with the filename `Database.ts` (or with the name specified in the configuration) at the current working directory. Warning: if this file exists, it will be overwritten.
 
 ---
 
-Use as a node module, passing the configuration as the first argument.
+Alternatively, use as a node module, passing the configuration object as the first argument.
 
 ### toObject
 
@@ -67,23 +93,6 @@ const definitions = await sqlts.toTypeScript(config)
 ## Config
 
 The configuration extends the [knex configuration](http://knexjs.org/#Installation-client) with some additional properties for table filtering and type overriding.
-
-For example, to connect to a mysql server, use the following.
-
-```json
-{
-  "dialect": "mysql",
-  "connection": {
-    "host": "localhost",
-    "database": "database",
-    "user": "user",
-    "password": "password"
-  }
-}
-```
-
-By default, no drivers are installed and the relevant driver must be installed as a dependency. Refer to the [knex documentation](http://knexjs.org/#Installation-node) on which drivers are used for which SQL variant. 
-
 ### tables
 
 Filter the tables to include only those specified.
