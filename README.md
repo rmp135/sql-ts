@@ -10,7 +10,7 @@ Supports the following databases: MySQL, Microsoft SQL Server, SQLite and Postgr
 
 Install into your project using npm / yarn.
 
-`npm install sql-ts`
+`npm install @rmp135/sql-ts`
 
 Install your relevant SQL driver. Refer to the [knex documentation](http://knexjs.org/#Installation-node) to determine which driver you should install.
 
@@ -34,9 +34,9 @@ The most basic MySQL setup is below, modify as appropriate. Additional options c
 
 ## Usage
 
-Run `sql-ts` with the path of the configuration file created above.
+Run `npx @rmp135/sql-ts` with the path of the configuration file created above.
 
-`sql-ts -c ./config.json`
+`npx @rmp135/sql-ts -c ./config.json`
 
 The file will be exported with the filename `Database.ts` (or with the name specified in the configuration) at the current working directory. Warning: if this file exists, it will be overwritten.
 
