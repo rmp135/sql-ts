@@ -57,6 +57,11 @@ function getAllTables(db, config) {
                     return [4 /*yield*/, adapter.getAllTables(db, config.schemas || [])];
                 case 1:
                     allTables = _a.sent();
+                    if (config.excludedTables && config.excludedTables.length) {
+                        allTables = allTables.filter(function (table) {
+                            return config.excludedTables.indexOf(table.name) < 0;
+                        });
+                    }
                     return [4 /*yield*/, Promise.all(allTables.map(function (table) { return __awaiter(_this, void 0, void 0, function () {
                             var _a;
                             return __generator(this, function (_b) {

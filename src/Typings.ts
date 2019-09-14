@@ -7,8 +7,9 @@ import * as knex from 'knex';
  * @interface Config
  * @extends {knex.Config}
  */
-export interface Config extends knex.Config { 
+export interface Config extends knex.Config {
   tables?: string[],
+  excludedTables?: string[],
   filename?: string,
   interfaceNameFormat?: string,
   schemaAsNamespace?: boolean,

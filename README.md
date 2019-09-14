@@ -93,6 +93,7 @@ const definitions = await sqlts.toTypeScript(config)
 ## Config
 
 The configuration extends the [knex configuration](http://knexjs.org/#Installation-client) with some additional properties for table filtering and type overriding.
+
 ### tables
 
 Filter the tables to include only those specified.
@@ -102,6 +103,18 @@ Filter the tables to include only those specified.
   "dialect": "...",
   "connection": {},
   "tables": ["Table1", "Table2"]
+}
+```
+
+### excludedTables
+
+Filter the tables to exclude those specified.
+
+```json
+{
+  "dialect": "...",
+  "connection": {},
+  "excludedTables": ["knex_migrations", "knex_migrations_lock", "android_metadata"]
 }
 ```
 

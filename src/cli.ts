@@ -19,5 +19,5 @@ const config = JSON.parse(fs.readFileSync(configPath, 'utf8')) as Config
   const fileName = `${config.filename || 'Database'}.ts`
   const outFile = path.join(process.cwd(), fileName)
   fs.writeFileSync(outFile, output)
-  console.log(`Definition file written as ${outFile}.`)
+  console.log(`Definition file written as ${outFile}`)
 })()
