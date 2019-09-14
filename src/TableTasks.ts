@@ -41,5 +41,11 @@ export async function getAllTables (db: knex, config: Config): Promise<Table[]> 
  */
 export function generateInterfaceName (name: string, config: Config): string {
   const interfaceNamePattern = config.interfaceNameFormat || '${table}Entity'
+  if (interfaceNamePattern === 'PascalCase') {
+    return name.split('_').map(s => {
+      if (!s.length) return s;
+      return s[0].toUpperCase() + s.substr(1).toLowerCase();
+    }).join('');
+  }
   return interfaceNamePattern.replace('${table}', name.replace(/ /g, '_'))
 }
