@@ -33,6 +33,13 @@ describe('TableTasks', () => {
         expect(MockTableTasks.generateInterfaceName('name_test', mockConfig)).toBe('NameTest')
         expect(MockTableTasks.generateInterfaceName('_special_case', mockConfig)).toBe('SpecialCase')
       })
+      it('should convert to PascalCaseSingular', () => {
+        const mockConfig = {
+          interfaceNameFormat: 'PascalCaseSingular'
+        }
+        expect(MockTableTasks.generateInterfaceName('user_sessions', mockConfig)).toBe('UserSession')
+        expect(MockTableTasks.generateInterfaceName('users', mockConfig)).toBe('User')
+      })
     })
   
   })
