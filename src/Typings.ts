@@ -10,6 +10,7 @@ import * as knex from 'knex';
 export interface Config extends knex.Config { 
   tables?: string[],
   filename?: string,
+  fileReplaceWithinMarker?: string,
   interfaceNameFormat?: string,
   schemaAsNamespace?: boolean,
   schemas?: string[],
