@@ -160,6 +160,26 @@ Specifies the name that the file should be saved as. Defaults to "Database.ts". 
 }
 ```
 
+### fileReplaceWithinMarker
+
+If set, instead of creating a new file, the command line tool will replace the content within the given markers in the existing `filename`. The marker can be any string but needs to be unique and there must be an opening and a closing one.
+
+For example if Database.ts contains the following content:
+
+```
+// Some random code here
+
+// INSERT_TYPES_HERE
+
+// INSERT_TYPES_HERE
+
+// Some other code after
+```
+
+And `fileReplaceWithinMarker` is set to `// INSERT_TYPES_HERE`, the type definitions will be inserted inside the file within these two "// INSERT_TYPES_HERE" comments.
+
+IF the file does not exists, or if the markers cannot be found in the file, the insertion will fail.
+
 ### interfaceNameFormat
 
 Specifies the pattern that the exported interface names will take. The token "${table}" will be replaced with the table name. Defaults to "${table}Entity".

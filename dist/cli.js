@@ -40,6 +40,19 @@ var fs = require("fs");
 var yargs = require("yargs");
 var path = require("path");
 var index_1 = require("./index");
+function insertContentIntoFile(filePath, markerOpen, markerClose, contentToInsert) {
+    var fs = require('fs');
+    if (fs.existsSync(path))
+        throw new Error('File not found: ' + filePath);
+    var content = fs.readFileSync(filePath, 'utf-8');
+    // [^]* matches any character including new lines
+    var regex = new RegExp(markerOpen + '[^]*?' + markerClose);
+    if (!content.match(regex))
+        throw new Error('Could not find markers: ' + markerOpen);
+    content = content.replace(regex, markerOpen + "\n" + contentToInsert + "\n" + markerClose);
+    fs.writeFileSync(filePath, content);
+}
+;
 var args = yargs(process.argv)
     .alias('c', 'config')
     .describe('c', 'Config file.')
@@ -56,8 +69,14 @@ var config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
                 output = _a.sent();
                 fileName = (config.filename || 'Database') + ".ts";
                 outFile = path.join(process.cwd(), fileName);
-                fs.writeFileSync(outFile, output);
-                console.log("Definition file written as " + outFile);
+                if (config.fileReplaceWithinMarker) {
+                    insertContentIntoFile(outFile, config.fileReplaceWithinMarker, config.fileReplaceWithinMarker, output);
+                    console.log("Definitions inserted into " + outFile);
+                }
+                else {
+                    fs.writeFileSync(outFile, output);
+                    console.log("Definition file written as " + outFile);
+                }
                 return [2 /*return*/];
         }
     });

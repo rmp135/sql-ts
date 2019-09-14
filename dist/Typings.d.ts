@@ -10,6 +10,7 @@ export interface Config extends knex.Config {
     tables?: string[];
     excludedTables?: string[];
     filename?: string;
+    fileReplaceWithinMarker?: string;
     interfaceNameFormat?: string;
     schemaAsNamespace?: boolean;
     schemas?: string[];
