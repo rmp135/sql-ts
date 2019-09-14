@@ -151,6 +151,8 @@ Specifies the name that the file should be saved as. Defaults to "Database.ts". 
 
 Specifies the pattern that the exported interface names will take. The token "${table}" will be replaced with the table name. Defaults to "${table}Entity".
 
+This property also supports the special value `PascalCase`. In this case, the table name will be transformed by removing the underscores and adding an converting the words to title case. Thus "user_sessions" would become "UserSessions".
+
 The below will export interfaces with such names as `UserModel` and `LogModel` for tables with names `User` and `Log` respectively.
 
 ```json
