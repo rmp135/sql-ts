@@ -91,6 +91,13 @@ exports.getAllTables = getAllTables;
  */
 function generateInterfaceName(name, config) {
     var interfaceNamePattern = config.interfaceNameFormat || '${table}Entity';
+    if (interfaceNamePattern === 'PascalCase') {
+        return name.split('_').map(function (s) {
+            if (!s.length)
+                return s;
+            return s[0].toUpperCase() + s.substr(1).toLowerCase();
+        }).join('');
+    }
     return interfaceNamePattern.replace('${table}', name.replace(/ /g, '_'));
 }
 exports.generateInterfaceName = generateInterfaceName;
