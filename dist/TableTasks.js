@@ -91,11 +91,17 @@ exports.getAllTables = getAllTables;
  */
 function generateInterfaceName(name, config) {
     var interfaceNamePattern = config.interfaceNameFormat || '${table}Entity';
-    if (interfaceNamePattern === 'PascalCase') {
+    if (interfaceNamePattern.indexOf('PascalCase') === 0) {
         return name.split('_').map(function (s) {
             if (!s.length)
                 return s;
-            return s[0].toUpperCase() + s.substr(1).toLowerCase();
+            if (interfaceNamePattern === 'PascalCase') {
+                return s[0].toUpperCase() + s.substr(1).toLowerCase();
+            }
+            else if (interfaceNamePattern === 'PascalCaseSingular') {
+                var hasS = s[s.length - 1] === 's';
+                return s[0].toUpperCase() + s.substr(1, s.length - (hasS ? 2 : 1)).toLowerCase();
+            }
         }).join('');
     }
     return interfaceNamePattern.replace('${table}', name.replace(/ /g, '_'));

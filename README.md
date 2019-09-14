@@ -151,7 +151,11 @@ Specifies the name that the file should be saved as. Defaults to "Database.ts". 
 
 Specifies the pattern that the exported interface names will take. The token "${table}" will be replaced with the table name. Defaults to "${table}Entity".
 
-This property also supports the special value `PascalCase`. In this case, the table name will be transformed by removing the underscores and adding an converting the words to title case. Thus "user_sessions" would become "UserSessions".
+This property also supports special values that transform the table name according to pre-specified rules. The supported formats are:
+
+- `PascalCase`: in this case, the table name will be transformed by removing the underscores and adding an converting the words to title case. Thus "user_sessions" would become "UserSessions".
+
+- `PascalCaseSingular`: table names are some times plural but it is preferable if the entity names are singular. This format transform the table name like PascalCase but also make the words singular. Thus "user_session" will become "UserSession" and "users" will become "User".
 
 The below will export interfaces with such names as `UserModel` and `LogModel` for tables with names `User` and `Log` respectively.
 
