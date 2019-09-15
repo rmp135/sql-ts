@@ -1,6 +1,6 @@
 import 'jasmine'
-import * as TableTasks from './TableTasks';
-import { Table } from './Typings'
+import * as TableTasks from './TableTasks'
+import { Config } from './Typings'
 const rewire = require('rewire')
 
 let RewireTableTasks = rewire('./TableTasks')
@@ -10,38 +10,71 @@ describe('TableTasks', () => {
   describe('TableSubTasks', () => {
     describe('generateTableNames', () => {
       it('should generate the default table name', () => {
-        const mockConfig = { }
+        const mockConfig: Config = { }
         const result = MockTableTasks.generateInterfaceName('name', mockConfig)
         expect(result).toBe('nameEntity')
       })
       it('should generate a configuration supplied format', () => {
-        const mockConfig = {
+        const mockConfig: Config = {
           interfaceNameFormat: '${table}Name'
         }
         const result = MockTableTasks.generateInterfaceName('name', mockConfig)
         expect(result).toBe('nameName')
       })
       it('should replace spaces with underscores', () => {
-        const mockConfig = { }
+        const mockConfig: Config = { }
         const result = MockTableTasks.generateInterfaceName('n a m e', mockConfig)
         expect(result).toBe('n_a_m_eEntity')
       })
       it('should convert to PascalCase', () => {
-        const mockConfig = {
-          interfaceNameFormat: 'PascalCase'
+        const mockConfig: Config = {
+          pascalTableNames: true
         }
-        expect(MockTableTasks.generateInterfaceName('name_test', mockConfig)).toBe('NameTest')
-        expect(MockTableTasks.generateInterfaceName('_special_case', mockConfig)).toBe('SpecialCase')
+        expect(MockTableTasks.generateInterfaceName('name_test', mockConfig)).toBe('NameTestEntity')
+        expect(MockTableTasks.generateInterfaceName('_special_case', mockConfig)).toBe('SpecialCaseEntity')
+        expect(MockTableTasks.generateInterfaceName('special_case_', mockConfig)).toBe('SpecialCaseEntity')
       })
-      it('should convert to PascalCaseSingular', () => {
-        const mockConfig = {
-          interfaceNameFormat: 'PascalCaseSingular'
+      it('should convert to PascalCase with spaces', () => {
+        const mockConfig: Config = {
+          pascalTableNames: true
         }
-        expect(MockTableTasks.generateInterfaceName('user_sessions', mockConfig)).toBe('UserSession')
-        expect(MockTableTasks.generateInterfaceName('users', mockConfig)).toBe('User')
+        expect(MockTableTasks.generateInterfaceName('name test', mockConfig)).toBe('NameTestEntity')
+        expect(MockTableTasks.generateInterfaceName('special case', mockConfig)).toBe('SpecialCaseEntity')
+      })
+      it('should convert to PascalCase with a different name', () => {
+        const mockConfig: Config = {
+          interfaceNameFormat: '${table}Name',
+          pascalTableNames: true
+        }
+        expect(MockTableTasks.generateInterfaceName('name_test', mockConfig)).toBe('NameTestName')
+        expect(MockTableTasks.generateInterfaceName('_special_case', mockConfig)).toBe('SpecialCaseName')
+        expect(MockTableTasks.generateInterfaceName('special_case_', mockConfig)).toBe('SpecialCaseName')
+      })
+      it('should convert to singular', () => {
+        const mockConfig: Config = {
+          singularTableNames: true
+        }
+        expect(MockTableTasks.generateInterfaceName('UserSessions', mockConfig)).toBe('UserSessionEntity')
+        expect(MockTableTasks.generateInterfaceName('UserSession', mockConfig)).toBe('UserSessionEntity')
+      })
+      it('should convert to singular with a different name', () => {
+        const mockConfig: Config = {
+          interfaceNameFormat: '${table}Name',
+          singularTableNames: true
+        }
+        expect(MockTableTasks.generateInterfaceName('UserSessions', mockConfig)).toBe('UserSessionName')
+        expect(MockTableTasks.generateInterfaceName('UserSession', mockConfig)).toBe('UserSessionName')
+      })
+      it('should convert to singular and PascalCase', () => {
+        const mockConfig: Config = {
+          pascalTableNames: true,
+          singularTableNames: true
+        }
+        expect(MockTableTasks.generateInterfaceName('name_tests', mockConfig)).toBe('NameTestEntity')
+        expect(MockTableTasks.generateInterfaceName('_special_cases', mockConfig)).toBe('SpecialCaseEntity')
+        expect(MockTableTasks.generateInterfaceName('special_cases_', mockConfig)).toBe('SpecialCaseEntity')
       })
     })
-  
   })
   describe('getAllTables', () => {
     it('should return all tables from a database', (done) => {
@@ -69,7 +102,7 @@ describe('TableTasks', () => {
         ColumnTasks: mockColumnTasks
       })(async () => {
         const mockDB = {}
-        const mockConfig = {
+        const mockConfig: Config = {
           schemas: ['schema1']
         }
         const result = await MockTableTasks.getAllTables(mockDB as any, mockConfig)
@@ -120,7 +153,7 @@ describe('TableTasks', () => {
         ColumnTasks: mockColumnTasks
       })(async () => {
         const mockDB = {}
-        const mockConfig = { }
+        const mockConfig: Config = { }
         const result = await MockTableTasks.getAllTables(mockDB as any, mockConfig)
         expect(mockAdapter.getAllTables).toHaveBeenCalledWith(mockDB, [])
         expect(mockColumnTasks.getColumnsForTable.calls.argsFor(0)).toEqual([mockDB, mockTables[0], mockConfig])

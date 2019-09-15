@@ -149,13 +149,7 @@ Specifies the name that the file should be saved as. Defaults to "Database.ts". 
 
 ### interfaceNameFormat
 
-Specifies the pattern that the exported interface names will take. The token "${table}" will be replaced with the table name. Defaults to "${table}Entity".
-
-This property also supports special values that transform the table name according to pre-specified rules. The supported formats are:
-
-- `PascalCase`: in this case, the table name will be transformed by removing the underscores and adding an converting the words to title case. Thus "user_sessions" would become "UserSessions".
-
-- `PascalCaseSingular`: table names are some times plural but it is preferable if the entity names are singular. This format transforms the table name like PascalCase but also makes the words singular. Thus "user_session" will become "UserSession" and "users" will become "User".
+Specifies the pattern that the exported interface names will take. The token "${table}" will be replaced with the table name. Defaults to `${table}Entity`.
 
 The below will export interfaces with such names as `UserModel` and `LogModel` for tables with names `User` and `Log` respectively.
 
@@ -164,6 +158,30 @@ The below will export interfaces with such names as `UserModel` and `LogModel` f
   "dialect": "...",
   "connection": {},
   "interfaceNameFormat": "${table}Model"
+}
+```
+
+### pascalTableNames
+
+Converts the names of tables into PascalCase before being passed into the name generator. e.g. "table_name" becomes "TableName". Spaces in table names are converted to underscores so "table name" also becomes "TableName". Defaults to `false`
+
+```json
+{
+  "dialect": "...",
+  "connection": {},
+  "pascalTableNames": true
+}
+```
+
+### singularTableNames
+
+Removes the "s" from the end of table names before being passed into the name generator. Defaults `false`.
+
+```json
+{
+  "dialect": "...",
+  "connection": {},
+  "singularTableNames": true
 }
 ```
 

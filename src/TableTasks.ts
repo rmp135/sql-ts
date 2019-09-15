@@ -36,16 +36,15 @@ export async function getAllTables (db: knex, config: Config): Promise<Table[]> 
  */
 export function generateInterfaceName (name: string, config: Config): string {
   const interfaceNamePattern = config.interfaceNameFormat || '${table}Entity'
-  if (interfaceNamePattern.indexOf('PascalCase') === 0) {
-    return name.split('_').map(s => {
-      if (!s.length) return s;
-      if (interfaceNamePattern === 'PascalCase') {
-        return s[0].toUpperCase() + s.substr(1).toLowerCase();
-      } else if (interfaceNamePattern === 'PascalCaseSingular') {
-        const hasS = s[s.length - 1] === 's';
-        return s[0].toUpperCase() + s.substr(1, s.length - (hasS ? 2 : 1)).toLowerCase();
-      }
-    }).join('');
+  name = name.replace(/ /g, '_')
+  if (config.pascalTableNames) {
+    name = name.split('_').map(s => {
+      if (s.length === 0) return s
+      return s[0].toUpperCase() + s.substr(1, s.length - 1).toLowerCase()
+    }).join('')
   }
-  return interfaceNamePattern.replace('${table}', name.replace(/ /g, '_'))
+  if (config.singularTableNames && name[name.length - 1] == "s") {
+    name = name.substr(0, name.length - 1)
+  }
+  return interfaceNamePattern.replace('${table}', name)
 }

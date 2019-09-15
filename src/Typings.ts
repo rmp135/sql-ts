@@ -11,6 +11,8 @@ export interface Config extends knex.Config {
   tables?: string[],
   filename?: string,
   interfaceNameFormat?: string,
+  pascalTableNames?: boolean,
+  singularTableNames?: boolean
   schemaAsNamespace?: boolean,
   schemas?: string[],
   template?: string,
