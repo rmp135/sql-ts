@@ -6,7 +6,7 @@ import sqlts, { Config } from './index'
 
 function insertContentIntoFile(filePath:string, markerOpen:string, markerClose:string, contentToInsert:string):void {
   const fs = require('fs');
-  if (fs.existsSync(path)) throw new Error('File not found: ' + filePath);
+  if (!fs.existsSync(filePath)) throw new Error('File not found: ' + filePath);
 	let content:string = fs.readFileSync(filePath, 'utf-8');
 	// [^]* matches any character including new lines
   const regex:RegExp = new RegExp(markerOpen + '[^]*?' + markerClose);
