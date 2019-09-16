@@ -42,7 +42,7 @@ var path = require("path");
 var index_1 = require("./index");
 function insertContentIntoFile(filePath, markerOpen, markerClose, contentToInsert) {
     var fs = require('fs');
-    if (fs.existsSync(path))
+    if (!fs.existsSync(path))
         throw new Error('File not found: ' + filePath);
     var content = fs.readFileSync(filePath, 'utf-8');
     // [^]* matches any character including new lines
