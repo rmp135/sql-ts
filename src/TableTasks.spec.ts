@@ -128,6 +128,50 @@ describe('TableTasks', () => {
         done()
       })
     })
+    it('should filter tables when specified', (done) => {
+      const mockTables = [
+        {
+          name: 'table2name',
+          schema: 'table2schema'
+        },
+        {
+          name: 'table3name',
+          schema: 'table2schema'
+        }
+      ]
+      const mockAdapter = {
+        getAllTables: jasmine.createSpy('getAllTables').and.returnValue(Promise.resolve(mockTables))
+      }
+      const mockAdapterFactory = {
+        buildAdapter: jasmine.createSpy('buildAdapter').and.returnValue(mockAdapter)
+      }
+      const mockColumnTasks = {
+        getColumnsForTable: jasmine.createSpy('getColumnsForTable').and.returnValues(Promise.resolve(['column1']))
+      }
+      MockTableTasks.__with__({
+        AdapterFactory: mockAdapterFactory,
+        ColumnTasks: mockColumnTasks
+      })(async () => {
+        const mockDB = {}
+        const mockConfig: Config = {
+          schemas: ['table2schema'],
+          excludedTables: ['table2schema.table2name']
+        }
+        const result = await MockTableTasks.getAllTables(mockDB as any, mockConfig)
+        expect(mockAdapter.getAllTables).toHaveBeenCalledWith(mockDB, ['table2schema'])
+        expect(mockColumnTasks.getColumnsForTable.calls.argsFor(0)).toEqual([mockDB, mockTables[1], mockConfig])
+        expect(result).toEqual([
+          {
+            columns: ['column1'],
+            name: 'table3name',
+            schema: 'table2schema',
+            extends: '',
+            additionalProperties: []
+          }
+        ] as any)
+        done()
+      })
+    })
     it('should revert to all schemas if none are provided', (done) => {
       const mockTables = [
         {
