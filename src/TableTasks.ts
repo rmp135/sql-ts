@@ -14,10 +14,13 @@ import * as TableSubTasks from './TableSubTasks'
  * @returns {Promise<Table[]>} 
  */
 export async function getAllTables (db: knex, config: Config): Promise<Table[]> {
+  const tables = config.tables || []
   const excludedTables = config.excludedTables || []
   const schemas = config.schemas || []
   const adapter = AdapterFactory.buildAdapter(config)
-  const allTables = (await adapter.getAllTables(db, schemas)).filter(table => !excludedTables.includes(`${table.schema}.${table.name}`))
+  const allTables = (await adapter.getAllTables(db, schemas))
+    .filter(table => tables.length == 0 || tables.includes(`${table.schema}.${table.name}`))
+    .filter(table => !excludedTables.includes(`${table.schema}.${table.name}`))
   return await Promise.all(allTables.map(async table => ({
     columns: await ColumnTasks.getColumnsForTable(db, table, config),
     name: table.name,

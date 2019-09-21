@@ -96,13 +96,13 @@ The configuration extends the [knex configuration](http://knexjs.org/#Installati
 
 ### tables
 
-Filter the tables to include only those specified.
+Filter the tables to include only those specified. These must be in the format `schema.table`. See [interfaceNameFormat](#interfacenameformat) for schema naming conventions.
 
 ```json
 {
   "dialect": "...",
   "connection": {},
-  "tables": ["Table1", "Table2"]
+  "tables": ["schema1.Table1", "schema2.Table2"]
 }
 ```
 
@@ -110,11 +110,13 @@ Filter the tables to include only those specified.
 
 Filter the tables to exclude those specified. These must be in the format `schema.table`. See [interfaceNameFormat](#interfacenameformat) for schema naming conventions.
 
+Excluding a table takes precedence over including it. Specifying a table in both configuration options will exclude it.
+
 ```json
 {
   "dialect": "...",
   "connection": {},
-  "excludedTables": ["schema.knex_migrations", "schema.knex_migrations_lock", "schema.android_metadata"]
+  "excludedTables": ["schema1.knex_migrations", "schema1.knex_migrations_lock", "schema2.android_metadata"]
 }
 ```
 
