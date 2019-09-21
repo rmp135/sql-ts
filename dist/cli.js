@@ -57,7 +57,7 @@ var config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
                 fileName = (config.filename || 'Database') + ".ts";
                 outFile = path.join(process.cwd(), fileName);
                 fs.writeFileSync(outFile, output);
-                console.log("Definition file written as " + outFile + ".");
+                console.log("Definition file written as " + outFile);
                 return [2 /*return*/];
         }
     });

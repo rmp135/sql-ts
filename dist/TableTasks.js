@@ -48,15 +48,20 @@ var TableSubTasks = require("./TableSubTasks");
  */
 function getAllTables(db, config) {
     return __awaiter(this, void 0, void 0, function () {
-        var adapter, allTables, tables;
+        var tables, excludedTables, schemas, adapter, allTables;
         var _this = this;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
+                    tables = config.tables || [];
+                    excludedTables = config.excludedTables || [];
+                    schemas = config.schemas || [];
                     adapter = AdapterFactory.buildAdapter(config);
-                    return [4 /*yield*/, adapter.getAllTables(db, config.schemas || [])];
+                    return [4 /*yield*/, adapter.getAllTables(db, schemas)];
                 case 1:
-                    allTables = _a.sent();
+                    allTables = (_a.sent())
+                        .filter(function (table) { return tables.length == 0 || tables.includes(table.schema + "." + table.name); })
+                        .filter(function (table) { return !excludedTables.includes(table.schema + "." + table.name); });
                     return [4 /*yield*/, Promise.all(allTables.map(function (table) { return __awaiter(_this, void 0, void 0, function () {
                             var _a;
                             return __generator(this, function (_b) {
@@ -73,9 +78,7 @@ function getAllTables(db, config) {
                                 }
                             });
                         }); }))];
-                case 2:
-                    tables = _a.sent();
-                    return [2 /*return*/, tables];
+                case 2: return [2 /*return*/, _a.sent()];
             }
         });
     });
@@ -91,19 +94,17 @@ exports.getAllTables = getAllTables;
  */
 function generateInterfaceName(name, config) {
     var interfaceNamePattern = config.interfaceNameFormat || '${table}Entity';
-    if (interfaceNamePattern.indexOf('PascalCase') === 0) {
-        return name.split('_').map(function (s) {
-            if (!s.length)
+    name = name.replace(/ /g, '_');
+    if (config.pascalTableNames) {
+        name = name.split('_').map(function (s) {
+            if (s.length === 0)
                 return s;
-            if (interfaceNamePattern === 'PascalCase') {
-                return s[0].toUpperCase() + s.substr(1).toLowerCase();
-            }
-            else if (interfaceNamePattern === 'PascalCaseSingular') {
-                var hasS = s[s.length - 1] === 's';
-                return s[0].toUpperCase() + s.substr(1, s.length - (hasS ? 2 : 1)).toLowerCase();
-            }
+            return s[0].toUpperCase() + s.substr(1, s.length - 1).toLowerCase();
         }).join('');
     }
-    return interfaceNamePattern.replace('${table}', name.replace(/ /g, '_'));
+    if (config.singularTableNames && name[name.length - 1] == "s") {
+        name = name.substr(0, name.length - 1);
+    }
+    return interfaceNamePattern.replace('${table}', name);
 }
 exports.generateInterfaceName = generateInterfaceName;

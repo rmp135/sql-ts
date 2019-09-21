@@ -8,8 +8,11 @@ import * as knex from 'knex';
  */
 export interface Config extends knex.Config {
     tables?: string[];
+    excludedTables?: string[];
     filename?: string;
     interfaceNameFormat?: string;
+    pascalTableNames?: boolean;
+    singularTableNames?: boolean;
     schemaAsNamespace?: boolean;
     schemas?: string[];
     template?: string;
