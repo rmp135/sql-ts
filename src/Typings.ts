@@ -12,7 +12,7 @@ export interface Config extends knex.Config {
   excludedTables?: string[],
   filename?: string,
   interfaceNameFormat?: string,
-  pascalTableNames?: boolean,
+  tableNameCasing?: string,
   singularTableNames?: boolean
   schemaAsNamespace?: boolean,
   schemas?: string[],

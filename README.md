@@ -176,15 +176,15 @@ The below will export interfaces with such names as `UserModel` and `LogModel` f
 }
 ```
 
-### pascalTableNames
+### tableNameCasing
 
-Converts the names of tables into PascalCase before being passed into the name generator. e.g. "table_name" becomes "TableName". Spaces in table names are converted to underscores so "table name" also becomes "TableName". Defaults to `false`
+Determines the casing for table names before being passed into the name generator. Valid values are "pascal" for PascalCase and "camel" for camelCase. If the value is empty, missing or invalid, no case conversion will be applied to the table names.
 
 ```json
 {
   "dialect": "...",
   "connection": {},
-  "pascalTableNames": true
+  "tableNameCasing": "pascal"
 }
 ```
 

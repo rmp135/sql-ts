@@ -1,7 +1,6 @@
 import * as AdapterFactory from './AdapterFactory'
 import * as knex from 'knex'
-import { TableDefinition } from './Adapters/AdapterInterface'
-import { Column, Config, Table } from './Typings'
+import { Config, Table } from './Typings'
 import * as ColumnTasks from './ColumnTasks'
 import * as TableSubTasks from './TableSubTasks'
 
@@ -41,12 +40,7 @@ export async function getAllTables (db: knex, config: Config): Promise<Table[]> 
 export function generateInterfaceName (name: string, config: Config): string {
   const interfaceNamePattern = config.interfaceNameFormat || '${table}Entity'
   name = name.replace(/ /g, '_')
-  if (config.pascalTableNames) {
-    name = name.split('_').map(s => {
-      if (s.length === 0) return s
-      return s[0].toUpperCase() + s.substr(1, s.length - 1).toLowerCase()
-    }).join('')
-  }
+  name = TableSubTasks.convertTableCase(name, config.tableNameCasing)
   if (config.singularTableNames && name[name.length - 1] == "s") {
     name = name.substr(0, name.length - 1)
   }

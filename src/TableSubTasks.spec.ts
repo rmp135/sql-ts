@@ -36,4 +36,26 @@ describe('TableSubTasks', () => {
       expect(result).toEqual('extend me')
     })
   })
+  describe('convertTableCase', () => {
+    it('should return the original table name if case type is undefined', () => {
+      const result = TableSubTasks.convertTableCase('table_name', undefined)
+      expect(result).toEqual('table_name')
+    })
+    it('should return the original table name and warn if the case type is invalid', () => {
+      const origwarn = console.warn
+      console.warn = jasmine.createSpy('warn')
+      const result = TableSubTasks.convertTableCase('table_name', 'invalid')
+      expect(console.warn).toHaveBeenCalledWith('Config option tableNameCasing was supplied with invalid value "invalid".')
+      expect(result).toEqual('table_name')
+      console.warn = origwarn
+    })
+    it('should return pascal if caseType is pascal', () => {
+      const result = TableSubTasks.convertTableCase('table_name', 'pascal')
+      expect(result).toEqual('TableName')
+    })
+    it('should return camel if caseType is camel', () => {
+      const result = TableSubTasks.convertTableCase('table_name', 'camel')
+      expect(result).toEqual('tableName')
+    })
+  })
 })
