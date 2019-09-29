@@ -4,6 +4,7 @@ import * as knex from 'knex'
 import { Column, Config } from './Typings'
 import TypeMap from './TypeMap'
 import * as ColumnSubTasks from './ColumnSubTasks'
+import * as SharedTasks from './SharedTasks'
 
 /**
  * Returns all columns in a given Table using a knex context.
@@ -19,7 +20,7 @@ export async function getColumnsForTable (db: knex, table: TableDefinition, conf
   const columns = await adapter.getAllColumns(db, table.name, table.schema)
   return columns.map(c => ({
     nullable: c.isNullable,
-    name: c.name,
+    name: SharedTasks.convertCase(c.name, config.columnNameCasing),
     type: c.type,
     optional: c.isOptional
   } as Column))

@@ -8,37 +8,82 @@ const MockTableTasks: typeof TableTasks & typeof RewireTableTasks = <any> Rewire
 
 describe('TableTasks', () => {
   describe('generateInterfaceName', () => {
-    it('should generate the default table name', () => {
+    it('should generate the default table name', (done) => {
       const mockConfig: Config = { }
-      const result = TableTasks.generateInterfaceName('name', mockConfig)
-      expect(result).toBe('nameEntity')
+      const mockSharedTasks = {
+        convertCase: jasmine.createSpy('convertCase').and.returnValue('newname')
+      }
+      MockTableTasks.__with__({
+        SharedTasks: mockSharedTasks
+      })(() => {
+        const result = MockTableTasks.generateInterfaceName('name', mockConfig)
+        expect(mockSharedTasks.convertCase).toHaveBeenCalledWith('name', undefined)
+        expect(result).toBe('newnameEntity')
+        done()
+      })
     })
-    it('should generate a configuration supplied format', () => {
+    it('should generate a configuration supplied format', (done) => {
       const mockConfig: Config = {
         interfaceNameFormat: '${table}Name'
       }
-      const result = TableTasks.generateInterfaceName('name', mockConfig)
-      expect(result).toBe('nameName')
+      const mockSharedTasks = {
+        convertCase: jasmine.createSpy('convertCase').and.returnValue('newname')
+      }
+      MockTableTasks.__with__({
+        SharedTasks: mockSharedTasks
+      })(() => {
+        const result = MockTableTasks.generateInterfaceName('name', mockConfig)
+        expect(mockSharedTasks.convertCase).toHaveBeenCalledWith('name', undefined)
+        expect(result).toBe('newnameName')
+        done()
+      })
     })
-    it('should replace spaces with underscores', () => {
+    it('should replace spaces with underscores', (done) => {
       const mockConfig: Config = { }
-      const result = TableTasks.generateInterfaceName('n a m e', mockConfig)
-      expect(result).toBe('n_a_m_eEntity')
+      const mockSharedTasks = {
+        convertCase: jasmine.createSpy('convertCase').and.returnValue('newname')
+      }
+      MockTableTasks.__with__({
+        SharedTasks: mockSharedTasks
+      })(() => {
+        const result = MockTableTasks.generateInterfaceName('n a m e', mockConfig)
+        expect(mockSharedTasks.convertCase).toHaveBeenCalledWith('n_a_m_e', undefined)
+        expect(result).toBe('newnameEntity')
+        done()
+      })
     })
-    it('should convert to singular', () => {
+    it('should convert to singular', (done) => {
       const mockConfig: Config = {
         singularTableNames: true
       }
-      expect(TableTasks.generateInterfaceName('UserSessions', mockConfig)).toBe('UserSessionEntity')
-      expect(TableTasks.generateInterfaceName('UserSession', mockConfig)).toBe('UserSessionEntity')
+      const mockSharedTasks = {
+        convertCase: jasmine.createSpy('convertCase').and.returnValue('newnames')
+      }
+      MockTableTasks.__with__({
+        SharedTasks: mockSharedTasks
+      })(() => {
+        const result = MockTableTasks.generateInterfaceName('names', mockConfig)
+        expect(mockSharedTasks.convertCase).toHaveBeenCalledWith('names', undefined)
+        expect(result).toBe('newnameEntity')
+        done()
+      })
     })
-    it('should convert to singular with a different name', () => {
+    it('should convert to singular with a different name', (done) => {
       const mockConfig: Config = {
         interfaceNameFormat: '${table}Name',
         singularTableNames: true
       }
-      expect(TableTasks.generateInterfaceName('UserSessions', mockConfig)).toBe('UserSessionName')
-      expect(TableTasks.generateInterfaceName('UserSession', mockConfig)).toBe('UserSessionName')
+      const mockSharedTasks = {
+        convertCase: jasmine.createSpy('convertCase').and.returnValue('newnames')
+      }
+      MockTableTasks.__with__({
+        SharedTasks: mockSharedTasks
+      })(() => {
+        const result = MockTableTasks.generateInterfaceName('names', mockConfig)
+        expect(mockSharedTasks.convertCase).toHaveBeenCalledWith('names', undefined)
+        expect(result).toBe('newnameName')
+        done()
+      })
     })
   })
   describe('getAllTables', () => {

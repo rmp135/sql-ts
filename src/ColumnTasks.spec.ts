@@ -1,6 +1,6 @@
 import 'jasmine'
-import { Column, Config } from './Typings';
 import * as ColumnTasks from './ColumnTasks';
+import { Config } from '.';
 const rewire = require('rewire')
 
 let RewireColumnTasks = rewire('./ColumnTasks')
@@ -97,7 +97,7 @@ describe('ColumnTasks', () => {
   })
 
   describe('getColumnsForTable', () => {
-    it('should return all columns for a table', () => {
+    it('should return all columns for a table', (done) => {
       const mockColumns = [
         {
           isNullable: false,
@@ -112,33 +112,35 @@ describe('ColumnTasks', () => {
       const mockAdapterFactory = {
         buildAdapter: jasmine.createSpy('buildAdapter').and.returnValue(mockAdapter)
       }
-      const mockColumnSubTasks = {
-        convertType: jasmine.createSpy('convertType').and.returnValue('convertedtype'),
-        generateFullColumnName: jasmine.createSpy('generateFullColumnName').and.returnValue('columnname')
+      const mockSharedTasks = {
+        convertCase: jasmine.createSpy('convertCase').and.returnValue('newname'),
       }
       MockColumnTasks.__with__({
         AdapterFactory: mockAdapterFactory,
-        ColumnSubTasks: mockColumnSubTasks
+        SharedTasks: mockSharedTasks
       })(async () => {
         const db = {}
         const table = {
           name: 'name',
           schema: 'schema'
         }
-        const config = {
-          dialect: 'dialect'
+        const config: Config = {
+          dialect: 'dialect',
+          columnNameCasing: 'camel'
         }
         const result = await MockColumnTasks.getColumnsForTable(db as any, table as any, config as any)
         expect(mockAdapterFactory.buildAdapter).toHaveBeenCalledWith(config)
         expect(mockAdapter.getAllColumns).toHaveBeenCalledWith(db, 'name', 'schema')
+        expect(mockSharedTasks.convertCase).toHaveBeenCalledWith('cname', 'camel')
         expect(result).toEqual([
           {
             nullable: false,
-            name: 'cname',
+            name: 'newname',
             type: 'ctype',
             optional: false
           }
         ])
+        done()
       })
     })
   })

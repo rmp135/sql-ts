@@ -3,6 +3,7 @@ import * as knex from 'knex'
 import { Config, Table } from './Typings'
 import * as ColumnTasks from './ColumnTasks'
 import * as TableSubTasks from './TableSubTasks'
+import * as SharedTasks from './SharedTasks'
 
 /**
  * Returns all tables from a given database using a configuration.
@@ -40,7 +41,7 @@ export async function getAllTables (db: knex, config: Config): Promise<Table[]> 
 export function generateInterfaceName (name: string, config: Config): string {
   const interfaceNamePattern = config.interfaceNameFormat || '${table}Entity'
   name = name.replace(/ /g, '_')
-  name = TableSubTasks.convertTableCase(name, config.tableNameCasing)
+  name = SharedTasks.convertCase(name, config.tableNameCasing)
   if (config.singularTableNames && name[name.length - 1] == "s") {
     name = name.substr(0, name.length - 1)
   }

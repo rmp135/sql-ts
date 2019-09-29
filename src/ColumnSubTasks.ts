@@ -1,6 +1,3 @@
-import { Config } from './Typings'
-import TypeMap from './TypeMap'
-
 /**
  * Generates the full column name comprised of the table, schema and column.
  * 

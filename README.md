@@ -188,6 +188,18 @@ Determines the casing for table names before being passed into the name generato
 }
 ```
 
+### columnNameCasing
+
+Determines the casing for column names before being passed into the name generator. Valid values are "pascal" for PascalCase and "camel" for camelCase. If the value is empty, missing or invalid, no case conversion will be applied to the column names.
+
+```json
+{
+  "dialect": "...",
+  "connection": {},
+  "columnNameCasing": "camel"
+}
+```
+
 ### singularTableNames
 
 Removes the "s" from the end of table names before being passed into the name generator. Defaults `false`.
