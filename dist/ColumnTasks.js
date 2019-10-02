@@ -38,6 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var AdapterFactory = require("./AdapterFactory");
 var TypeMap_1 = require("./TypeMap");
 var ColumnSubTasks = require("./ColumnSubTasks");
+var SharedTasks = require("./SharedTasks");
 /**
  * Returns all columns in a given Table using a knex context.
  *
@@ -59,7 +60,7 @@ function getColumnsForTable(db, table, config) {
                     columns = _a.sent();
                     return [2 /*return*/, columns.map(function (c) { return ({
                             nullable: c.isNullable,
-                            name: c.name,
+                            name: SharedTasks.convertCase(c.name, config.columnNameCasing),
                             type: c.type,
                             optional: c.isOptional
                         }); })];

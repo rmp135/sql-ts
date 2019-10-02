@@ -38,6 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var AdapterFactory = require("./AdapterFactory");
 var ColumnTasks = require("./ColumnTasks");
 var TableSubTasks = require("./TableSubTasks");
+var SharedTasks = require("./SharedTasks");
 /**
  * Returns all tables from a given database using a configuration.
  *
@@ -95,13 +96,7 @@ exports.getAllTables = getAllTables;
 function generateInterfaceName(name, config) {
     var interfaceNamePattern = config.interfaceNameFormat || '${table}Entity';
     name = name.replace(/ /g, '_');
-    if (config.pascalTableNames) {
-        name = name.split('_').map(function (s) {
-            if (s.length === 0)
-                return s;
-            return s[0].toUpperCase() + s.substr(1, s.length - 1).toLowerCase();
-        }).join('');
-    }
+    name = SharedTasks.convertCase(name, config.tableNameCasing);
     if (config.singularTableNames && name[name.length - 1] == "s") {
         name = name.substr(0, name.length - 1);
     }
