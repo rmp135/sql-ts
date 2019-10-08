@@ -200,6 +200,18 @@ Determines the casing for column names before being passed into the name generat
 }
 ```
 
+### avoidOptionals
+
+Avoid using TypeScript optionals (?) for columns with default value. Defaults to `false`.
+
+```json
+{
+  "dialect": "...",
+  "connection": {},
+  "avoidOptionals": "camel"
+}
+```
+
 ### singularTableNames
 
 Removes the "s" from the end of table names before being passed into the name generator. Defaults `false`.

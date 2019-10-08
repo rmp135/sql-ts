@@ -22,7 +22,7 @@ export async function getColumnsForTable (db: knex, table: TableDefinition, conf
     nullable: c.isNullable,
     name: SharedTasks.convertCase(c.name, config.columnNameCasing),
     type: c.type,
-    optional: c.isOptional
+    optional: config.avoidOptionals ? false : c.isOptional
   } as Column))
 }
 /**
