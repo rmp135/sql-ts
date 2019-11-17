@@ -18,6 +18,7 @@ export function stringifyDatabase (database: Database, config: Config): string {
   if (config.template !== undefined)
     template = fs.readFileSync(config.template, 'utf-8')
   const compiler = handlebars.compile(template)
+  database.tables.sort((tableA, tableB) => tableA.name.localeCompare(tableB.name));
   const grouped : {[key:string]: Table[]} = {}
   for (let t of database.tables) {
     if (grouped[t.schema] === undefined) {
