@@ -55,6 +55,12 @@ var default_1 = /** @class */ (function () {
                         query = db('pg_catalog.pg_tables')
                             .select('schemaname AS schema')
                             .select('tablename AS name')
+                            .union(function (qb) {
+                            qb
+                                .select('schemaname AS schema')
+                                .select('matviewname AS name')
+                                .from('pg_catalog.pg_matviews');
+                        })
                             .whereNotIn('schemaname', ['pg_catalog', 'information_schema']);
                         if (schemas.length > 0)
                             query.whereIn('schemaname', schemas);
@@ -68,13 +74,19 @@ var default_1 = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, db('information_schema.columns')
-                            .select('column_name AS name')
-                            .select('udt_name AS type')
-                            .select('is_nullable AS isNullable')
-                            .select(db.raw('(CASE WHEN column_default IS NOT NULL THEN 1 ELSE 0 END) AS isoptional'))
-                            .where({ table_name: table, table_schema: schema })
-                            .map(function (c) { return (__assign({}, c, { isNullable: c.isNullable === 'YES', isOptional: c.isoptional === 1 })); })];
+                    case 0: return [4 /*yield*/, db
+                            .select('pg_attribute.attname AS name')
+                            .select('pg_namespace.nspname AS schema')
+                            .select(db.raw('pg_catalog.format_type(pg_attribute.atttypid, null) AS type'))
+                            .select('pg_attribute.attnotnull AS notNullable')
+                            .select('pg_attribute.atthasdef AS hasDefault')
+                            .select('pg_class.relname AS table')
+                            .from('pg_attribute')
+                            .join('pg_class', 'pg_attribute.attrelid', 'pg_class.oid')
+                            .join('pg_namespace', 'pg_class.relnamespace', 'pg_namespace.oid')
+                            .where({ 'pg_class.relname': table, 'pg_namespace.nspname': schema })
+                            .where('pg_attribute.attnum', '>', 0)
+                            .map(function (c) { return (__assign({}, c, { isNullable: !c.notNullable, isOptional: c.hasDefault })); })];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });

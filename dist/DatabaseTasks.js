@@ -26,6 +26,7 @@ function stringifyDatabase(database, config) {
     if (config.template !== undefined)
         template = fs.readFileSync(config.template, 'utf-8');
     var compiler = handlebars.compile(template);
+    database.tables.sort(function (tableA, tableB) { return tableA.name.localeCompare(tableB.name); });
     var grouped = {};
     for (var _i = 0, _a = database.tables; _i < _a.length; _i++) {
         var t = _a[_i];
