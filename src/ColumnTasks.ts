@@ -20,7 +20,7 @@ export async function getColumnsForTable (db: knex, table: TableDefinition, conf
   const columns = await adapter.getAllColumns(db, table.name, table.schema)
   return columns.map(c => ({
     nullable: c.isNullable,
-    name: `"${SharedTasks.convertCase(c.name, config.columnNameCasing)}"`,
+    name: SharedTasks.convertCase(c.name, config.columnNameCasing),
     type: c.type,
     optional: c.isOptional
   } as Column))
