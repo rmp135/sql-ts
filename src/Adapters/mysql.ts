@@ -13,12 +13,12 @@ export default class implements AdapterInterface {
     return await query
   }
   async getAllColumns(db: knex, table: string, schema: string): Promise<ColumnDefinition[]> {
-    return await db('information_schema.columns')
+    return (await db('information_schema.columns')
     .select('column_name AS name')
     .select(db.raw('(CASE WHEN is_nullable = \'NO\' THEN 0 ELSE 1 END) AS isNullable'))
     .select(db.raw('(SELECT CASE WHEN LOCATE(\'auto_increment\', extra) <> 0 OR COLUMN_DEFAULT IS NOT NULL THEN 1 ELSE 0 END) AS isOptional'))
     .select('data_type AS type')
-    .where({ table_name: table, table_schema: schema })
+    .where({ table_name: table, table_schema: schema }))
     .map((c: { name: string, type: string, isNullable: string, isOptional: number } ) => ({ ...c, isNullable: !!c.isNullable, isOptional: c.isOptional === 1 }) as ColumnDefinition)
   }
 }

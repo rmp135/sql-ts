@@ -3,14 +3,14 @@ import { AdapterInterface, TableDefinition, ColumnDefinition } from './AdapterIn
 
 export default class implements AdapterInterface {
   async getAllTables(db: knex, schemas: string[]): Promise<TableDefinition[]> {
-    return await db('sqlite_master')
+    return (await db('sqlite_master')
     .select('tbl_name AS name')
     .whereNot({ tbl_name: 'sqlite_sequence' })
-    .where({ type: 'table'})
+    .where({ type: 'table'}))
     .map((t: { name: string }) => ({ name: t.name, schema: 'main' }))
   }
   async getAllColumns(db: knex, table: string, schema: string): Promise<ColumnDefinition[]> {
-    return await db.raw(`pragma table_info(${table})`)
+    return (await db.raw(`pragma table_info(${table})`))
     .map((c: { name: string, type: String, notnull: number, dflt: any, pk: number }) => (
       {
         name: c.name,

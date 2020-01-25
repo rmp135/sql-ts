@@ -18,7 +18,7 @@ export default class implements AdapterInterface {
     return await query
   }
   async getAllColumns(db: knex, table: string, schema: string): Promise<ColumnDefinition[]> {
-    return await db
+    return (await db
     .select('pg_attribute.attname AS name')
     .select('pg_namespace.nspname AS schema')
     .select(db.raw('pg_catalog.format_type(pg_attribute.atttypid, null) AS type'))
@@ -29,7 +29,7 @@ export default class implements AdapterInterface {
     .join('pg_class', 'pg_attribute.attrelid', 'pg_class.oid')
     .join('pg_namespace', 'pg_class.relnamespace', 'pg_namespace.oid')
     .where({ 'pg_class.relname': table, 'pg_namespace.nspname': schema })
-    .where('pg_attribute.attnum', '>', 0)
+    .where('pg_attribute.attnum', '>', 0))
     .map((c: { name: string, type: string, notNullable: boolean, hasDefault: boolean } ) => (
       {
         ...c,

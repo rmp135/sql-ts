@@ -17,19 +17,20 @@
     "test": "jasmine ./__test/{**,}/*.spec.js"
   },
   "dependencies": {
-    "handlebars": "^4.0.11",
-    "knex": "^0.14.6",
-    "yargs": "^11.0.0"
+    "handlebars": "^4.1.2",
+    "knex": "^0.20.4",
+    "yargs": "^15.0.2"
   },
   "devDependencies": {
+    "@types/node": "^12.12.18",
     "@types/handlebars": "^4.0.39",
-    "@types/jasmine": "^2.6.0",
-    "@types/knex": "^0.14.23",
+    "@types/jasmine": "^3.5.0",
+    "@types/knex": "^0.16.1",
     "@types/rewire": "^2.5.28",
-    "@types/yargs": "^11.0.0",
+    "@types/yargs": "^13.0.3",
     "copyfiles": "^2.0.0",
     "jasmine": "^3.1.0",
     "rewire": "^4.0.1",
-    "typescript": "^2.5.3"
+    "typescript": "^3.7.3"
   }
 }

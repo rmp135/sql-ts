@@ -8,7 +8,7 @@ const args = yargs(process.argv)
 .alias('c', 'config')
 .describe('c', 'Config file.')
 .demandOption(['c'])
-.argv
+.argv as any
 
 const configPath = path.join(process.cwd(), args.config) 
 
