@@ -12,7 +12,7 @@ function convertCase(name, caseType) {
     var tempName = name.split('_').map(function (s) {
         if (s.length === 0)
             return s;
-        return s[0].toUpperCase() + s.substr(1).toLowerCase();
+        return s[0].toUpperCase() + s.substr(1);
     }).join('');
     if (caseType == 'pascal') {
         return tempName;
