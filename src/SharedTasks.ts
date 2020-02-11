@@ -9,7 +9,7 @@
 export function convertCase (name: string, caseType: string) {
   const tempName = name.split('_').map(s => {
     if (s.length === 0) return s
-    return s[0].toUpperCase() + s.substr(1).toLowerCase()
+    return s[0].toUpperCase() + s.substr(1)
   }).join('')
   if (caseType == 'pascal') {
     return tempName
