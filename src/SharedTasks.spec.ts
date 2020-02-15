@@ -19,5 +19,9 @@ describe('SharedTasks', () => {
       const result = SharedTasks.convertCase('table_name', 'camel')
       expect(result).toEqual('tableName')
     })
+    it('should keep casing for letters after the first', () => {
+      const result = SharedTasks.convertCase('TableNameWithUppercase', 'camel')
+      expect(result).toEqual('tableNameWithUppercase')
+    })
   })
 })
