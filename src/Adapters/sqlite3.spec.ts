@@ -8,13 +8,14 @@ describe('sqlite', () => {
   describe('getAllTables', () => {
     it('should get all tables settings the schema to the current database', async (done) => {
       const mockMap = jasmine.createSpy('map').and.returnValue([1,2,3])
-      const mockWhere = jasmine.createSpy('where').and.returnValue({ map: mockMap })
-      const mockWhereNot = jasmine.createSpy('whereNot').and.returnValue({ where: mockWhere })
+      const mockWhereIn = jasmine.createSpy('whereIn').and.returnValue({ map: mockMap })
+      const mockWhereNot = jasmine.createSpy('whereNot').and.returnValue({ whereIn: mockWhereIn })
       const mockSelect = jasmine.createSpy('select').and.returnValue({ whereNot: mockWhereNot })
       const mockdb = jasmine.createSpy('db').and.returnValue({ select: mockSelect })
       const adapter = new Mocksqlite.default();
       const res = await adapter.getAllTables(mockdb as any, [])
       expect(mockdb).toHaveBeenCalledWith('sqlite_master')
+      expect(mockWhereIn).toHaveBeenCalledWith('type', ['table', 'view'])
       expect(mockSelect).toHaveBeenCalledWith('tbl_name AS name')
       expect(mockWhereNot).toHaveBeenCalledWith({ tbl_name: 'sqlite_sequence' })
       expect(mockMap).toHaveBeenCalled()

@@ -6,7 +6,7 @@ export default class implements AdapterInterface {
     return (await db('sqlite_master')
     .select('tbl_name AS name')
     .whereNot({ tbl_name: 'sqlite_sequence' })
-    .where({ type: 'table'}))
+    .whereIn('type', ['table', 'view']))
     .map((t: { name: string }) => ({ name: t.name, schema: 'main' }))
   }
   async getAllColumns(db: knex, table: string, schema: string): Promise<ColumnDefinition[]> {
