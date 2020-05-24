@@ -162,6 +162,18 @@ Specifies the name that the file should be saved as. Defaults to "Database.ts". 
 }
 ```
 
+### folder
+
+Specifies a folder relative to the current working directory where the file will be generated. By default, the current working directory is used. Folders will not be created and will error if they do not exist.
+
+```json
+{
+  "dialect": "...",
+  "connection": {},
+  "folder": "outputdir/subdir"
+}
+```
+
 ### interfaceNameFormat
 
 Specifies the pattern that the exported interface names will take. The token "${table}" will be replaced with the table name. Defaults to `${table}Entity`.

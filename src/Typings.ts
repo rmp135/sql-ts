@@ -11,6 +11,7 @@ export interface Config extends knex.Config {
   tables?: string[],
   excludedTables?: string[],
   filename?: string,
+  folder?: string,
   interfaceNameFormat?: string,
   tableNameCasing?: 'pascal' | 'camel',
   columnNameCasing?: 'pascal' | 'camel',
