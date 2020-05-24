@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -34,7 +35,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require("fs");
 var yargs = require("yargs");
@@ -47,15 +47,17 @@ var args = yargs(process.argv)
     .argv;
 var configPath = path.join(process.cwd(), args.config);
 var config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-(function () { return __awaiter(_this, void 0, void 0, function () {
-    var output, fileName, outFile;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+(function () { return __awaiter(void 0, void 0, void 0, function () {
+    var output, fileName, directory, outFile;
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0: return [4 /*yield*/, index_1.default.toTypeScript(config)];
             case 1:
-                output = _a.sent();
-                fileName = (config.filename || 'Database') + ".ts";
-                outFile = path.join(process.cwd(), fileName);
+                output = _c.sent();
+                fileName = (_a = config.filename, (_a !== null && _a !== void 0 ? _a : 'Database')) + ".ts";
+                directory = (_b = config.folder, (_b !== null && _b !== void 0 ? _b : '.'));
+                outFile = path.join(process.cwd(), directory, fileName);
                 fs.writeFileSync(outFile, output);
                 console.log("Definition file written as " + outFile);
                 return [2 /*return*/];
