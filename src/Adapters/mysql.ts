@@ -1,4 +1,3 @@
-import { Config } from '../Typings';
 import * as knex from 'knex';
 import { AdapterInterface, TableDefinition, ColumnDefinition } from './AdapterInterface'
 

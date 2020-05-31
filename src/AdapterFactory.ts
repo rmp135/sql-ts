@@ -9,16 +9,17 @@ import { Config } from '.';
  * @returns {AdapterInterface} The adapter for connecting to a SQL database.
  */
 export function buildAdapter (config: Config): AdapterInterface {
-  const dialect = config.dialect || config.client.toString() 
+  const dialect = config.dialect ?? config.client.toString() 
   // Use aliases from knex.
   // https://github.com/tgriesser/knex/blob/master/src/index.js
   const aliases = {
     'pg' : 'postgres',
-    'sqlite' : 'sqlite3'
+    'sqlite' : 'sqlite3',
+    'mysql2': 'mysql'
   };
   let adapter = null
   try {
-    adapter = require(`./Adapters/${aliases[dialect] || dialect}`)
+    adapter = require(`./Adapters/${aliases[dialect] ?? dialect}`)
   } catch (err) {
     throw new Error(`Unable to find adapter for dialect '${dialect}'.`)
   }
