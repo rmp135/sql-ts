@@ -8,16 +8,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @returns {AdapterInterface} The adapter for connecting to a SQL database.
  */
 function buildAdapter(config) {
-    var dialect = config.dialect || config.client.toString();
+    var _a, _b;
+    var dialect = (_a = config.dialect, (_a !== null && _a !== void 0 ? _a : config.client.toString()));
     // Use aliases from knex.
     // https://github.com/tgriesser/knex/blob/master/src/index.js
     var aliases = {
         'pg': 'postgres',
-        'sqlite': 'sqlite3'
+        'sqlite': 'sqlite3',
+        'mysql2': 'mysql'
     };
     var adapter = null;
     try {
-        adapter = require("./Adapters/" + (aliases[dialect] || dialect));
+        adapter = require("./Adapters/" + (_b = aliases[dialect], (_b !== null && _b !== void 0 ? _b : dialect)));
     }
     catch (err) {
         throw new Error("Unable to find adapter for dialect '" + dialect + "'.");
