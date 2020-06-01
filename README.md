@@ -16,13 +16,13 @@ Install your relevant SQL driver. Refer to the [knex documentation](http://knexj
 
 For example `npm install mysql`.
 
-Create a configuration file, for example `mysql.json`. This will mirror connection details from knex. The `dialect` or `client` property will determine the SQL type.
+Create a configuration file, for example `mysql.json`. This will mirror connection details from knex. The `client` property will determine the SQL type.
 
 The most basic MySQL setup is below, modify as appropriate. Additional options can be applied by referring to the [Config](#config).
 
 ```json
 {
-  "dialect":"mysql",
+  "client":"mysql",
   "connection": {
     "host": "localhost",
     "user": "user",
@@ -100,7 +100,7 @@ Filter the tables to include only those specified. These must be in the format `
 
 ```json
 {
-  "dialect": "...",
+  "client": "...",
   "connection": {},
   "tables": ["schema1.Table1", "schema2.Table2"]
 }
@@ -114,7 +114,7 @@ Excluding a table takes precedence over including it. Specifying a table in both
 
 ```json
 {
-  "dialect": "...",
+  "client": "...",
   "connection": {},
   "excludedTables": ["schema1.knex_migrations", "schema1.knex_migrations_lock", "schema2.android_metadata"]
 }
@@ -126,7 +126,7 @@ Override the types on a per column basis. This requires the full name of the col
 
 ```json
 {
-  "dialect": "...",
+  "client": "...",
   "connection": {},
   "typeOverrides": {
     "dbo.Table_1.ColumnName": "string",
@@ -141,7 +141,7 @@ Adds additional types to the type resolution. The order in which types are resol
 
 ```json
 {
-  "dialect": "...",
+  "client": "...",
   "connection": {},
   "typeMap": {
     "number": ["decimal", "float"],
@@ -156,7 +156,7 @@ Specifies the name that the file should be saved as. Defaults to "Database.ts". 
 
 ```json
 {
-  "dialect": "...",
+  "client": "...",
   "connection": {},
   "filename": "DatabaseModels"
 }
@@ -168,7 +168,7 @@ Specifies a folder relative to the current working directory where the file will
 
 ```json
 {
-  "dialect": "...",
+  "client": "...",
   "connection": {},
   "folder": "outputdir/subdir"
 }
@@ -182,7 +182,7 @@ The below will export interfaces with such names as `UserModel` and `LogModel` f
 
 ```json
 {
-  "dialect": "...",
+  "client": "...",
   "connection": {},
   "interfaceNameFormat": "${table}Model"
 }
@@ -194,7 +194,7 @@ Determines the casing for table names before being passed into the name generato
 
 ```json
 {
-  "dialect": "...",
+  "client": "...",
   "connection": {},
   "tableNameCasing": "pascal"
 }
@@ -206,7 +206,7 @@ Determines the casing for column names before being passed into the name generat
 
 ```json
 {
-  "dialect": "...",
+  "client": "...",
   "connection": {},
   "columnNameCasing": "camel"
 }
@@ -218,7 +218,7 @@ Removes the "s" from the end of table names before being passed into the name ge
 
 ```json
 {
-  "dialect": "...",
+  "client": "...",
   "connection": {},
   "singularTableNames": true
 }
@@ -238,7 +238,7 @@ SQLite     | 'main'
 
 ```json
 {
-  "dialect": "...",
+  "client": "...",
   "connection": {},
   "schemaAsNamespace": true
 }
@@ -254,7 +254,7 @@ This has no effect on SQLite as the concept of schemas do not exist.
 
 ```json
 {
-  "dialect": "...",
+  "client": "...",
   "connection": {},
   "schemas": ["dbo", "schema1"]
 }
@@ -266,7 +266,7 @@ Specifies additional properties to be assigned to the output TypeScript file. Ke
 
 ```json
 {
-  "dialect": "...",
+  "client": "...",
   "connection": {},
   "additionalProperties": {
     "dbo.Table_1": ["propertyOne: string", "propertyTwo?: number | null"]
@@ -280,7 +280,7 @@ Specifies the superclass than should be applied to the generated interface. Key 
 
 ```json
 {
-  "dialect": "...",
+  "client": "...",
   "connection": {},
   "extends": {
     "dbo.Table_1": "Extension, AnotherExtension"
@@ -294,7 +294,7 @@ Specifies the [handlebars](https://handlebarsjs.com) template to use when creati
 
 ```json
 {
-  "dialect": "...",
+  "client": "...",
   "connection": {},
   "template": "./template.handlebars"
 }
@@ -302,7 +302,7 @@ Specifies the [handlebars](https://handlebarsjs.com) template to use when creati
 
 ## Bespoke Configuration
 
-### `mssql` dialect with `msnodesqlv8` driver (Windows only)
+### `mssql` client with `msnodesqlv8` driver (Windows only)
 
 For instructions to setup the SQL Server Native client installed see [mode-mssql/issue/338](https://github.com/patriksimek/node-mssql/issues/338#issuecomment-278400345)
 
@@ -312,7 +312,7 @@ Sample configuration (replace the `HostName` and `DatabaseName` accordingly).
 
 ```json
 {
-    "dialect": "mssql",
+    "client": "mssql",
     "connection": {
         "driver": "msnodesqlv8",
         "connectionString": "Driver={SQL Server Native Client 10.0};Server=HostName;Database=DatabaseName;Trusted_Connection=yes;"
