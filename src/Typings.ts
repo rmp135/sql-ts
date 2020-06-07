@@ -43,11 +43,19 @@ export interface Column {
   name: string,
   type: string,
   optional: boolean,
-  nullable: boolean
+  nullable: boolean,
+  isEnum: boolean
 }
 
+export interface Enum {
+  name: string;
+  schema: string;
+  values: {
+    [key: string]: string
+  }
+}
 /**
- * The JSON definition of a taboe for importing and exporting.
+ * The JSON definition of a table for importing and exporting.
  * 
  * @export
  * @interface Table
@@ -83,6 +91,7 @@ export interface Table {
  */
 export interface Database {
   tables: Table[]
+  enums: Enum[]
 }
 
 /**
@@ -92,7 +101,19 @@ export interface Database {
  * @interface DecoratedDatabase
  */
 export interface DecoratedDatabase {
-  tables: DecoratedTable[]
+  tables: DecoratedTable[],
+  enums: DecoratedEnum[]
+}
+
+export interface DecoratedEnum {
+  schema: string;
+  name: string;
+  convertedName: string;
+  values: {
+    originalKey: string;
+    convertedKey: string;
+    value: string;
+  }[]
 }
 
 /**

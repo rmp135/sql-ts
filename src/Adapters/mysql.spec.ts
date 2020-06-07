@@ -16,7 +16,7 @@ describe('mysql', () => {
       expect(mockdb).toHaveBeenCalledWith('information_schema.tables')
       expect(mockSelectName).toHaveBeenCalledWith('TABLE_NAME AS name')
       expect(mockSelectSchema).toHaveBeenCalledWith('TABLE_SCHEMA AS schema')
-      expect(mockWhereNotIn).toHaveBeenCalledWith('TABLE_SCHEMA', ['information_schema'])
+      expect(mockWhereNotIn).toHaveBeenCalledWith('TABLE_SCHEMA', ['mysql', 'information_schema', 'performance_schema', 'sys'])
       expect(res).toEqual([1,2,3] as any)
       done()
     })
@@ -31,7 +31,7 @@ describe('mysql', () => {
       expect(mockdb).toHaveBeenCalledWith('information_schema.tables')
       expect(mockSelectName).toHaveBeenCalledWith('TABLE_NAME AS name')
       expect(mockSelectSchema).toHaveBeenCalledWith('TABLE_SCHEMA AS schema')
-      expect(mockWhereNotIn).toHaveBeenCalledWith('TABLE_SCHEMA', ['information_schema'])
+      expect(mockWhereNotIn).toHaveBeenCalledWith('TABLE_SCHEMA', ['mysql', 'information_schema', 'performance_schema', 'sys'])
       expect(mockWhereIn).toHaveBeenCalledWith('table_schema', ['schema1', 'schema2'])
       done()
     })
@@ -48,7 +48,7 @@ describe('mysql', () => {
       const mockdb = jasmine.createSpy('db').and.returnValue({ select: mockSelectName })
       mockdb['raw'] = mockRaw
       const adapter = new Mockmysql.default();
-      const res = await adapter.getAllColumns(mockdb as any, 'table', 'schema')
+      const res = await adapter.getAllColumns(mockdb as any, {}, 'table', 'schema')
       expect(mockdb).toHaveBeenCalledWith('information_schema.columns')
       expect(mockSelectName).toHaveBeenCalledWith('column_name AS name')
       expect(mockRaw).toHaveBeenCalledWith('(CASE WHEN is_nullable = \'NO\' THEN 0 ELSE 1 END) AS isNullable')

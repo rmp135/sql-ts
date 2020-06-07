@@ -39,14 +39,15 @@ describe('sqlite', () => {
       mockdb['raw'] = mockRaw
 
       const adapter = new Mocksqlite.default();
-      const res = await adapter.getAllColumns(mockdb as any, 'table', 'schema')
+      const res = await adapter.getAllColumns(mockdb as any, {}, 'table', 'schema')
       expect(mockRaw).toHaveBeenCalledWith('pragma table_info(table)')
       expect(res).toEqual([
         {
           name: 'name1',
           isNullable: true,
           type: 'type',
-          isOptional: false
+          isOptional: false,
+          isEnum: false
         }
       ])
       done()
@@ -66,14 +67,15 @@ describe('sqlite', () => {
       mockdb['raw'] = mockRaw
 
       const adapter = new Mocksqlite.default();
-      const res = await adapter.getAllColumns(mockdb as any, 'table', 'schema')
+      const res = await adapter.getAllColumns(mockdb as any, {}, 'table', 'schema')
       expect(mockRaw).toHaveBeenCalledWith('pragma table_info(table)')
       expect(res).toEqual([
         {
           name: 'name1',
           isNullable: true,
           type: 'type',
-          isOptional: true
+          isOptional: true,
+          isEnum: false
         }
       ])
       done()
@@ -93,14 +95,15 @@ describe('sqlite', () => {
       mockdb['raw'] = mockRaw
 
       const adapter = new Mocksqlite.default();
-      const res = await adapter.getAllColumns(mockdb as any, 'table', 'schema')
+      const res = await adapter.getAllColumns(mockdb as any, {}, 'table', 'schema')
       expect(mockRaw).toHaveBeenCalledWith('pragma table_info(table)')
       expect(res).toEqual([
         {
           name: 'name1',
           isNullable: true,
           type: 'type',
-          isOptional: true
+          isOptional: true,
+          isEnum: false
         }
       ])
       done()
@@ -120,14 +123,15 @@ describe('sqlite', () => {
       mockdb['raw'] = mockRaw
 
       const adapter = new Mocksqlite.default();
-      const res = await adapter.getAllColumns(mockdb as any, 'table', 'schema')
+      const res = await adapter.getAllColumns(mockdb as any, {}, 'table', 'schema')
       expect(mockRaw).toHaveBeenCalledWith('pragma table_info(table)')
       expect(res).toEqual([
         {
           name: 'name1',
           isNullable: false,
           type: 'type',
-          isOptional: false
+          isOptional: false,
+          isEnum: false
         }
       ])
       done()
@@ -147,14 +151,15 @@ describe('sqlite', () => {
       mockdb['raw'] = mockRaw
 
       const adapter = new Mocksqlite.default();
-      const res = await adapter.getAllColumns(mockdb as any, 'table', 'schema')
+      const res = await adapter.getAllColumns(mockdb as any, {}, 'table', 'schema')
       expect(mockRaw).toHaveBeenCalledWith('pragma table_info(table)')
       expect(res).toEqual([
         {
           name: 'name1',
           isNullable: true,
           type: 'type',
-          isOptional: false
+          isOptional: false,
+          isEnum: false
         }
       ])
       done()

@@ -5,6 +5,7 @@ import { Column, Config } from './Typings'
 import TypeMap from './TypeMap'
 import * as ColumnSubTasks from './ColumnSubTasks'
 import * as SharedTasks from './SharedTasks'
+import { Table } from '.'
 
 /**
  * Returns all columns in a given Table using a knex context.
@@ -17,36 +18,38 @@ import * as SharedTasks from './SharedTasks'
  */
 export async function getColumnsForTable (db: knex, table: TableDefinition, config: Config): Promise<Column[]> {
   const adapter = AdapterFactory.buildAdapter(config)
-  const columns = await adapter.getAllColumns(db, table.name, table.schema)
+  const columns = await adapter.getAllColumns(db, config, table.name, table.schema)
   return columns.map(c => ({
     nullable: c.isNullable,
     name: SharedTasks.convertCase(c.name, config.columnNameCasing),
     type: c.type,
-    optional: c.isOptional
+    optional: c.isOptional,
+    isEnum: c.isEnum
   } as Column))
 }
 /**
  * Converts a database type to that of a JavaScript type.
  * 
  * @export
- * @param {string} tableName The name of the table.
- * @param {string} schemaName The schema of the table.
- * @param {string} columnName The column name.
- * @param {string} type The name of the type from the database.
+ * @param {Column} column The column definition to convert.
+ * @param {Table} table The table that the column belongs to.
  * @param {Config} config The configuration object.
  * @returns {string}
  */
-export function convertType (tableName: string, schema: string, columnName: string, type: string, config: Config): string {
-  const fullname = ColumnSubTasks.generateFullColumnName(tableName, schema, columnName)
+export function convertType (column: Column, table: Table, config: Config): string {
+  if (column.isEnum) {
+    return column.type.replace(/ /g, '')
+  }
+  const fullname = ColumnSubTasks.generateFullColumnName(table.name, table.schema, column.name)
   let convertedType = undefined
   const overrides = config.typeOverrides || {}
   const userTypeMap = config.typeMap || {}
   convertedType = overrides[fullname]
   if (convertedType == null) {
-    convertedType = Object.keys(userTypeMap).find(t => userTypeMap[t].includes(type))
+    convertedType = Object.keys(userTypeMap).find(t => userTypeMap[t].includes(column.type))
   }
   if (convertedType == null) {
-    convertedType = Object.keys(TypeMap).find(t => TypeMap[t].includes(type))
+    convertedType = Object.keys(TypeMap).find(t => TypeMap[t].includes(column.type))
   }
   return convertedType === undefined ? 'any' : convertedType
 }

@@ -15,18 +15,21 @@ describe('DatabaseFactory', () => {
       const mockTableTasks = {
         getAllTables: jasmine.createSpy('getAllTables').and.returnValue(Promise.resolve(['table1', 'table2']))
       }
+      const mockEnumTasks = {
+        getAllEnums: jasmine.createSpy('getAllEnums').and.returnValue(Promise.resolve(['enum1', 'enum2']))
+      }
       MockDatabaseFactory.__set__({
         knex: mockKnexImport,
-        TableTasks: mockTableTasks 
+        TableTasks: mockTableTasks,
+        EnumTasks: mockEnumTasks
       })
       const mockConfig = {} as any
       const dat = await MockDatabaseFactory.buildDatabase(mockConfig) as any
       expect(mockKnexImport).toHaveBeenCalledWith(mockConfig)
       expect(mockTableTasks.getAllTables).toHaveBeenCalledWith(mockKnex, mockConfig)
       expect(mockKnex.destroy).toHaveBeenCalled()
-      expect(dat).toEqual({
-        tables: ['table1', 'table2']
-      })
+      expect(dat.tables).toEqual(['table1', 'table2'])
+      expect(dat.enums).toEqual(['enum1', 'enum2'])
       done()
     })
     it('should throw an error when an error occurs', async (done) => {

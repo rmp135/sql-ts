@@ -11,6 +11,7 @@ describe('DatabaseTasks', () => {
 
   beforeEach(() => {
     mockDatabase = {
+      enums: [],
       tables: [
       {
         name: 'tname1',
@@ -110,42 +111,48 @@ describe('DatabaseTasks', () => {
         expect(mockHandlebars.compile).toHaveBeenCalledWith('template')
         expect(mockCompileReturn).toHaveBeenCalledWith({
           grouped: {
-            schema1: [
-              {
-                name: 'tname1',
-                schema: 'schema1',
-                columns: [
-                  {
-                    name: 'col1',
-                    type: 'type1'
-                  }
-                ]
-              },
-              {
-                name: 'tname2',
-                schema: 'schema1',
-                columns: [
-                  {
-                    name: 'col2',
-                    type: 'type2'
-                  }
-                ]
-              }
-            ],
-            schema2: [
-              {
-                name: 'tname3',
-                schema: 'schema2',
-                columns: [
-                  {
-                    name: 'col3',
-                    type: 'type3'
-                  }
-                ]
-              }
-            ]
+            schema1: 
+            {
+              enums: [],
+              tables: [
+                {
+                  name: 'tname1',
+                  schema: 'schema1',
+                  columns: [
+                    {
+                      name: 'col1',
+                      type: 'type1'
+                    }
+                  ]
+                },
+                {
+                  name: 'tname2',
+                  schema: 'schema1',
+                  columns: [
+                    {
+                      name: 'col2',
+                      type: 'type2'
+                    }
+                  ]
+                }
+              ]
+            },
+            schema2: {
+              enums: [],
+              tables: [
+                {
+                  name: 'tname3',
+                  schema: 'schema2',
+                  columns: [
+                    {
+                      name: 'col3',
+                      type: 'type3'
+                    }
+                  ]
+                }
+              ]
+            }            
           },
-          tables: mockDatabase.tables,
           config: mockConfig
         })
         expect(result).toBe(`compiledTemplate`)
@@ -172,9 +179,9 @@ describe('DatabaseTasks', () => {
         expect(mockTableTasks.generateInterfaceName.calls.argsFor(0)).toEqual(['tname1', mockConfig])
         expect(mockTableTasks.generateInterfaceName.calls.argsFor(1)).toEqual(['tname2', mockConfig])
         expect(mockTableTasks.generateInterfaceName.calls.argsFor(2)).toEqual(['tname3', mockConfig])
-        expect(mockColumnTasks.convertType.calls.argsFor(0)).toEqual(['tname1', 'schema1', 'col1', 'type1', mockConfig])
-        expect(mockColumnTasks.convertType.calls.argsFor(1)).toEqual(['tname2', 'schema1', 'col2', 'type2', mockConfig])
-        expect(mockColumnTasks.convertType.calls.argsFor(2)).toEqual(['tname3', 'schema2', 'col3', 'type3', mockConfig])
+        expect(mockColumnTasks.convertType.calls.argsFor(0)).toEqual([mockDatabase.tables[0].columns[0], mockDatabase.tables[0], mockConfig])
+        expect(mockColumnTasks.convertType.calls.argsFor(1)).toEqual([mockDatabase.tables[1].columns[0], mockDatabase.tables[1], mockConfig])
+        expect(mockColumnTasks.convertType.calls.argsFor(2)).toEqual([mockDatabase.tables[2].columns[0], mockDatabase.tables[2], mockConfig])
       })      
     })
   })

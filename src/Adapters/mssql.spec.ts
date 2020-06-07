@@ -44,7 +44,7 @@ describe('mssql', () => {
       const mockdb = jasmine.createSpy('db').and.returnValue({ select: mockSelectName })
       mockdb['raw'] = mockRaw
       const adapter = new Mockmssql.default();
-      const res = await adapter.getAllColumns(mockdb as any, 'table', 'schema')
+      const res = await adapter.getAllColumns(mockdb as any, {}, 'table', 'schema')
       expect(mockdb).toHaveBeenCalledWith('INFORMATION_SCHEMA.COLUMNS')
       expect(mockSelectName).toHaveBeenCalledWith('COLUMN_NAME AS name')
       expect(mockSelectNullable).toHaveBeenCalledWith('IS_NULLABLE AS isNullable')

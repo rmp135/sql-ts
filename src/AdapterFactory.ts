@@ -11,7 +11,6 @@ import { Config } from '.';
 export function buildAdapter (config: Config): AdapterInterface {
   const dialect = config.dialect ?? config.client.toString() 
   // Use aliases from knex.
-  // https://github.com/tgriesser/knex/blob/master/src/index.js
   const aliases = {
     'pg' : 'postgres',
     'sqlite' : 'sqlite3',

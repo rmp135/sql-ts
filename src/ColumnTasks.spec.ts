@@ -20,7 +20,11 @@ describe('ColumnTasks', () => {
           }
         }
       })(() => {
-        const result = MockColumnTasks.convertType('tableName', 'schema', 'columnname', 'tofind', {})
+        const mockTable = { }
+        const mockColumn = {
+          type: 'tofind'
+        }
+        const result = MockColumnTasks.convertType(mockColumn, mockTable, {})
         expect(result).toBe('type')
       })
     })
@@ -31,7 +35,14 @@ describe('ColumnTasks', () => {
       MockColumnTasks.__with__({
         ColumnSubTasks: mockColumnSubTasks
       })(() => {
-        const result = MockColumnTasks.convertType('tableName', 'schema', 'columnname', 'tofind', { typeMap: { type: ['tofind'] } })
+        const mockTable = {
+          name: 'tableName',
+          schema: 'schema'
+        }
+        const mockColumn = {
+          type: 'tofind'
+        }
+        const result = MockColumnTasks.convertType(mockColumn, mockTable, { typeMap: { type: ['tofind'] } })
         expect(result).toBe('type')
       })
     })
@@ -47,7 +58,14 @@ describe('ColumnTasks', () => {
           }
         }
       })(() => {
-        const result = MockColumnTasks.convertType('tableName', 'schema', 'columnname', 'tofind', { typeMap: { type: ['tofind'] } })
+        const mockTable = {
+          name: 'tableName',
+          schema: 'schema'
+        }
+        const mockColumn = {
+          type: 'tofind'
+        }
+        const result = MockColumnTasks.convertType(mockColumn, mockTable, { typeMap: { type: ['tofind'] } })
         expect(result).toBe('type')
       })
     })
@@ -58,7 +76,14 @@ describe('ColumnTasks', () => {
       MockColumnTasks.__with__({
         ColumnSubTasks: mockColumnSubTasks
       })(() => {
-        const result = MockColumnTasks.convertType('tableName', 'schema', 'columnname', 'tofind', { typeOverrides: { 'fullName': 'type' } })
+        const mockTable = {
+          name: 'tableName',
+          schema: 'schema'
+        }
+        const mockColumn = {
+          type: 'tofind'
+        }
+        const result = MockColumnTasks.convertType(mockColumn, mockTable, { typeOverrides: { 'fullName': 'type' } })
         expect(result).toBe('type')
       })
     })
@@ -74,7 +99,14 @@ describe('ColumnTasks', () => {
           }
         }
       })(() => {
-        const result = MockColumnTasks.convertType('tableName', 'schema', 'columnname', 'tofind', { typeOverrides: { 'fullName': 'overridetype' }, typeMap: { usertype: ['fullName'] } })
+        const mockTable = {
+          name: 'tableName',
+          schema: 'schema'
+        }
+        const mockColumn = {
+          type: 'tofind'
+        }
+        const result = MockColumnTasks.convertType(mockColumn, mockTable, { typeOverrides: { 'fullName': 'overridetype' }, typeMap: { usertype: ['fullName'] } })
         expect(result).toBe('overridetype')
       })
     })
@@ -103,7 +135,8 @@ describe('ColumnTasks', () => {
           isNullable: false,
           name: 'cname',
           type: 'ctype',
-          isOptional: false
+          isOptional: false,
+          isEnum: false
         }
       ]
       const mockAdapter = {
@@ -130,14 +163,15 @@ describe('ColumnTasks', () => {
         }
         const result = await MockColumnTasks.getColumnsForTable(db as any, table as any, config as any)
         expect(mockAdapterFactory.buildAdapter).toHaveBeenCalledWith(config)
-        expect(mockAdapter.getAllColumns).toHaveBeenCalledWith(db, 'name', 'schema')
+        expect(mockAdapter.getAllColumns).toHaveBeenCalledWith(db, config, 'name', 'schema')
         expect(mockSharedTasks.convertCase).toHaveBeenCalledWith('cname', 'camel')
         expect(result).toEqual([
           {
             nullable: false,
             name: 'newname',
             type: 'ctype',
-            optional: false
+            optional: false,
+            isEnum: false
           }
         ])
         done()
