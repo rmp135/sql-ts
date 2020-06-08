@@ -50,6 +50,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var default_1 = /** @class */ (function () {
     function default_1() {
     }
+    default_1.prototype.getAllEnums = function (db, config) {
+        return Promise.resolve([]);
+    };
     default_1.prototype.getAllTables = function (db, schemas) {
         return __awaiter(this, void 0, void 0, function () {
             var query;
@@ -59,7 +62,7 @@ var default_1 = /** @class */ (function () {
                         query = db('information_schema.tables')
                             .select('TABLE_NAME AS name')
                             .select('TABLE_SCHEMA AS schema')
-                            .whereNotIn('TABLE_SCHEMA', ['information_schema']);
+                            .whereNotIn('TABLE_SCHEMA', ['mysql', 'information_schema', 'performance_schema', 'sys']);
                         if (schemas.length > 0)
                             query.whereIn('table_schema', schemas);
                         return [4 /*yield*/, query];
@@ -68,7 +71,7 @@ var default_1 = /** @class */ (function () {
             });
         });
     };
-    default_1.prototype.getAllColumns = function (db, table, schema) {
+    default_1.prototype.getAllColumns = function (db, config, table, schema) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -79,7 +82,7 @@ var default_1 = /** @class */ (function () {
                             .select('data_type AS type')
                             .where({ table_name: table, table_schema: schema })];
                     case 1: return [2 /*return*/, (_a.sent())
-                            .map(function (c) { return (__assign(__assign({}, c), { isNullable: !!c.isNullable, isOptional: c.isOptional === 1 })); })];
+                            .map(function (c) { return (__assign(__assign({}, c), { isNullable: !!c.isNullable, isOptional: c.isOptional === 1, isEnum: false })); })];
                 }
             });
         });

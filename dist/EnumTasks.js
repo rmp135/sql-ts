@@ -36,44 +36,24 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var knex = require("knex");
-var TableTasks = require("./TableTasks");
-var EnumTasks = require("./EnumTasks");
-/**
- * Builds a Database and generates its definitions.
- *
- * @export
- * @param {Config} [config]     The configuration to use.
- * @returns {Promise<Database>} The generated Database.
- */
-function buildDatabase(config) {
+var AdapterFactory = require("./AdapterFactory");
+function getAllEnums(db, config) {
     return __awaiter(this, void 0, void 0, function () {
-        var database, db, _a, err_1;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var adapter, allEnums;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
                 case 0:
-                    _b.trys.push([0, 3, 4, 5]);
-                    db = knex(config);
-                    _a = {};
-                    return [4 /*yield*/, TableTasks.getAllTables(db, config)];
+                    adapter = AdapterFactory.buildAdapter(config);
+                    return [4 /*yield*/, adapter.getAllEnums(db, config)];
                 case 1:
-                    _a.tables = _b.sent();
-                    return [4 /*yield*/, EnumTasks.getAllEnums(db, config)];
-                case 2:
-                    database = (_a.enums = _b.sent(),
-                        _a);
-                    return [3 /*break*/, 5];
-                case 3:
-                    err_1 = _b.sent();
-                    throw err_1;
-                case 4:
-                    if (db !== undefined) {
-                        db.destroy();
-                    }
-                    return [7 /*endfinally*/];
-                case 5: return [2 /*return*/, database];
+                    allEnums = (_a.sent());
+                    return [2 /*return*/, allEnums.map(function (e) { return ({
+                            name: e.name,
+                            schema: e.schema,
+                            values: e.values
+                        }); })];
             }
         });
     });
 }
-exports.buildDatabase = buildDatabase;
+exports.getAllEnums = getAllEnums;

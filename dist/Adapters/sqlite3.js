@@ -39,6 +39,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var default_1 = /** @class */ (function () {
     function default_1() {
     }
+    default_1.prototype.getAllEnums = function (db, config) {
+        return Promise.resolve([]);
+    };
     default_1.prototype.getAllTables = function (db, schemas) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
@@ -53,7 +56,7 @@ var default_1 = /** @class */ (function () {
             });
         });
     };
-    default_1.prototype.getAllColumns = function (db, table, schema) {
+    default_1.prototype.getAllColumns = function (db, config, table, schema) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -63,7 +66,8 @@ var default_1 = /** @class */ (function () {
                             name: c.name,
                             isNullable: c.notnull === 0,
                             type: (c.type.includes('(') ? c.type.split('(')[0] : c.type).toLowerCase(),
-                            isOptional: c.dflt != null || c.pk == 1
+                            isOptional: c.dflt != null || c.pk == 1,
+                            isEnum: false
                         }); })];
                 }
             });

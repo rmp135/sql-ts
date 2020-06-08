@@ -1,6 +1,7 @@
 import { TableDefinition } from './Adapters/AdapterInterface';
 import * as knex from 'knex';
 import { Column, Config } from './Typings';
+import { Table } from '.';
 /**
  * Returns all columns in a given Table using a knex context.
  *
@@ -15,11 +16,9 @@ export declare function getColumnsForTable(db: knex, table: TableDefinition, con
  * Converts a database type to that of a JavaScript type.
  *
  * @export
- * @param {string} tableName The name of the table.
- * @param {string} schemaName The schema of the table.
- * @param {string} columnName The column name.
- * @param {string} type The name of the type from the database.
+ * @param {Column} column The column definition to convert.
+ * @param {Table} table The table that the column belongs to.
  * @param {Config} config The configuration object.
  * @returns {string}
  */
-export declare function convertType(tableName: string, schema: string, columnName: string, type: string, config: Config): string;
+export declare function convertType(column: Column, table: Table, config: Config): string;

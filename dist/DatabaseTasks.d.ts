@@ -7,7 +7,7 @@ import { Config, Database, DecoratedDatabase } from './Typings';
  * @param {Config} config The configuration to use.
  * @returns A TypeScript definition, optionally wrapped in a namespace.
  */
-export declare function stringifyDatabase(database: Database, config: Config): string;
+export declare function stringifyDatabase(database: DecoratedDatabase, config: Config): string;
 /**
  * Decorates the database object before sending to template compiler.
  *

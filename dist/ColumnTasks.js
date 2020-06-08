@@ -56,14 +56,15 @@ function getColumnsForTable(db, table, config) {
             switch (_a.label) {
                 case 0:
                     adapter = AdapterFactory.buildAdapter(config);
-                    return [4 /*yield*/, adapter.getAllColumns(db, table.name, table.schema)];
+                    return [4 /*yield*/, adapter.getAllColumns(db, config, table.name, table.schema)];
                 case 1:
                     columns = _a.sent();
                     return [2 /*return*/, columns.map(function (c) { return ({
                             nullable: c.isNullable,
                             name: SharedTasks.convertCase(c.name, config.columnNameCasing),
                             type: c.type,
-                            optional: c.isOptional
+                            optional: c.isOptional,
+                            isEnum: c.isEnum
                         }); })];
             }
         });
@@ -74,24 +75,25 @@ exports.getColumnsForTable = getColumnsForTable;
  * Converts a database type to that of a JavaScript type.
  *
  * @export
- * @param {string} tableName The name of the table.
- * @param {string} schemaName The schema of the table.
- * @param {string} columnName The column name.
- * @param {string} type The name of the type from the database.
+ * @param {Column} column The column definition to convert.
+ * @param {Table} table The table that the column belongs to.
  * @param {Config} config The configuration object.
  * @returns {string}
  */
-function convertType(tableName, schema, columnName, type, config) {
-    var fullname = ColumnSubTasks.generateFullColumnName(tableName, schema, columnName);
+function convertType(column, table, config) {
+    if (column.isEnum) {
+        return column.type.replace(/ /g, '');
+    }
+    var fullname = ColumnSubTasks.generateFullColumnName(table.name, table.schema, column.name);
     var convertedType = undefined;
     var overrides = config.typeOverrides || {};
     var userTypeMap = config.typeMap || {};
     convertedType = overrides[fullname];
     if (convertedType == null) {
-        convertedType = Object.keys(userTypeMap).find(function (t) { return userTypeMap[t].includes(type); });
+        convertedType = Object.keys(userTypeMap).find(function (t) { return userTypeMap[t].includes(column.type); });
     }
     if (convertedType == null) {
-        convertedType = Object.keys(TypeMap_1.default).find(function (t) { return TypeMap_1.default[t].includes(type); });
+        convertedType = Object.keys(TypeMap_1.default).find(function (t) { return TypeMap_1.default[t].includes(column.type); });
     }
     return convertedType === undefined ? 'any' : convertedType;
 }

@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -50,20 +39,61 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var default_1 = /** @class */ (function () {
     function default_1() {
     }
+    default_1.prototype.getAllEnums = function (db, config) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function () {
+            function getValues(schema, name) {
+                var values = {};
+                for (var _i = 0, _a = enums.filter(function (e) { return e.schema == schema && e.name == name; }); _i < _a.length; _i++) {
+                    var row = _a[_i];
+                    values[row.value] = row.value;
+                }
+                return values;
+            }
+            var query, enums, foundEnums, _i, enums_1, row, mapKey;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        query = db('pg_type')
+                            .select('pg_namespace.nspname AS schema')
+                            .select('pg_type.typname AS name')
+                            .select('pg_enum.enumlabel AS value')
+                            .join('pg_enum', 'pg_enum.enumtypid', 'pg_type.oid')
+                            .join('pg_namespace', 'pg_namespace.oid', 'pg_type.typnamespace');
+                        if (((_a = config.schemas) === null || _a === void 0 ? void 0 : _a.length) > 0)
+                            query.whereIn('pg_namespace.nspname', config.schemas);
+                        return [4 /*yield*/, query];
+                    case 1:
+                        enums = _b.sent();
+                        foundEnums = {};
+                        for (_i = 0, enums_1 = enums; _i < enums_1.length; _i++) {
+                            row = enums_1[_i];
+                            mapKey = row.schema + '.' + row.name;
+                            if (foundEnums[mapKey] == undefined) {
+                                foundEnums[mapKey] = { name: row.name, schema: row.schema, values: getValues(row.schema, row.name) };
+                            }
+                        }
+                        return [2 /*return*/, Object.values(foundEnums)];
+                }
+            });
+        });
+    };
     default_1.prototype.getAllTables = function (db, schemas) {
         return __awaiter(this, void 0, void 0, function () {
             var query;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        query = db('pg_catalog.pg_tables')
+                        query = db('pg_tables')
                             .select('schemaname AS schema')
                             .select('tablename AS name')
                             .union(function (qb) {
                             qb
                                 .select('schemaname AS schema')
                                 .select('matviewname AS name')
-                                .from('pg_catalog.pg_matviews');
+                                .from('pg_matviews');
+                            if (schemas.length > 0)
+                                qb.whereIn('schemaname', schemas);
                         })
                             .whereNotIn('schemaname', ['pg_catalog', 'information_schema']);
                         if (schemas.length > 0)
@@ -74,24 +104,35 @@ var default_1 = /** @class */ (function () {
             });
         });
     };
-    default_1.prototype.getAllColumns = function (db, table, schema) {
+    default_1.prototype.getAllColumns = function (db, config, table, schema) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, db
+                            .select('typns.nspname AS enumSchema')
+                            .select('pg_type.typname AS enumType')
                             .select('pg_attribute.attname AS name')
                             .select('pg_namespace.nspname AS schema')
                             .select(db.raw('pg_catalog.format_type(pg_attribute.atttypid, null) AS type'))
                             .select('pg_attribute.attnotnull AS notNullable')
                             .select('pg_attribute.atthasdef AS hasDefault')
                             .select('pg_class.relname AS table')
+                            .select('pg_type.typcategory AS typcategory')
                             .from('pg_attribute')
                             .join('pg_class', 'pg_attribute.attrelid', 'pg_class.oid')
+                            .join('pg_type', 'pg_type.oid', 'pg_attribute.atttypid')
                             .join('pg_namespace', 'pg_class.relnamespace', 'pg_namespace.oid')
+                            .join('pg_namespace AS typns', 'typns.oid', 'pg_type.typnamespace')
                             .where({ 'pg_class.relname': table, 'pg_namespace.nspname': schema })
                             .where('pg_attribute.attnum', '>', 0)];
                     case 1: return [2 /*return*/, (_a.sent())
-                            .map(function (c) { return (__assign(__assign({}, c), { isNullable: !c.notNullable, isOptional: c.hasDefault })); })];
+                            .map(function (c) { return ({
+                            name: c.name,
+                            type: c.typcategory == "E" && config.schemaAsNamespace ? c.enumSchema + "." + c.enumType : c.enumType,
+                            isNullable: !c.notNullable,
+                            isOptional: c.hasDefault,
+                            isEnum: c.typcategory == "E"
+                        }); })];
                 }
             });
         });

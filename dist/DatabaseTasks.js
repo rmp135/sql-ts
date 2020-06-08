@@ -26,19 +26,30 @@ var ColumnTasks = require("./ColumnTasks");
  */
 function stringifyDatabase(database, config) {
     var template = fs.readFileSync(path.join(__dirname, './template.handlebars'), 'utf-8');
-    if (config.template !== undefined)
+    if (config.template !== undefined) {
         template = fs.readFileSync(config.template, 'utf-8');
+    }
     var compiler = handlebars.compile(template);
     database.tables.sort(function (tableA, tableB) { return tableA.name.localeCompare(tableB.name); });
     var grouped = {};
     for (var _i = 0, _a = database.tables; _i < _a.length; _i++) {
         var t = _a[_i];
         if (grouped[t.schema] === undefined) {
-            grouped[t.schema] = [];
+            grouped[t.schema] = { tables: [], enums: [] };
         }
-        grouped[t.schema].push(t);
+        grouped[t.schema].tables.push(t);
     }
-    return compiler({ grouped: grouped, tables: database.tables, config: config });
+    for (var _b = 0, _c = database.enums; _b < _c.length; _b++) {
+        var e = _c[_b];
+        if (grouped[e.schema] === undefined) {
+            grouped[e.schema] = { tables: [], enums: [] };
+        }
+        grouped[e.schema].enums.push(e);
+    }
+    return compiler({
+        grouped: grouped,
+        config: config
+    });
 }
 exports.stringifyDatabase = stringifyDatabase;
 /**
@@ -51,9 +62,21 @@ exports.stringifyDatabase = stringifyDatabase;
  */
 function decorateDatabase(database, config) {
     return {
+        enums: database.enums.map(function (e) {
+            return {
+                name: e.name,
+                convertedName: e.name.replace(/ /g, ''),
+                schema: e.schema,
+                values: Object.keys(e.values).map(function (ee) { return ({
+                    originalKey: ee,
+                    convertedKey: ee.replace(/ /g, ''),
+                    value: e.values[ee]
+                }); })
+            };
+        }),
         tables: database.tables.map(function (t) {
             return __assign(__assign({}, t), { interfaceName: TableTasks.generateInterfaceName(t.name, config), columns: t.columns.map(function (c) {
-                    return __assign(__assign({}, c), { propertyName: c.name.replace(/ /g, ''), propertyType: ColumnTasks.convertType(t.name, t.schema, c.name, c.type, config) });
+                    return __assign(__assign({}, c), { propertyName: c.name.replace(/ /g, ''), propertyType: ColumnTasks.convertType(c, t, config) });
                 }) });
         })
     };

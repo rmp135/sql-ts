@@ -11,7 +11,6 @@ function buildAdapter(config) {
     var _a, _b;
     var dialect = (_a = config.dialect, (_a !== null && _a !== void 0 ? _a : config.client.toString()));
     // Use aliases from knex.
-    // https://github.com/tgriesser/knex/blob/master/src/index.js
     var aliases = {
         'pg': 'postgres',
         'sqlite': 'sqlite3',
