@@ -71,6 +71,8 @@ var default_1 = /** @class */ (function () {
                             .where({ table_name: table, table_schema: schema })];
                     case 1: return [2 /*return*/, (_a.sent())
                             .map(function (c) { return ({
+                            name: c.name,
+                            type: c.type,
                             isNullable: c.isNullable === 'YES',
                             isOptional: c.isOptional === 1,
                             isEnum: false

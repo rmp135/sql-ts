@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -82,7 +71,13 @@ var default_1 = /** @class */ (function () {
                             .select('data_type AS type')
                             .where({ table_name: table, table_schema: schema })];
                     case 1: return [2 /*return*/, (_a.sent())
-                            .map(function (c) { return (__assign(__assign({}, c), { isNullable: !!c.isNullable, isOptional: c.isOptional === 1, isEnum: false })); })];
+                            .map(function (c) { return ({
+                            name: c.name,
+                            type: c.type,
+                            isNullable: !!c.isNullable,
+                            isOptional: c.isOptional === 1,
+                            isEnum: false
+                        }); })];
                 }
             });
         });
