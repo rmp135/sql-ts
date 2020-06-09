@@ -23,7 +23,10 @@ export default class implements AdapterInterface {
     .select('data_type AS type')
     .where({ table_name: table, table_schema: schema }))
     .map((c: { name: string, type: string, isNullable: string, isOptional: number } ) => (
-      { ...c, isNullable: !!c.isNullable,
+      {
+        name: c.name,
+        type: c.type,
+        isNullable: !!c.isNullable,
         isOptional: c.isOptional === 1,
         isEnum: false
       }
