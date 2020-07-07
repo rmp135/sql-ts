@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getExtends = exports.getAdditionalProperties = void 0;
 /**
  * Returns the additional properties to add to the interface.
  *

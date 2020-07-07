@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.convertCase = void 0;
 /**
  * Converts the casing of a string.
  *

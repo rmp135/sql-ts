@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.buildDatabase = void 0;
 var knex = require("knex");
 var TableTasks = require("./TableTasks");
 var EnumTasks = require("./EnumTasks");

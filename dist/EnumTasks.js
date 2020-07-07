@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getAllEnums = void 0;
 var AdapterFactory = require("./AdapterFactory");
 function getAllEnums(db, config) {
     return __awaiter(this, void 0, void 0, function () {

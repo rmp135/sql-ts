@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.convertType = exports.getColumnsForTable = void 0;
 var AdapterFactory = require("./AdapterFactory");
 var TypeMap_1 = require("./TypeMap");
 var ColumnSubTasks = require("./ColumnSubTasks");

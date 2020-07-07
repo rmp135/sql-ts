@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.generateInterfaceName = exports.getAllTables = void 0;
 var AdapterFactory = require("./AdapterFactory");
 var ColumnTasks = require("./ColumnTasks");
 var TableSubTasks = require("./TableSubTasks");

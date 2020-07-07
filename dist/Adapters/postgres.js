@@ -130,7 +130,7 @@ var default_1 = /** @class */ (function () {
                             name: c.name,
                             type: c.typcategory == "E" && config.schemaAsNamespace ? c.enumSchema + "." + c.enumType : c.enumType,
                             isNullable: !c.notNullable,
-                            isOptional: c.hasDefault,
+                            isOptional: config.writeMode && c.hasDefault,
                             isEnum: c.typcategory == "E"
                         }); })];
                 }

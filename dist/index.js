@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.toTypeScript = exports.fromObject = exports.toObject = void 0;
 var DatabaseFactory = require("./DatabaseFactory");
 var DatabaseTasks = require("./DatabaseTasks");
 /**
