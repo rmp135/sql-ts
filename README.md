@@ -300,6 +300,18 @@ Specifies the [handlebars](https://handlebarsjs.com) template to use when creati
 }
 ```
 
+For instance, this template creates an enum of all table names
+
+```
+export enum TableNames {
+  {{#each grouped as |group key|}}
+  {{#each tables as |table|}}
+  {{name}}{{#if @last}}{{else}},{{/if}}
+  {{/each}}
+  {{/each}}
+}
+```
+
 ## Bespoke Configuration
 
 ### `mssql` client with `msnodesqlv8` driver (Windows only)
