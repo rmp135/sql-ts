@@ -1,4 +1,5 @@
 import { Config, Database, Table, DecoratedDatabase, Enum, DecoratedEnum } from './Typings';
+import * as EnumTasks from './EnumTasks';
 import * as TableTasks from './TableTasks';
 import * as handlebars from 'handlebars'
 import * as fs from 'fs'
@@ -52,7 +53,7 @@ export function decorateDatabase(database: Database, config: Config): DecoratedD
     enums: database.enums.map(e => {
       return {
         name: e.name,
-        convertedName: e.name.replace(/ /g,''),
+        convertedName: EnumTasks.generateEnumName(e.name, config),
         schema: e.schema,
         values: Object.keys(e.values).map(ee => ({
           originalKey: ee,
