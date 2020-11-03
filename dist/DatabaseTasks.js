@@ -11,6 +11,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var EnumTasks = require("./EnumTasks");
 var TableTasks = require("./TableTasks");
 var handlebars = require("handlebars");
 var fs = require("fs");
@@ -65,7 +66,7 @@ function decorateDatabase(database, config) {
         enums: database.enums.map(function (e) {
             return {
                 name: e.name,
-                convertedName: e.name.replace(/ /g, ''),
+                convertedName: EnumTasks.generateEnumName(e.name, config),
                 schema: e.schema,
                 values: Object.keys(e.values).map(function (ee) { return ({
                     originalKey: ee,

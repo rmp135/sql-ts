@@ -37,6 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var AdapterFactory = require("./AdapterFactory");
+var SharedTasks = require("./SharedTasks");
 function getAllEnums(db, config) {
     return __awaiter(this, void 0, void 0, function () {
         var adapter, allEnums;
@@ -57,3 +58,16 @@ function getAllEnums(db, config) {
     });
 }
 exports.getAllEnums = getAllEnums;
+/**
+ * Converts an db enum name to an enum name given a configuration.
+ *
+ * @export
+ * @param {string} name The name of the enum.
+ * @param {Config} config The configuration to use.
+ * @returns
+ */
+function generateEnumName(name, config) {
+    name = name.replace(/ /g, '');
+    return SharedTasks.convertCase(name, config.enumNameCasing);
+}
+exports.generateEnumName = generateEnumName;
