@@ -190,7 +190,7 @@ The below will export interfaces with such names as `UserModel` and `LogModel` f
 
 ### tableNameCasing
 
-Determines the casing for table names before being passed into the name generator. Valid values are "pascal" for PascalCase and "camel" for camelCase. If the value is empty, missing or invalid, no case conversion will be applied to the table names.
+Determines the casing for table names before being passed into the name generator. Valid values are "pascal" for PascalCase, "camel" for camelCase, "lower" for lowercase and "upper" for UPPERCASE. If the value is empty, missing or invalid, no case conversion will be applied to the table names.
 
 ```json
 {
@@ -219,7 +219,7 @@ Determines the casing for enum names before being passed into the name generator
 {
   "client": "...",
   "connection": {},
-  "enumNameCasing": "camel"
+  "enumNameCasing": "lower"
 }
 ```
 
