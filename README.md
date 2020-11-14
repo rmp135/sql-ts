@@ -202,7 +202,7 @@ Determines the casing for table names before being passed into the name generato
 
 ### columnNameCasing
 
-Determines the casing for column names before being passed into the name generator. Valid values are "pascal" for PascalCase and "camel" for camelCase. If the value is empty, missing or invalid, no case conversion will be applied to the column names.
+Determines the casing for column names before being passed into the name generator. Valid values are "pascal" for PascalCase, "camel" for camelCase, "lower" for lowercase and "upper" for UPPERCASE. If the value is empty, missing or invalid, no case conversion will be applied to the column names.
 
 ```json
 {
@@ -213,7 +213,7 @@ Determines the casing for column names before being passed into the name generat
 ```
 ### enumNameCasing
 
-Determines the casing for enum names before being passed into the name generator. Valid values are "pascal" for PascalCase and "camel" for camelCase. If the value is empty, missing or invalid, no case conversion will be applied to the enum names.
+Determines the casing for enum names before being passed into the name generator. Valid values are "pascal" for PascalCase, "camel" for camelCase, "lower" for lowercase and "upper" for UPPERCASE. If the value is empty, missing or invalid, no case conversion will be applied to the enum names.
 
 ```json
 {

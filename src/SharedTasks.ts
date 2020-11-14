@@ -11,11 +11,16 @@ export function convertCase (name: string, caseType: string) {
     if (s.length === 0) return s
     return s[0].toUpperCase() + s.substr(1)
   }).join('')
-  if (caseType == 'pascal') {
-    return tempName
+  switch (caseType) {
+    case 'pascal':
+      return tempName
+    case 'camel':
+      return tempName[0].toLowerCase() + tempName.substr(1)
+    case 'lower':
+      return name.toLowerCase()
+    case 'upper':
+      return name.toUpperCase()
+    default:
+      return name
   }
-  else if (caseType == 'camel') {
-    return tempName[0].toLowerCase() + tempName.substr(1)
-  }
-  return name
 }
