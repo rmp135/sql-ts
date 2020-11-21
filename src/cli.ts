@@ -9,15 +9,13 @@ const args = yargs(process.argv)
 .demandOption(['c'])
 .argv as any
 
-const configPath = path.join(process.cwd(), args.config) 
-
-const config = JSON.parse(fs.readFileSync(configPath, 'utf8')) as Config
+const config = JSON.parse(fs.readFileSync(args.config, 'utf8')) as Config
 
 ;(async () => {
   const output = await sqlts.toTypeScript(config)
   const fileName = `${config.filename ?? 'Database'}.ts`
   const directory = config.folder ?? '.'
-  const outFile = path.join(process.cwd(), directory, fileName)
+  const outFile = path.join(directory, fileName)
   fs.writeFileSync(outFile, output)
   console.log(`Definition file written as ${outFile}`)
 })()

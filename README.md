@@ -164,7 +164,9 @@ Specifies the name that the file should be saved as. Defaults to "Database.ts". 
 
 ### folder
 
-Specifies a folder relative to the current working directory where the file will be generated. By default, the current working directory is used. Folders will not be created and will error if they do not exist.
+Specifies a folder where the file will be generated. This will be relative to the current working directory if no absolute path is given. Folders will not be created and will error if they do not exist.
+
+For unix systems, the home shortcut `~`  will not work, use the fully qualified path name.
 
 ```json
 {
