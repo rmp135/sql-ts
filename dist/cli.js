@@ -45,8 +45,7 @@ var args = yargs(process.argv)
     .describe('c', 'Config file.')
     .demandOption(['c'])
     .argv;
-var configPath = path.join(process.cwd(), args.config);
-var config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+var config = JSON.parse(fs.readFileSync(args.config, 'utf8'));
 (function () { return __awaiter(void 0, void 0, void 0, function () {
     var output, fileName, directory, outFile;
     var _a, _b;
@@ -57,7 +56,7 @@ var config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
                 output = _c.sent();
                 fileName = (_a = config.filename, (_a !== null && _a !== void 0 ? _a : 'Database')) + ".ts";
                 directory = (_b = config.folder, (_b !== null && _b !== void 0 ? _b : '.'));
-                outFile = path.join(process.cwd(), directory, fileName);
+                outFile = path.join(directory, fileName);
                 fs.writeFileSync(outFile, output);
                 console.log("Definition file written as " + outFile);
                 return [2 /*return*/];
