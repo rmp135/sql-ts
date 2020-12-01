@@ -110,7 +110,7 @@ Filter the tables to include only those specified. These must be in the format `
 
 Filter the tables to exclude those specified. These must be in the format `schema.table`. See [interfaceNameFormat](#interfacenameformat) for schema naming conventions.
 
-Excluding a table takes precedence over including it. Specifying a table in both configuration options will exclude it.
+Excluding a table takes precedence over including it. Specifying a table in both configuration options will exclude it. Note that for SQLite the schema is always called `main`, so to refer to a table you would use for example "main.my_table".
 
 ```json
 {
