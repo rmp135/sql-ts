@@ -4,5 +4,5 @@ export default {
   Date: ['datetime', 'timestamp', 'date', 'time', 'timestamp', 'datetime2', 'smalldatetime', 'datetimeoffset'],
   boolean: ['bit', 'boolean', 'bool'],
   Object: ['json', 'TVP'],
-  buffer: ['binary', 'varbinary', 'image', 'UDT']
+  Buffer: ['binary', 'varbinary', 'image', 'UDT']
 }
