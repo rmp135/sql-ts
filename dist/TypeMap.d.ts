@@ -4,6 +4,6 @@ declare const _default: {
     Date: string[];
     boolean: string[];
     Object: string[];
-    buffer: string[];
+    Buffer: string[];
 };
 export default _default;
