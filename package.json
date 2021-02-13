@@ -17,11 +17,11 @@
     "test": "jasmine ./__test/{**,}/*.spec.js"
   },
   "peerDependencies": {
-    "mssql": "^6.2.0",
+    "mssql": "^6.3.1",
     "mysql": "^2.18.1",
-    "mysql2": "^2.1.0",
-    "pg": "^8.0.3",
-    "sqlite3": "^5.0.0"
+    "mysql2": "^2.2.5",
+    "pg": "^8.5.1",
+    "sqlite3": "5.0.0"
   },
   "peerDependenciesMeta": {
     "mssql": {
@@ -41,20 +41,20 @@
     }
   },
   "dependencies": {
-    "handlebars": "^4.1.2",
-    "knex": "^0.20.4",
-    "yargs": "^15.0.2"
+    "handlebars": "^4.7.6",
+    "knex": "^0.21.17",
+    "yargs": "^16.2.0"
   },
   "devDependencies": {
-    "@types/node": "^12.12.18",
-    "@types/handlebars": "^4.0.39",
-    "@types/jasmine": "^3.5.0",
+    "@types/handlebars": "^4.0.40",
+    "@types/jasmine": "^3.6.3",
     "@types/knex": "^0.16.1",
+    "@types/node": "^14.14.22",
     "@types/rewire": "^2.5.28",
-    "@types/yargs": "^13.0.3",
-    "copyfiles": "^2.0.0",
-    "jasmine": "^3.1.0",
-    "rewire": "^4.0.1",
-    "typescript": "^3.7.3"
+    "@types/yargs": "^16.0.0",
+    "copyfiles": "^2.4.1",
+    "jasmine": "^3.6.4",
+    "rewire": "^5.0.0",
+    "typescript": "^4.1.3"
   }
 }

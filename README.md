@@ -110,7 +110,7 @@ Filter the tables to include only those specified. These must be in the format `
 
 Filter the tables to exclude those specified. These must be in the format `schema.table`. See [interfaceNameFormat](#interfacenameformat) for schema naming conventions.
 
-Excluding a table takes precedence over including it. Specifying a table in both configuration options will exclude it. Note that for SQLite the schema is always called `main`, so to refer to a table you would use for example "main.my_table".
+Excluding a table takes precedence over including it. Specifying a table in both configuration options will exclude it.
 
 ```json
 {
@@ -305,6 +305,8 @@ Specifies the superclass than should be applied to the generated interface. Key 
 
 Specifies the [handlebars](https://handlebarsjs.com) template to use when creating the output TypeScript file relative to the current working directory. See [dist/template.handlebars](./dist/template.handlebars) for the default template. 
 
+See the section on templating for more info on how to use the template.
+
 ```json
 {
   "client": "...",
@@ -313,15 +315,53 @@ Specifies the [handlebars](https://handlebarsjs.com) template to use when creati
 }
 ```
 
-For instance, this template creates an enum of all table names
+## Templating
 
-```
-export enum TableNames {
-  {{#each grouped as |group key|}}
-  {{#each tables as |table|}}
-  {{name}}{{#if @last}}{{else}},{{/if}}
-  {{/each}}
-  {{/each}}
+The `template.handlebars` file controls the output of the generated .ts file. You can modify this file and use the `template` config option to specify a custom template file.
+
+The inputs to this file are as followed.
+
+```js
+{
+  {
+    "dbo": { // Key is schema name.
+      "tables": [ // List of all non-filtered tables.
+        {
+          "name": "User", // The original database table name.
+          "schema": "dbo", // The schema the table belongs to.
+          "additionalProperties": { // Any additional properties that should be added.
+            "PropertyName": "number" // Property name and type.
+          },
+          "extends": "DBEntity", // The superclass, if any, that should be extended.
+          "interfaceName": "UserEntity", // The computed interface name.
+          "columns": {
+            "name": "ID", // The original database column name.
+            "type": "int", // The original database type.
+            "propertyName": "ID", // The computed Typescript property name 
+            "propertyType": "number", // The computed Typescript type 
+            "nullable": false, // Whether the column is nullable.
+            "optional": true, // Whether the column is optional for insertion (has a default value).
+            "isEnum": false, // Whether the column is an enum type (currently only Postgres).
+            "isPrimaryKey": true // Whether the column is a primary key.
+          }
+        }
+      ],
+      "enums": [ // List of enums (Postgres only).
+        { 
+          "name": "Severity", // The original database enum name.
+          "convertedName": "SeverityEnum", // The converted name of the enum.
+          "schema": "dbo", // The schema the enum belongs to.
+          "values": [
+            {
+              "originalKey": "very high", // The original database key that represents the enum.
+              "convertedKey": "veryhigh", // Converted value name (strips spaces).
+              "value": "Very High" // Value this enum represents.
+            }
+          ]
+        }
+      ]
+    }
+  }
 }
 ```
 
