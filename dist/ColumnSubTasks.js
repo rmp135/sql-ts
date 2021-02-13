@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.generateFullColumnName = void 0;
 /**
  * Generates the full column name comprised of the table, schema and column.
  *

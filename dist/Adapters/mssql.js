@@ -61,21 +61,20 @@ var default_1 = /** @class */ (function () {
     };
     default_1.prototype.getAllColumns = function (db, config, table, schema) {
         return __awaiter(this, void 0, void 0, function () {
+            var sql;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, db('INFORMATION_SCHEMA.COLUMNS')
-                            .select('COLUMN_NAME AS name')
-                            .select('IS_NULLABLE AS isNullable')
-                            .select(db.raw('CASE WHEN COLUMNPROPERTY(object_id(TABLE_SCHEMA+\'.\'+TABLE_NAME), COLUMN_NAME, \'IsIdentity\') = 1 OR COLUMN_DEFAULT IS NOT NULL THEN 1 ELSE 0 END AS isOptional'))
-                            .select('DATA_TYPE AS type')
-                            .where({ table_name: table, table_schema: schema })];
+                    case 0:
+                        sql = "\n      SELECT\n        COLUMN_NAME as name,\n        IS_NULLABLE AS isNullable,\n        DATA_TYPE as type,\n        CASE WHEN EXISTS(\n          SELECT NULL FROM information_schema.table_constraints t\n          JOIN information_schema.key_column_usage k on k.constraint_name = t.constraint_name AND k.table_name = t.table_name AND k.table_schema = t.table_schema\n          WHERE t.table_name = c.table_name\n          AND k.column_name = c.column_name\n          AND k.table_schema = c.table_schema\n          AND t.constraint_type = 'PRIMARY KEY'\n        ) THEN 1 ELSE 0 END AS isPrimaryKey,\n        CASE WHEN COLUMNPROPERTY(object_id(TABLE_SCHEMA+'.'+TABLE_NAME), COLUMN_NAME, 'IsIdentity') = 1 OR COLUMN_DEFAULT IS NOT NULL THEN 1 ELSE 0 END AS isOptional\n        FROM INFORMATION_SCHEMA.COLUMNS c\n        WHERE c.TABLE_NAME = :table\n        AND c.TABLE_SCHEMA = :schema\n      ";
+                        return [4 /*yield*/, db.raw(sql, { table: table, schema: schema })];
                     case 1: return [2 /*return*/, (_a.sent())
                             .map(function (c) { return ({
                             name: c.name,
                             type: c.type,
                             isNullable: c.isNullable === 'YES',
                             isOptional: c.isOptional === 1,
-                            isEnum: false
+                            isEnum: false,
+                            isPrimaryKey: c.isPrimaryKey == 1
                         }); })];
                 }
             });

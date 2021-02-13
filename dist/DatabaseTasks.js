@@ -11,6 +11,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.decorateDatabase = exports.stringifyDatabase = void 0;
 var EnumTasks = require("./EnumTasks");
 var TableTasks = require("./TableTasks");
 var handlebars = require("handlebars");

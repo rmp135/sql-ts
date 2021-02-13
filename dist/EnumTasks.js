@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.generateEnumName = exports.getAllEnums = void 0;
 var AdapterFactory = require("./AdapterFactory");
 var SharedTasks = require("./SharedTasks");
 function getAllEnums(db, config) {

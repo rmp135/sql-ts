@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.buildDatabase = void 0;
 var knex = require("knex");
 var TableTasks = require("./TableTasks");
 var EnumTasks = require("./EnumTasks");
@@ -48,7 +49,8 @@ var EnumTasks = require("./EnumTasks");
  */
 function buildDatabase(config) {
     return __awaiter(this, void 0, void 0, function () {
-        var database, db, _a, err_1;
+        var database, db, err_1;
+        var _a;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:

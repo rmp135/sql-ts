@@ -54,8 +54,8 @@ var config = JSON.parse(fs.readFileSync(args.config, 'utf8'));
             case 0: return [4 /*yield*/, index_1.default.toTypeScript(config)];
             case 1:
                 output = _c.sent();
-                fileName = (_a = config.filename, (_a !== null && _a !== void 0 ? _a : 'Database')) + ".ts";
-                directory = (_b = config.folder, (_b !== null && _b !== void 0 ? _b : '.'));
+                fileName = ((_a = config.filename) !== null && _a !== void 0 ? _a : 'Database') + ".ts";
+                directory = (_b = config.folder) !== null && _b !== void 0 ? _b : '.';
                 outFile = path.join(directory, fileName);
                 fs.writeFileSync(outFile, output);
                 console.log("Definition file written as " + outFile);

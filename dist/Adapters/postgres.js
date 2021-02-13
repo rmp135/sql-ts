@@ -106,32 +106,20 @@ var default_1 = /** @class */ (function () {
     };
     default_1.prototype.getAllColumns = function (db, config, table, schema) {
         return __awaiter(this, void 0, void 0, function () {
+            var sql;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, db
-                            .select('typns.nspname AS enumSchema')
-                            .select('pg_type.typname AS enumType')
-                            .select('pg_attribute.attname AS name')
-                            .select('pg_namespace.nspname AS schema')
-                            .select(db.raw('pg_catalog.format_type(pg_attribute.atttypid, null) AS type'))
-                            .select('pg_attribute.attnotnull AS notNullable')
-                            .select('pg_attribute.atthasdef AS hasDefault')
-                            .select('pg_class.relname AS table')
-                            .select('pg_type.typcategory AS typcategory')
-                            .from('pg_attribute')
-                            .join('pg_class', 'pg_attribute.attrelid', 'pg_class.oid')
-                            .join('pg_type', 'pg_type.oid', 'pg_attribute.atttypid')
-                            .join('pg_namespace', 'pg_class.relnamespace', 'pg_namespace.oid')
-                            .join('pg_namespace AS typns', 'typns.oid', 'pg_type.typnamespace')
-                            .where({ 'pg_class.relname': table, 'pg_namespace.nspname': schema })
-                            .where('pg_attribute.attnum', '>', 0)];
-                    case 1: return [2 /*return*/, (_a.sent())
+                    case 0:
+                        sql = "\n      SELECT\n        typns.nspname AS enumSchema,\n        pg_type.typname AS enumType,\n        pg_attribute.attname AS name,\n        pg_namespace.nspname AS schema,\n        pg_catalog.format_type(pg_attribute.atttypid, null) as type,\n        pg_attribute.attnotnull AS notNullable,\n        pg_attribute.atthasdef AS hasDefault,\n        pg_class.relname AS table,\n        pg_type.typcategory AS typcategory,\n        CASE WHEN EXISTS (\n          SELECT null FROM pg_index\n          WHERE pg_index.indrelid = pg_attribute.attrelid\n          AND  pg_attribute.attnum = any(pg_index.indkey)\n        AND pg_index.indisprimary) THEN 1 ELSE 0 END isPrimaryKey\n      FROM pg_attribute\n      JOIN pg_class ON pg_class.oid = pg_attribute.attrelid\n      JOIN pg_type ON pg_type.oid = pg_attribute.atttypid\n      JOIN pg_namespace ON pg_namespace.oid = pg_class.relnamespace\n      JOIN pg_namespace AS typns ON typns.oid = pg_type.typnamespace\n      where pg_attribute.attnum > 0\n      AND pg_class.relname = :table\n      AND pg_namespace.nspname = :schema\n    ";
+                        return [4 /*yield*/, db.raw(sql, { table: table, schema: schema })];
+                    case 1: return [2 /*return*/, (_a.sent()).rows
                             .map(function (c) { return ({
                             name: c.name,
-                            type: c.typcategory == "E" && config.schemaAsNamespace ? c.enumSchema + "." + c.enumType : c.enumType,
-                            isNullable: !c.notNullable,
-                            isOptional: c.hasDefault,
-                            isEnum: c.typcategory == "E"
+                            type: c.typcategory == "E" && config.schemaAsNamespace ? c.enumschema + "." + c.enumtype : c.enumtype,
+                            isNullable: !c.notnullable,
+                            isOptional: c.hasdefault,
+                            isEnum: c.typcategory == "E",
+                            isPrimaryKey: c.isprimarykey == 1
                         }); })];
                 }
             });

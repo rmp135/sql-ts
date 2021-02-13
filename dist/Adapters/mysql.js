@@ -62,21 +62,20 @@ var default_1 = /** @class */ (function () {
     };
     default_1.prototype.getAllColumns = function (db, config, table, schema) {
         return __awaiter(this, void 0, void 0, function () {
+            var sql;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, db('information_schema.columns')
-                            .select('column_name AS name')
-                            .select(db.raw('(CASE WHEN is_nullable = \'NO\' THEN 0 ELSE 1 END) AS isNullable'))
-                            .select(db.raw('(SELECT CASE WHEN LOCATE(\'auto_increment\', extra) <> 0 OR COLUMN_DEFAULT IS NOT NULL THEN 1 ELSE 0 END) AS isOptional'))
-                            .select('data_type AS type')
-                            .where({ table_name: table, table_schema: schema })];
-                    case 1: return [2 /*return*/, (_a.sent())
+                    case 0:
+                        sql = "\n      SELECT\n        column_name as name,\n        is_nullable,\n        CASE WHEN LOCATE('auto_increment', extra) <> 0 OR COLUMN_DEFAULT IS NOT NULL THEN 1 ELSE 0 END isOptional,\n        CASE WHEN EXISTS(\n          SELECT NULL FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu\n          WHERE CONSTRAINT_NAME = 'PRIMARY'\n          AND kcu.TABLE_NAME = c.TABLE_NAME\n          AND kcu.TABLE_SCHEMA = c.TABLE_SCHEMA\n          AND kcu.COLUMN_NAME = c.COLUMN_NAME\n        ) THEN 1 ELSE 0 END isPrimaryKey,\n        data_type AS type\n        FROM information_schema.columns c\n        WHERE table_name = :table\n        AND c.TABLE_SCHEMA = :schema\n      ";
+                        return [4 /*yield*/, db.raw(sql, { table: table, schema: schema })];
+                    case 1: return [2 /*return*/, ((_a.sent())[0])
                             .map(function (c) { return ({
                             name: c.name,
                             type: c.type,
-                            isNullable: !!c.isNullable,
+                            isNullable: c.isNullable == 'YES',
                             isOptional: c.isOptional === 1,
-                            isEnum: false
+                            isEnum: false,
+                            isPrimaryKey: c.isPrimaryKey == 1
                         }); })];
                 }
             });
