@@ -16,19 +16,32 @@ export default class implements AdapterInterface {
     return await query
   }
   async getAllColumns(db: knex, config: Config, table: string, schema: string): Promise<ColumnDefinition[]> {
-    return (await db('information_schema.columns')
-    .select('column_name AS name')
-    .select(db.raw('(CASE WHEN is_nullable = \'NO\' THEN 0 ELSE 1 END) AS isNullable'))
-    .select(db.raw('(SELECT CASE WHEN LOCATE(\'auto_increment\', extra) <> 0 OR COLUMN_DEFAULT IS NOT NULL THEN 1 ELSE 0 END) AS isOptional'))
-    .select('data_type AS type')
-    .where({ table_name: table, table_schema: schema }))
-    .map((c: { name: string, type: string, isNullable: string, isOptional: number } ) => (
+    const sql = `
+      SELECT
+        column_name as name,
+        is_nullable,
+        CASE WHEN LOCATE('auto_increment', extra) <> 0 OR COLUMN_DEFAULT IS NOT NULL THEN 1 ELSE 0 END isOptional,
+        CASE WHEN EXISTS(
+          SELECT NULL FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu
+          WHERE CONSTRAINT_NAME = 'PRIMARY'
+          AND kcu.TABLE_NAME = c.TABLE_NAME
+          AND kcu.TABLE_SCHEMA = c.TABLE_SCHEMA
+          AND kcu.COLUMN_NAME = c.COLUMN_NAME
+        ) THEN 1 ELSE 0 END isPrimaryKey,
+        data_type AS type
+        FROM information_schema.columns c
+        WHERE table_name = :table
+        AND c.TABLE_SCHEMA = :schema
+      `
+    return ((await db.raw(sql, {table,schema}))[0])
+    .map((c: { name: string, type: string, isNullable: string, isOptional: number, isPrimaryKey: number } ) => (
       {
         name: c.name,
         type: c.type,
-        isNullable: !!c.isNullable,
+        isNullable: c.isNullable == 'YES',
         isOptional: c.isOptional === 1,
-        isEnum: false
+        isEnum: false,
+        isPrimaryKey: c.isPrimaryKey == 1
       }
       ) as ColumnDefinition)
   }

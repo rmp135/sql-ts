@@ -21,7 +21,8 @@ export default class implements AdapterInterface {
         isNullable: c.notnull === 0,
         type: (c.type.includes('(') ? c.type.split('(')[0] : c.type).toLowerCase(),
         isOptional: c.dflt != null || c.pk == 1,
-        isEnum: false
+        isEnum: false,
+        isPrimaryKey: c.pk == 1
       } as ColumnDefinition
     ))
   }

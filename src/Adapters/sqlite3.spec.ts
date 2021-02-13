@@ -47,7 +47,8 @@ describe('sqlite', () => {
           isNullable: true,
           type: 'type',
           isOptional: false,
-          isEnum: false
+          isEnum: false,
+          isPrimaryKey: false
         }
       ])
       done()
@@ -75,7 +76,8 @@ describe('sqlite', () => {
           isNullable: true,
           type: 'type',
           isOptional: true,
-          isEnum: false
+          isEnum: false,
+          isPrimaryKey: false
         }
       ])
       done()
@@ -103,7 +105,8 @@ describe('sqlite', () => {
           isNullable: true,
           type: 'type',
           isOptional: true,
-          isEnum: false
+          isEnum: false,
+          isPrimaryKey: true
         }
       ])
       done()
@@ -131,7 +134,8 @@ describe('sqlite', () => {
           isNullable: false,
           type: 'type',
           isOptional: false,
-          isEnum: false
+          isEnum: false,
+          isPrimaryKey: false
         }
       ])
       done()
@@ -143,7 +147,7 @@ describe('sqlite', () => {
           notnull: 0,
           type: 'type(123,33)',
           dflt: null,
-          pk: 0
+          pk: 1
         }
       ]
       const mockRaw = jasmine.createSpy('raw').and.returnValue(mockTables)
@@ -158,8 +162,9 @@ describe('sqlite', () => {
           name: 'name1',
           isNullable: true,
           type: 'type',
-          isOptional: false,
-          isEnum: false
+          isOptional: true,
+          isEnum: false,
+          isPrimaryKey: true
         }
       ])
       done()

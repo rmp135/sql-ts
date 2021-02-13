@@ -24,7 +24,8 @@ export async function getColumnsForTable (db: knex, table: TableDefinition, conf
     name: SharedTasks.convertCase(c.name, config.columnNameCasing),
     type: c.type,
     optional: c.isOptional,
-    isEnum: c.isEnum
+    isEnum: c.isEnum,
+    isPrimaryKey: c.isPrimaryKey
   } as Column))
 }
 /**

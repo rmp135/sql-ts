@@ -136,7 +136,8 @@ describe('ColumnTasks', () => {
           name: 'cname',
           type: 'ctype',
           isOptional: false,
-          isEnum: false
+          isEnum: false,
+          isPrimaryKey: true
         }
       ]
       const mockAdapter = {
@@ -171,7 +172,8 @@ describe('ColumnTasks', () => {
             name: 'newname',
             type: 'ctype',
             optional: false,
-            isEnum: false
+            isEnum: false,
+            isPrimaryKey: true
           }
         ])
         done()

@@ -48,30 +48,40 @@ export default class implements AdapterInterface {
     return await query
   }
   async getAllColumns(db: knex, config: Config, table: string, schema: string): Promise<ColumnDefinition[]> {
-    return (await db
-    .select('typns.nspname AS enumSchema')
-    .select('pg_type.typname AS enumType')
-    .select('pg_attribute.attname AS name')
-    .select('pg_namespace.nspname AS schema')
-    .select(db.raw('pg_catalog.format_type(pg_attribute.atttypid, null) AS type'))
-    .select('pg_attribute.attnotnull AS notNullable')
-    .select('pg_attribute.atthasdef AS hasDefault')
-    .select('pg_class.relname AS table')
-    .select('pg_type.typcategory AS typcategory')
-    .from('pg_attribute')
-    .join('pg_class', 'pg_attribute.attrelid', 'pg_class.oid')
-    .join('pg_type', 'pg_type.oid', 'pg_attribute.atttypid')
-    .join('pg_namespace', 'pg_class.relnamespace', 'pg_namespace.oid')
-    .join('pg_namespace AS typns', 'typns.oid', 'pg_type.typnamespace')
-    .where({ 'pg_class.relname': table, 'pg_namespace.nspname': schema })
-    .where('pg_attribute.attnum', '>', 0))
-    .map((c: { name: string, type: string, notNullable: boolean, hasDefault: boolean, typcategory: string, enumSchema: string, enumType: string } ) => (
+    const sql = `
+      SELECT
+        typns.nspname AS enumSchema,
+        pg_type.typname AS enumType,
+        pg_attribute.attname AS name,
+        pg_namespace.nspname AS schema,
+        pg_catalog.format_type(pg_attribute.atttypid, null) as type,
+        pg_attribute.attnotnull AS notNullable,
+        pg_attribute.atthasdef AS hasDefault,
+        pg_class.relname AS table,
+        pg_type.typcategory AS typcategory,
+        CASE WHEN EXISTS (
+          SELECT null FROM pg_index
+          WHERE pg_index.indrelid = pg_attribute.attrelid
+          AND  pg_attribute.attnum = any(pg_index.indkey)
+        AND pg_index.indisprimary) THEN 1 ELSE 0 END isPrimaryKey
+      FROM pg_attribute
+      JOIN pg_class ON pg_class.oid = pg_attribute.attrelid
+      JOIN pg_type ON pg_type.oid = pg_attribute.atttypid
+      JOIN pg_namespace ON pg_namespace.oid = pg_class.relnamespace
+      JOIN pg_namespace AS typns ON typns.oid = pg_type.typnamespace
+      where pg_attribute.attnum > 0
+      AND pg_class.relname = :table
+      AND pg_namespace.nspname = :schema
+    `
+    return (await db.raw(sql, { table, schema })).rows
+    .map((c: { name: string, type: string, notnullable: boolean, hasdefault: boolean, typcategory: string, enumschema: string, enumtype: string, isprimarykey: number } ) => (
       {
         name: c.name,
-        type: c.typcategory == "E" && config.schemaAsNamespace ? `${c.enumSchema}.${c.enumType}` : c.enumType,
-        isNullable: !c.notNullable,
-        isOptional: c.hasDefault,
-        isEnum: c.typcategory == "E"
+        type: c.typcategory == "E" && config.schemaAsNamespace ? `${c.enumschema}.${c.enumtype}` : c.enumtype,
+        isNullable: !c.notnullable,
+        isOptional: c.hasdefault,
+        isEnum: c.typcategory == "E",
+        isPrimaryKey: c.isprimarykey == 1
       }) as ColumnDefinition)
   }
 }

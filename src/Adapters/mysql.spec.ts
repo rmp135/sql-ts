@@ -1,3 +1,4 @@
+import { ColumnDefinition } from './AdapterInterface';
 import * as mysql from './mysql';
 const rewire = require('rewire')
 
@@ -38,26 +39,49 @@ describe('mysql', () => {
   })
   describe('getAllColumns', () => {
     it('should get all columns', async (done) => {
-      const mockMap = jasmine.createSpy('map').and.returnValue([1,2,3])
-      const mockWhere = jasmine.createSpy('where').and.returnValue({ map: mockMap })
-      const mockSelectType = jasmine.createSpy('select').and.returnValue({ where: mockWhere })
-      const mockSelectOptional = jasmine.createSpy('select').and.returnValue({ select: mockSelectType })
-      const mockSelectNullable = jasmine.createSpy('select').and.returnValue({ select: mockSelectOptional })
-      const mockSelectName = jasmine.createSpy('select').and.returnValue({ select: mockSelectNullable })
-      const mockRaw = jasmine.createSpy('raw').and.returnValue('rawReturn')
-      const mockdb = jasmine.createSpy('db').and.returnValue({ select: mockSelectName })
+      const mockRawReturn = [[
+        {
+          name: "name",
+          type: "type",
+          isNullable: "YES",
+          isOptional: 1,
+          isEnum: false,
+          isPrimaryKey: 1
+        },
+        {
+          name: "name2",
+          type: "type2",
+          isNullable: "NO",
+          isOptional: 0,
+          isEnum: false,
+          isPrimaryKey: 0
+        },
+      ]]
+      const mockRaw = jasmine.createSpy('raw').and.returnValue(mockRawReturn)
+      const mockdb = jasmine.createSpy('db').and.returnValue({ raw: mockRawReturn  })
       mockdb['raw'] = mockRaw
       const adapter = new Mockmysql.default();
       const res = await adapter.getAllColumns(mockdb as any, {}, 'table', 'schema')
-      expect(mockdb).toHaveBeenCalledWith('information_schema.columns')
-      expect(mockSelectName).toHaveBeenCalledWith('column_name AS name')
-      expect(mockRaw).toHaveBeenCalledWith('(CASE WHEN is_nullable = \'NO\' THEN 0 ELSE 1 END) AS isNullable')
-      expect(mockSelectNullable).toHaveBeenCalledWith('rawReturn')
-      expect(mockRaw).toHaveBeenCalledWith('(SELECT CASE WHEN LOCATE(\'auto_increment\', extra) <> 0 OR COLUMN_DEFAULT IS NOT NULL THEN 1 ELSE 0 END) AS isOptional')
-      expect(mockSelectOptional).toHaveBeenCalledWith('rawReturn')
-      expect(mockSelectType).toHaveBeenCalledWith('data_type AS type')
-      expect(mockWhere).toHaveBeenCalledWith({ table_name: 'table', table_schema: 'schema' })
-      expect(res).toEqual([1,2,3] as any)
+      expect(mockRaw).toHaveBeenCalledWith(jasmine.any(String), { table: 'table', schema: 'schema' })
+      expect(res).toEqual(
+        [
+          {
+            name: "name",
+            type: "type",
+            isNullable: true,
+            isOptional: true,
+            isEnum: false,
+            isPrimaryKey: true
+          },
+          {
+            name: "name2",
+            type: "type2",
+            isNullable: false,
+            isOptional: false,
+            isEnum: false,
+            isPrimaryKey: false
+          }
+        ] as ColumnDefinition[])
       done()
     })
   })

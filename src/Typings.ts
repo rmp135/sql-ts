@@ -45,7 +45,8 @@ export interface Column {
   type: string,
   optional: boolean,
   nullable: boolean,
-  isEnum: boolean
+  isEnum: boolean,
+  isPrimaryKey: boolean
 }
 
 export interface Enum {

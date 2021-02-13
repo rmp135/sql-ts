@@ -16,6 +16,7 @@ export interface ColumnDefinition {
   isNullable: boolean;
   isOptional: boolean;
   isEnum: boolean;
+  isPrimaryKey: boolean;
 }
 
 export interface EnumDefinition {
