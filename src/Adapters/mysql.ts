@@ -19,7 +19,7 @@ export default class implements AdapterInterface {
     const sql = `
       SELECT
         column_name as name,
-        is_nullable,
+        is_nullable as isNullable,
         CASE WHEN LOCATE('auto_increment', extra) <> 0 OR COLUMN_DEFAULT IS NOT NULL THEN 1 ELSE 0 END isOptional,
         CASE WHEN EXISTS(
           SELECT NULL FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu
