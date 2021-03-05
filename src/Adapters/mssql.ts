@@ -17,19 +17,22 @@ export default class implements AdapterInterface {
   async getAllColumns(db: knex, config: Config, table: string, schema: string): Promise<ColumnDefinition[]> {
     const sql = `
       SELECT
-        COLUMN_NAME as name,
-        IS_NULLABLE AS isNullable,
-        DATA_TYPE as type,
-        CASE WHEN EXISTS(
-          SELECT NULL FROM information_schema.table_constraints t
-          JOIN information_schema.key_column_usage k on k.constraint_name = t.constraint_name AND k.table_name = t.table_name AND k.table_schema = t.table_schema
-          WHERE t.table_name = c.table_name
-          AND k.column_name = c.column_name
-          AND k.table_schema = c.table_schema
-          AND t.constraint_type = 'PRIMARY KEY'
-        ) THEN 1 ELSE 0 END AS isPrimaryKey,
-        CASE WHEN COLUMNPROPERTY(object_id(TABLE_SCHEMA+'.'+TABLE_NAME), COLUMN_NAME, 'IsIdentity') = 1 OR COLUMN_DEFAULT IS NOT NULL THEN 1 ELSE 0 END AS isOptional
-        FROM INFORMATION_SCHEMA.COLUMNS c
+				COLUMN_NAME as name,
+				IS_NULLABLE AS isNullable,
+				DATA_TYPE as type,
+				CASE WHEN EXISTS(
+					SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS t
+					JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE k 
+					ON k.CONSTRAINT_NAME = t.CONSTRAINT_NAME 
+					AND k.TABLE_NAME = t.TABLE_NAME 
+					AND k.TABLE_SCHEMA = t.TABLE_SCHEMA
+					WHERE t.TABLE_NAME = c.TABLE_NAME
+					AND k.COLUMN_NAME = c.COLUMN_NAME
+					AND k.TABLE_SCHEMA = c.TABLE_SCHEMA
+					AND t.CONSTRAINT_NAME = 'PRIMARY KEY'
+				) THEN 1 ELSE 0 END AS isPrimaryKey,
+				CASE WHEN COLUMNPROPERTY(object_id(TABLE_SCHEMA+'.'+TABLE_NAME), COLUMN_NAME, 'IsIdentity') = 1 OR COLUMN_DEFAULT IS NOT NULL THEN 1 ELSE 0 END AS isOptional
+				FROM INFORMATION_SCHEMA.COLUMNS c
         WHERE c.TABLE_NAME = :table
         AND c.TABLE_SCHEMA = :schema
       `
