@@ -150,6 +150,17 @@ Adds additional types to the type resolution. The order in which types are resol
 }
 ```
 
+Specific for `pg` and `text[]`
+
+```json
+{
+  "client": "pg",
+  "typeMap": {
+    "string[]": ["_text"]
+  }
+}
+```
+
 ### filename
 
 Specifies the name that the file should be saved as. Defaults to "Database.ts". The .ts extensions is not required.
