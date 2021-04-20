@@ -2,9 +2,21 @@
 
 [![Build Status](https://travis-ci.org/rmp135/sql-ts.svg?branch=master)](https://travis-ci.org/rmp135/sql-ts)
 
-Generate TypeScript types from a SQL database.
+Generate TypeScript types for tables and views in a SQL database.
+
+Highly configurable: choose your own naming and casing schemes, add types, extend base types, and more.
 
 Supports the following databases: MySQL, Microsoft SQL Server, SQLite and Postgres.
+
+```ts
+// ./Database.ts
+
+export interface UserEntity {
+  "id": number
+  "name": string
+  "email": string | null
+}
+```
 
 ## Installation
 
