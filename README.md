@@ -346,16 +346,18 @@ The inputs to this file are as followed.
           },
           "extends": "DBEntity", // The superclass, if any, that should be extended.
           "interfaceName": "UserEntity", // The computed interface name.
-          "columns": {
-            "name": "ID", // The original database column name.
-            "type": "int", // The original database type.
-            "propertyName": "ID", // The computed Typescript property name 
-            "propertyType": "number", // The computed Typescript type 
-            "nullable": false, // Whether the column is nullable.
-            "optional": true, // Whether the column is optional for insertion (has a default value).
-            "isEnum": false, // Whether the column is an enum type (currently only Postgres).
-            "isPrimaryKey": true // Whether the column is a primary key.
-          }
+          "columns": [ // List of columns in this table.
+            {
+              "name": "ID", // The original database column name.
+              "type": "int", // The original database type.
+              "propertyName": "ID", // The computed Typescript property name 
+              "propertyType": "number", // The computed Typescript type 
+              "nullable": false, // Whether the column is nullable.
+              "optional": true, // Whether the column is optional for insertion (has a default value).
+              "isEnum": false, // Whether the column is an enum type (currently only Postgres).
+              "isPrimaryKey": true // Whether the column is a primary key.
+            }
+          ]
         }
       ],
       "enums": [ // List of enums (Postgres only).
