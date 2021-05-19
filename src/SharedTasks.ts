@@ -1,7 +1,5 @@
-import {
-  camelCase,
-  pascalCase,
-} from "change-case";
+import { camelCase, pascalCase } from 'change-case'
+
 /**
  * Converts the casing of a string.
  *
