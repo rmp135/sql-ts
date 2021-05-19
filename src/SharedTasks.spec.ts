@@ -31,5 +31,9 @@ describe('SharedTasks', () => {
       const result = SharedTasks.convertCase('TableNameWithUppercase', 'camel')
       expect(result).toEqual('tableNameWithUppercase')
     })
+    it('should should remove numbers from the start', () => {
+      const result = SharedTasks.convertCase('1Ta2bLeNaM3', 'camel')
+      expect(result).toEqual('ta2bLeNaM3')
+    })
   })
 })

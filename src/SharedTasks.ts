@@ -1,3 +1,7 @@
+import {
+  camelCase,
+  pascalCase,
+} from "change-case";
 /**
  * Converts the casing of a string.
  *
@@ -7,20 +11,19 @@
  * @returns The converted name.
  */
 export function convertCase (name: string, caseType: string) {
-  const tempName = name.split('_').map(s => {
-    if (s.length === 0) return s
-    return s[0].toUpperCase() + s.substr(1)
-  }).join('')
+  /** removes any number at the beginning of the string */
+  const scapedName = name.replace(/^([0-9]+)/g, "");
+
   switch (caseType) {
     case 'pascal':
-      return tempName
+      return pascalCase(scapedName)
     case 'camel':
-      return tempName[0].toLowerCase() + tempName.substr(1)
+      return camelCase(scapedName)
     case 'lower':
-      return name.toLowerCase()
+      return scapedName.toLowerCase()
     case 'upper':
-      return name.toUpperCase()
+      return scapedName.toUpperCase()
     default:
-      return name
+      return scapedName
   }
 }
