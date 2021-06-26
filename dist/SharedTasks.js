@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.convertCase = void 0;
+var change_case_1 = require("change-case");
 /**
  * Converts the casing of a string.
  *
@@ -10,22 +11,19 @@ exports.convertCase = void 0;
  * @returns The converted name.
  */
 function convertCase(name, caseType) {
-    var tempName = name.split('_').map(function (s) {
-        if (s.length === 0)
-            return s;
-        return s[0].toUpperCase() + s.substr(1);
-    }).join('');
+    /** removes any number at the beginning of the string */
+    var scapedName = name.replace(/^([0-9]+)/g, "");
     switch (caseType) {
         case 'pascal':
-            return tempName;
+            return change_case_1.pascalCase(scapedName);
         case 'camel':
-            return tempName[0].toLowerCase() + tempName.substr(1);
+            return change_case_1.camelCase(scapedName);
         case 'lower':
-            return name.toLowerCase();
+            return scapedName.toLowerCase();
         case 'upper':
-            return name.toUpperCase();
+            return scapedName.toUpperCase();
         default:
-            return name;
+            return scapedName;
     }
 }
 exports.convertCase = convertCase;
