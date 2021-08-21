@@ -48,5 +48,39 @@ describe('DatabaseFactory', () => {
         done()
       }
     })
+    it('should allow using a custom Knex connection', async (done) => {
+      const mockKnex = {
+        destroy: jasmine.createSpy('knex.destroy')
+      }
+
+      MockDatabaseFactory.__set__({
+        TableTasks: {
+          getAllTables: jasmine.createSpy('getAllTables').and.returnValue(Promise.resolve(['table1', 'table2']))
+        },
+        EnumTasks: {
+          getAllEnums: jasmine.createSpy('getAllEnums').and.returnValue(Promise.resolve(['enum1', 'enum2']))
+        }
+      })
+
+      await MockDatabaseFactory.buildDatabase({
+        knexConnection:  mockKnex,
+        dialect: 'sqlite3',
+      }) as any
+
+      expect(mockKnex.destroy).not.toHaveBeenCalled()
+
+      let hasThrown = false;
+      try {
+        await MockDatabaseFactory.buildDatabase({
+          knexConnection:  mockKnex,
+        })
+      } catch (error) {
+        hasThrown = true;
+      }
+
+      expect(hasThrown).toBe(true);
+
+      done()
+    })
   })
 })

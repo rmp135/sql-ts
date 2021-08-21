@@ -327,6 +327,18 @@ See the section on templating for more info on how to use the template.
 }
 ```
 
+### knexConnection
+
+Optionally, you may provide an active Knex connection, in which case sql-ts will use it in the build scripts. Additionally sql-ts will not automatically close the connection - your calling code instead should take care of this. When using a custom connection, you must also specify the `dialect` property.
+
+```json
+{
+  "client": "...",
+  "knexConnection": customKnexConnection,
+  "dialect": "sqlite3",
+}
+```
+
 ## Templating
 
 The `template.handlebars` file controls the output of the generated .ts file. You can modify this file and use the `template` config option to specify a custom template file.

@@ -54,26 +54,30 @@ function buildDatabase(config) {
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    _b.trys.push([0, 3, 4, 5]);
-                    db = knex(config);
+                    if (config.knexConnection && !config.dialect)
+                        throw new Error('"dialect" property must be set when using a custom connection');
+                    _b.label = 1;
+                case 1:
+                    _b.trys.push([1, 4, 5, 6]);
+                    db = config.knexConnection ? config.knexConnection : knex(config);
                     _a = {};
                     return [4 /*yield*/, TableTasks.getAllTables(db, config)];
-                case 1:
+                case 2:
                     _a.tables = _b.sent();
                     return [4 /*yield*/, EnumTasks.getAllEnums(db, config)];
-                case 2:
+                case 3:
                     database = (_a.enums = _b.sent(),
                         _a);
-                    return [3 /*break*/, 5];
-                case 3:
+                    return [3 /*break*/, 6];
+                case 4:
                     err_1 = _b.sent();
                     throw err_1;
-                case 4:
-                    if (db !== undefined) {
+                case 5:
+                    if (db !== undefined && !config.knexConnection) {
                         db.destroy();
                     }
                     return [7 /*endfinally*/];
-                case 5: return [2 /*return*/, database];
+                case 6: return [2 /*return*/, database];
             }
         });
     });

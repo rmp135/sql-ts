@@ -14,8 +14,11 @@ import * as EnumTasks from './EnumTasks'
 export async function buildDatabase (config: Config): Promise<Database> {
   let database: Database
   let db: knex
+
+  if (config.knexConnection && !config.dialect) throw new Error('"dialect" property must be set when using a custom connection');
+  
   try {
-    db = knex(config)
+    db = config.knexConnection ? config.knexConnection : knex(config)
     database = {
       tables: await TableTasks.getAllTables(db, config),
       enums: await EnumTasks.getAllEnums(db, config)
@@ -25,7 +28,7 @@ export async function buildDatabase (config: Config): Promise<Database> {
     throw err
   }
   finally {
-    if (db !== undefined) {
+    if (db !== undefined && !config.knexConnection) {
       db.destroy()
     }
   }

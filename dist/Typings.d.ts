@@ -31,6 +31,7 @@ export interface Config extends knex.Config {
     extends?: {
         [key: string]: string;
     };
+    knexConnection?: knex;
 }
 /**
  * The JSON definition of a column for importing and exporting.

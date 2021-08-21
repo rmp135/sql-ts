@@ -31,7 +31,8 @@ export interface Config extends knex.Config {
   },
   extends?: { 
     [key: string]: string
-  }
+  },
+  knexConnection?: knex,
 } 
 
 /**
