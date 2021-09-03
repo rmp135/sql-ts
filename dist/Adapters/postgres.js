@@ -117,7 +117,7 @@ var default_1 = /** @class */ (function () {
                             name: c.name,
                             type: c.typcategory == "E" && config.schemaAsNamespace ? c.enumschema + "." + c.enumtype : c.enumtype,
                             isNullable: !c.notnullable,
-                            isOptional: c.hasdefault,
+                            isOptional: !c.notnullable || c.hasdefault,
                             isEnum: c.typcategory == "E",
                             isPrimaryKey: c.isprimarykey == 1
                         }); })];

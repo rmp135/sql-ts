@@ -5,14 +5,22 @@ export interface {{interfaceName}} {{#if extends}}extends {{extends}} {{/if}}{
   {{prop}}
   {{/each}}
   {{#each columns}}
-  "{{propertyName}}"{{#if optional}}?{{/if}}: {{propertyType}} {{#if nullable}}| null {{/if}}
+  '{{propertyName}}': {{propertyType}}{{#if nullable}} | null{{/if}};
+  {{/each}}
+}
+export interface Create{{interfaceName}} {{#if extends}}extends {{extends}} {{/if}}{
+  {{#each additionalProperties as |prop|}}
+  {{prop}}
+  {{/each}}
+  {{#each columns}}
+  '{{propertyName}}'{{#if optional}}?{{/if}}: {{propertyType}}{{#if nullable}} | null{{/if}};
   {{/each}}
 }
 {{/each}}
 {{#each enums as |enum|}}
 export enum {{convertedName}} {
 {{#each values as |value|}}
-  {{value.convertedKey}} = "{{value.value}}",
+  {{value.convertedKey}} = '{{value.value}}',
 {{/each}}
 }
 {{/each}}

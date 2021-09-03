@@ -27,22 +27,21 @@ var ColumnTasks = require("./ColumnTasks");
  * @returns A TypeScript definition, optionally wrapped in a namespace.
  */
 function stringifyDatabase(database, config) {
-    var template = fs.readFileSync(path.join(__dirname, './template.handlebars'), 'utf-8');
-    if (config.template !== undefined) {
-        template = fs.readFileSync(config.template, 'utf-8');
-    }
+    var _a;
+    var templatePath = (_a = config.template) !== null && _a !== void 0 ? _a : path.join(__dirname, './template.handlebars');
+    var template = fs.readFileSync(templatePath, 'utf-8');
     var compiler = handlebars.compile(template);
     database.tables.sort(function (tableA, tableB) { return tableA.name.localeCompare(tableB.name); });
     var grouped = {};
-    for (var _i = 0, _a = database.tables; _i < _a.length; _i++) {
-        var t = _a[_i];
+    for (var _i = 0, _b = database.tables; _i < _b.length; _i++) {
+        var t = _b[_i];
         if (grouped[t.schema] === undefined) {
             grouped[t.schema] = { tables: [], enums: [] };
         }
         grouped[t.schema].tables.push(t);
     }
-    for (var _b = 0, _c = database.enums; _b < _c.length; _b++) {
-        var e = _c[_b];
+    for (var _c = 0, _d = database.enums; _c < _d.length; _c++) {
+        var e = _d[_c];
         if (grouped[e.schema] === undefined) {
             grouped[e.schema] = { tables: [], enums: [] };
         }
