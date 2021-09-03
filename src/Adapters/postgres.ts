@@ -3,7 +3,7 @@ import { AdapterInterface, TableDefinition, ColumnDefinition, EnumDefinition } f
 import { Config } from '..'
 
 export default class implements AdapterInterface {
-  async getAllEnums(db: knex, config: Config): Promise<EnumDefinition[]> {
+  async getAllEnums (db: knex, config: Config): Promise<EnumDefinition[]> {
     const query = db('pg_type')
       .select('pg_namespace.nspname AS schema')
       .select('pg_type.typname AS name')
@@ -12,7 +12,7 @@ export default class implements AdapterInterface {
       .join('pg_namespace', 'pg_namespace.oid', 'pg_type.typnamespace')
     if (config.schemas?.length > 0)
       query.whereIn('pg_namespace.nspname', config.schemas)
-    
+
     const enums: { schema: string, name: string, value: string }[] = await query
     const foundEnums: {[key: string]: EnumDefinition} = {}
     function getValues(schema: string, name: string) {
@@ -30,7 +30,7 @@ export default class implements AdapterInterface {
     }
     return Object.values(foundEnums)
   }
-  async getAllTables(db: knex, schemas: string[]): Promise<TableDefinition[]> {
+  async getAllTables (db: knex, schemas: string[]): Promise<TableDefinition[]> {
     const query = db('pg_tables')
     .select('schemaname AS schema')
     .select('tablename AS name')
@@ -47,7 +47,7 @@ export default class implements AdapterInterface {
       query.whereIn('schemaname', schemas)
     return await query
   }
-  async getAllColumns(db: knex, config: Config, table: string, schema: string): Promise<ColumnDefinition[]> {
+  async getAllColumns (db: knex, config: Config, table: string, schema: string): Promise<ColumnDefinition[]> {
     const sql = `
       SELECT
         typns.nspname AS enumSchema,
@@ -79,7 +79,7 @@ export default class implements AdapterInterface {
         name: c.name,
         type: c.typcategory == "E" && config.schemaAsNamespace ? `${c.enumschema}.${c.enumtype}` : c.enumtype,
         isNullable: !c.notnullable,
-        isOptional: c.hasdefault,
+        isOptional: !c.notnullable || c.hasdefault,
         isEnum: c.typcategory == "E",
         isPrimaryKey: c.isprimarykey == 1
       }) as ColumnDefinition)
