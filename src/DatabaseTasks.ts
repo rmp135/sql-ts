@@ -8,17 +8,15 @@ import * as ColumnTasks from './ColumnTasks';
 
 /**
  * Converts a Database definition to TypeScript.
- * 
+ *
  * @export
  * @param {Database} database The Database definition.
  * @param {Config} config The configuration to use.
  * @returns A TypeScript definition, optionally wrapped in a namespace.
  */
 export function stringifyDatabase (database: DecoratedDatabase, config: Config): string {
-  let template = fs.readFileSync(path.join(__dirname, './template.handlebars'), 'utf-8')
-  if (config.template !== undefined) {
-    template = fs.readFileSync(config.template, 'utf-8')
-  }
+  const templatePath = config.template ?? path.join(__dirname, './template.handlebars')
+  const template = fs.readFileSync(templatePath, 'utf-8')
   const compiler = handlebars.compile(template)
   database.tables.sort((tableA, tableB) => tableA.name.localeCompare(tableB.name));
   const grouped : {[key:string]: { tables: Table[], enums: DecoratedEnum[]}} = {}
@@ -48,7 +46,7 @@ export function stringifyDatabase (database: DecoratedDatabase, config: Config):
  * @param {Config} config The configuration to use.
  * @returns The decorated database definition.
  */
-export function decorateDatabase(database: Database, config: Config): DecoratedDatabase {
+export function decorateDatabase (database: Database, config: Config): DecoratedDatabase {
   return {
     enums: database.enums.map(e => {
       return {
@@ -74,6 +72,6 @@ export function decorateDatabase(database: Database, config: Config): DecoratedD
           }
         })
       }
-    })  
+    })
   }
 }
