@@ -50,7 +50,6 @@
     "yargs": "^17.1.1"
   },
   "devDependencies": {
-    "@types/handlebars": "^4.0.40",
     "@types/jasmine": "^3.9.0",
     "@types/node": "^16.7.10",
     "@types/rewire": "^2.5.28",
