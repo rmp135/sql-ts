@@ -1,5 +1,6 @@
 import 'jasmine'
-import * as SharedTasks from './SharedTasks'
+import { Config } from '..'
+import * as SharedTasks from '../SharedTasks'
 
 describe('SharedTasks', () => {
   describe('convertCase', () => {
@@ -34,6 +35,36 @@ describe('SharedTasks', () => {
     it('should should remove numbers from the start', () => {
       const result = SharedTasks.convertCase('1Ta2bLeNaM3', 'camel')
       expect(result).toEqual('ta2bLeNaM3')
+    })
+  })
+  describe('resolveAdapterName', () => {
+    it('should resolve the same adapter name if no matching dialect alias exists', () => {
+      const mockConfig: Config = {
+        dialect: 'test'
+      }
+      const result = SharedTasks.resolveAdapterName(mockConfig)
+      expect(result).toEqual('test')
+    })
+    it('should resolve the same adapter name if no matching client alias exists', () => {
+      const mockConfig: Config = {
+        client: 'test'
+      }
+      const result = SharedTasks.resolveAdapterName(mockConfig)
+      expect(result).toEqual('test')
+    })
+    it('should resolve adapter alias from client', () => {
+      const mockConfig: Config = {
+        client: 'pg'
+      }
+      const result = SharedTasks.resolveAdapterName(mockConfig)
+      expect(result).toEqual('postgres')
+    })
+    it('should resolve adapter alias from dialect', () => {
+      const mockConfig: Config = {
+        client: 'pg'
+      }
+      const result = SharedTasks.resolveAdapterName(mockConfig)
+      expect(result).toEqual('postgres')
     })
   })
 })

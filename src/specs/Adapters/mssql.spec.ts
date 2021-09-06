@@ -1,8 +1,8 @@
-import { ColumnDefinition } from './AdapterInterface';
-import * as mssql from './mssql';
+import { ColumnDefinition } from '../../Adapters/AdapterInterface'
+import * as mssql from '../../Adapters/mssql'
 const rewire = require('rewire')
 
-let Rewiremssql = rewire('./mssql')
+let Rewiremssql = rewire('../../Adapters/mssql')
 const Mockmssql: typeof mssql & typeof Rewiremssql = <any> Rewiremssql
 
 describe('mssql', () => {
@@ -19,7 +19,7 @@ describe('mssql', () => {
       expect(res).toEqual([1,2,3] as any)
       done()
     })
-    it('should get all tables from specific schemas', async (done) => {
+    it('should get all tables from specific schemas', async () => {
       const mockWhereIn = jasmine.createSpy('whereIn')
       const mockSelectSchema = jasmine.createSpy('select').and.returnValue({ whereIn: mockWhereIn })
       const mockSelectName = jasmine.createSpy('select').and.returnValue({ select: mockSelectSchema })
@@ -30,24 +30,23 @@ describe('mssql', () => {
       expect(mockSelectName).toHaveBeenCalledWith('TABLE_NAME AS name')
       expect(mockSelectSchema).toHaveBeenCalledWith('TABLE_SCHEMA AS schema')
       expect(mockWhereIn).toHaveBeenCalledWith('TABLE_SCHEMA', ['schema1', 'schema2'])
-      done()
     })
   })
   describe('getAllColumns', () => {
-    it('should get all columns', async (done) => {
+    it('should get all columns', async () => {
       const mockRawReturn = [
         {
-          name: "name",
-          type: "type",
-          isNullable: "YES",
+          name: 'name',
+          type: 'type',
+          isNullable: 'YES',
           isOptional: 1,
           isEnum: false,
           isPrimaryKey: 1
         },
         {
-          name: "name2",
-          type: "type2",
-          isNullable: "NO",
+          name: 'name2',
+          type: 'type2',
+          isNullable: 'NO',
           isOptional: 0,
           isEnum: false,
           isPrimaryKey: 0
@@ -62,23 +61,22 @@ describe('mssql', () => {
       expect(res).toEqual(
         [
           {
-            name: "name",
-            type: "type",
-            isNullable: true,
-            isOptional: true,
+            name: 'name',
+            type: 'type',
+            nullable: true,
+            optional: true,
             isEnum: false,
             isPrimaryKey: true
           },
           {
-            name: "name2",
-            type: "type2",
-            isNullable: false,
-            isOptional: false,
+            name: 'name2',
+            type: 'type2',
+            nullable: false,
+            optional: false,
             isEnum: false,
             isPrimaryKey: false
           }
         ] as ColumnDefinition[])
-      done()
     })
   })
 })

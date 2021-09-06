@@ -1,8 +1,8 @@
 import 'jasmine'
-import * as DatabaseFactory from './DatabaseFactory';
+import * as DatabaseFactory from '../DatabaseFactory'
 const rewire = require('rewire')
 
-let RewireDatabaseFactory = rewire('./DatabaseFactory')
+let RewireDatabaseFactory = rewire('../DatabaseFactory')
 const MockDatabaseFactory: typeof DatabaseFactory & typeof RewireDatabaseFactory = <any> RewireDatabaseFactory
 
 describe('DatabaseFactory', () => {
@@ -11,7 +11,9 @@ describe('DatabaseFactory', () => {
       const mockKnex = {
         destroy: jasmine.createSpy('knex.destroy')
       }
-      const mockKnexImport = jasmine.createSpy('knex').and.returnValue(mockKnex)
+      const mockKnexImport = {
+        default: jasmine.createSpy('knex').and.returnValue(mockKnex)
+      }
       const mockTableTasks = {
         getAllTables: jasmine.createSpy('getAllTables').and.returnValue(Promise.resolve(['table1', 'table2']))
       }
@@ -19,13 +21,13 @@ describe('DatabaseFactory', () => {
         getAllEnums: jasmine.createSpy('getAllEnums').and.returnValue(Promise.resolve(['enum1', 'enum2']))
       }
       MockDatabaseFactory.__set__({
-        knex: mockKnexImport,
+        knex_1: mockKnexImport,
         TableTasks: mockTableTasks,
         EnumTasks: mockEnumTasks
       })
       const mockConfig = {} as any
       const dat = await MockDatabaseFactory.buildDatabase(mockConfig) as any
-      expect(mockKnexImport).toHaveBeenCalledWith(mockConfig)
+      expect(mockKnexImport.default).toHaveBeenCalledWith(mockConfig)
       expect(mockTableTasks.getAllTables).toHaveBeenCalledWith(mockKnex, mockConfig)
       expect(mockKnex.destroy).toHaveBeenCalled()
       expect(dat.tables).toEqual(['table1', 'table2'])
@@ -33,18 +35,17 @@ describe('DatabaseFactory', () => {
       done()
     })
     it('should throw an error when an error occurs', async (done) => {
-      const mockKnex = {
-        destroy: jasmine.createSpy('knex.destroy')
-      }
-      const mockKnexImport = jasmine.createSpy('knex').and.throwError("knex error")
+      const mockKnexImport = {
+        default: jasmine.createSpy('knex').and.throwError('knex error')
+      } 
       MockDatabaseFactory.__set__({
-        knex: mockKnexImport,
+        knex_1: mockKnexImport,
       })
       const mockConfig = {} as any
       try {
         await MockDatabaseFactory.buildDatabase(mockConfig)
       } catch (err) {
-        expect(err.message).toBe("knex error")
+        expect(err.message).toBe('knex error')
         done()
       }
     })

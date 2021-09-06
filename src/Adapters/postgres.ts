@@ -1,9 +1,9 @@
-import * as knex from 'knex'
+import { Knex } from 'knex'
 import { AdapterInterface, TableDefinition, ColumnDefinition, EnumDefinition } from './AdapterInterface'
 import { Config } from '..'
 
 export default class implements AdapterInterface {
-  async getAllEnums(db: knex, config: Config): Promise<EnumDefinition[]> {
+  async getAllEnums(db: Knex, config: Config): Promise<EnumDefinition[]> {
     const query = db('pg_type')
       .select('pg_namespace.nspname AS schema')
       .select('pg_type.typname AS name')
@@ -14,7 +14,7 @@ export default class implements AdapterInterface {
       query.whereIn('pg_namespace.nspname', config.schemas)
     
     const enums: { schema: string, name: string, value: string }[] = await query
-    const foundEnums: {[key: string]: EnumDefinition} = {}
+    const foundEnums: {[key: string]: EnumDefinition} = { }
     function getValues(schema: string, name: string) {
       const values = {}
       for (const row of enums.filter(e => e.schema == schema && e.name == name)) {
@@ -30,7 +30,8 @@ export default class implements AdapterInterface {
     }
     return Object.values(foundEnums)
   }
-  async getAllTables(db: knex, schemas: string[]): Promise<TableDefinition[]> {
+  
+  async getAllTables(db: Knex, schemas: string[]): Promise<TableDefinition[]> {
     const query = db('pg_tables')
     .select('schemaname AS schema')
     .select('tablename AS name')
@@ -47,7 +48,7 @@ export default class implements AdapterInterface {
       query.whereIn('schemaname', schemas)
     return await query
   }
-  async getAllColumns(db: knex, config: Config, table: string, schema: string): Promise<ColumnDefinition[]> {
+  async getAllColumns(db: Knex, config: Config, table: string, schema: string): Promise<ColumnDefinition[]> {
     const sql = `
       SELECT
         typns.nspname AS enumSchema,
@@ -77,10 +78,10 @@ export default class implements AdapterInterface {
     .map((c: { name: string, type: string, notnullable: boolean, hasdefault: boolean, typcategory: string, enumschema: string, enumtype: string, isprimarykey: number } ) => (
       {
         name: c.name,
-        type: c.typcategory == "E" && config.schemaAsNamespace ? `${c.enumschema}.${c.enumtype}` : c.enumtype,
-        isNullable: !c.notnullable,
-        isOptional: c.hasdefault,
-        isEnum: c.typcategory == "E",
+        type: c.typcategory == 'E' && config.schemaAsNamespace ? `${c.enumschema}.${c.enumtype}` : c.enumtype,
+        nullable: !c.notnullable,
+        optional: c.hasdefault || !c.notnullable,
+        isEnum: c.typcategory == 'E',
         isPrimaryKey: c.isprimarykey == 1
       }) as ColumnDefinition)
   }

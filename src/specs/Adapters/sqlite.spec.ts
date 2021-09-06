@@ -1,7 +1,7 @@
-import * as sqlite from './sqlite3';
+import * as sqlite from '../../Adapters/sqlite'
 const rewire = require('rewire')
 
-let Rewiresqlite = rewire('./sqlite3')
+let Rewiresqlite = rewire('../../Adapters/sqlite')
 const Mocksqlite: typeof sqlite & typeof Rewiresqlite = <any> Rewiresqlite
 
 describe('sqlite', () => {
@@ -44,9 +44,9 @@ describe('sqlite', () => {
       expect(res).toEqual([
         {
           name: 'name1',
-          isNullable: true,
+          nullable: true,
           type: 'type',
-          isOptional: false,
+          optional: true,
           isEnum: false,
           isPrimaryKey: false
         }
@@ -73,9 +73,9 @@ describe('sqlite', () => {
       expect(res).toEqual([
         {
           name: 'name1',
-          isNullable: true,
+          nullable: true,
           type: 'type',
-          isOptional: true,
+          optional: true,
           isEnum: false,
           isPrimaryKey: false
         }
@@ -102,9 +102,9 @@ describe('sqlite', () => {
       expect(res).toEqual([
         {
           name: 'name1',
-          isNullable: true,
+          nullable: true,
           type: 'type',
-          isOptional: true,
+          optional: true,
           isEnum: false,
           isPrimaryKey: true
         }
@@ -131,9 +131,9 @@ describe('sqlite', () => {
       expect(res).toEqual([
         {
           name: 'name1',
-          isNullable: false,
+          nullable: false,
           type: 'type',
-          isOptional: false,
+          optional: false,
           isEnum: false,
           isPrimaryKey: false
         }
@@ -160,9 +160,9 @@ describe('sqlite', () => {
       expect(res).toEqual([
         {
           name: 'name1',
-          isNullable: true,
+          nullable: true,
           type: 'type',
-          isOptional: true,
+          optional: true,
           isEnum: false,
           isPrimaryKey: true
         }

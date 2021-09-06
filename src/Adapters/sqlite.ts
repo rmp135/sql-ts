@@ -1,26 +1,28 @@
-import * as knex from 'knex'
+import { Knex } from 'knex'
 import { AdapterInterface, TableDefinition, ColumnDefinition, EnumDefinition } from './AdapterInterface'
 import { Config } from '..'
 
 export default class implements AdapterInterface {
-  getAllEnums(db: knex, config: Config): Promise<EnumDefinition[]> {
+  getAllEnums(db: Knex, config: Config): Promise<EnumDefinition[]> {
     return Promise.resolve([])
   }
-  async getAllTables(db: knex, schemas: string[]): Promise<TableDefinition[]> {
+  
+  async getAllTables(db: Knex, schemas: string[]): Promise<TableDefinition[]> {
     return (await db('sqlite_master')
     .select('tbl_name AS name')
     .whereNot({ tbl_name: 'sqlite_sequence' })
     .whereIn('type', ['table', 'view']))
     .map((t: { name: string }) => ({ name: t.name, schema: 'main' }))
   }
-  async getAllColumns(db: knex, config: Config, table: string, schema: string): Promise<ColumnDefinition[]> {
+
+  async getAllColumns(db: Knex, config: Config, table: string, schema: string): Promise<ColumnDefinition[]> {
     return (await db.raw(`pragma table_info(${table})`))
-    .map((c: { name: string, type: String, notnull: number, dflt: any, pk: number }) => (
+    .map((c: { name: string, type: string, notnull: 0 | 1, dflt_value: any, pk: 0 | 1 }) => (
       {
         name: c.name,
-        isNullable: c.notnull === 0,
+        nullable: c.notnull === 0,
         type: (c.type.includes('(') ? c.type.split('(')[0] : c.type).toLowerCase(),
-        isOptional: c.dflt != null || c.pk == 1,
+        optional: c.dflt_value != null || c.pk == 1 || c.notnull === 0,
         isEnum: false,
         isPrimaryKey: c.pk == 1
       } as ColumnDefinition

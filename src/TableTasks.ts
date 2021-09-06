@@ -1,8 +1,8 @@
 import * as AdapterFactory from './AdapterFactory'
-import * as knex from 'knex'
+import { Knex } from 'knex'
 import { Config, Table } from './Typings'
 import * as ColumnTasks from './ColumnTasks'
-import * as TableSubTasks from './TableSubTasks'
+import * as TableTasks from './TableTasks'
 import * as SharedTasks from './SharedTasks'
 
 /**
@@ -13,21 +13,51 @@ import * as SharedTasks from './SharedTasks'
  * @param {Config} config The configuration to use.
  * @returns {Promise<Table[]>} 
  */
-export async function getAllTables (db: knex, config: Config): Promise<Table[]> {
-  const tables = config.tables || []
-  const excludedTables = config.excludedTables || []
-  const schemas = config.schemas || []
+export async function getAllTables (db: Knex, config: Config): Promise<Table[]> {
+  const tables = config.tables
+  const excludedTables = config.excludedTables
+  const schemas = config.schemas
   const adapter = AdapterFactory.buildAdapter(config)
   const allTables = (await adapter.getAllTables(db, schemas))
     .filter(table => tables.length == 0 || tables.includes(`${table.schema}.${table.name}`))
     .filter(table => !excludedTables.includes(`${table.schema}.${table.name}`))
   return await Promise.all(allTables.map(async table => ({
     columns: await ColumnTasks.getColumnsForTable(db, table, config),
+    interfaceName: TableTasks.generateInterfaceName(table.name, config),
     name: table.name,
     schema: table.schema,
-    additionalProperties: TableSubTasks.getAdditionalProperties(table.name, table.schema, config),
-    extends: TableSubTasks.getExtends(table.name, table.schema, config)
+    additionalProperties: TableTasks.getAdditionalProperties(table.name, table.schema, config),
+    extends: TableTasks.getExtends(table.name, table.schema, config)
   } as Table)))
+}
+
+
+/**
+ * Returns the additional properties to add to the interface.
+ * 
+ * @export
+ * @param {string} tableName The name of the table.
+ * @param {string} schemaName The schema of the table.
+ * @param {Config} config The configuration to use.
+ */
+ export function getAdditionalProperties (tableName: string, schemaName: string, config: Config): string[] {
+  const fullName = `${schemaName}.${tableName}`
+  return config.additionalProperties[fullName] ?? []
+}
+
+/**
+ * Returns any extension that should be applied to the interface.
+ *
+ * @export
+ * @param {string} tableName
+ * @param {string} schemaName
+ * @param {Config} config
+ * @returns {string}
+ */
+export function getExtends (tableName: string, schemaName: string, config: Config): string {
+  const fullName = `${schemaName}.${tableName}`
+  if (config.extends === undefined) return ""
+  return config.extends[fullName]
 }
 
 /**
@@ -38,8 +68,8 @@ export async function getAllTables (db: knex, config: Config): Promise<Table[]> 
  * @param {Config} config The configuration to use.
  * @returns 
  */
-export function generateInterfaceName (name: string, config: Config): string {
-  const interfaceNamePattern = config.interfaceNameFormat || '${table}Entity'
+ export function generateInterfaceName (name: string, config: Config): string {
+  const interfaceNamePattern = config.interfaceNameFormat
   name = name.replace(/ /g, '_')
   name = SharedTasks.convertCase(name, config.tableNameCasing)
   if (config.singularTableNames && name[name.length - 1] == "s") {

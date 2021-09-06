@@ -1,15 +1,28 @@
 import 'jasmine'
-import * as TableTasks from './TableTasks'
-import { Config } from './Typings'
+import * as TableTasks from '../TableTasks'
+import { Config, Table } from '../Typings'
 const rewire = require('rewire')
 
-let RewireTableTasks = rewire('./TableTasks')
+let RewireTableTasks = rewire('../TableTasks')
 const MockTableTasks: typeof TableTasks & typeof RewireTableTasks = <any> RewireTableTasks
+
+const defaultConfig: Config = {
+  filename: 'Database',
+  folder: '.',
+  tables: [],
+  excludedTables: [],
+  schemas: [],
+  interfaceNameFormat: '${table}Entity',
+  additionalProperties: {},
+  schemaAsNamespace: false
+}
 
 describe('TableTasks', () => {
   describe('generateInterfaceName', () => {
     it('should generate the default table name', (done) => {
-      const mockConfig: Config = { }
+      const mockConfig: Config = {
+        interfaceNameFormat: '${table}Entity'
+      }
       const mockSharedTasks = {
         convertCase: jasmine.createSpy('convertCase').and.returnValue('newname')
       }
@@ -39,7 +52,9 @@ describe('TableTasks', () => {
       })
     })
     it('should replace spaces with underscores', (done) => {
-      const mockConfig: Config = { }
+      const mockConfig: Config = {
+        interfaceNameFormat: '${table}Entity'
+      }
       const mockSharedTasks = {
         convertCase: jasmine.createSpy('convertCase').and.returnValue('newname')
       }
@@ -54,7 +69,8 @@ describe('TableTasks', () => {
     })
     it('should convert to singular', (done) => {
       const mockConfig: Config = {
-        singularTableNames: true
+        singularTableNames: true,
+        interfaceNameFormat: '${table}Entity'
       }
       const mockSharedTasks = {
         convertCase: jasmine.createSpy('convertCase').and.returnValue('newnames')
@@ -107,45 +123,57 @@ describe('TableTasks', () => {
       const mockColumnTasks = {
         getColumnsForTable: jasmine.createSpy('getColumnsForTable').and.returnValues(Promise.resolve(['column1']), Promise.resolve(['column2', 'column3']))
       }
+      const mockTableTasks = {
+        generateInterfaceName: jasmine.createSpy('generateInterfaceName').and.returnValues('genint1name', 'genint2name'),
+        getAdditionalProperties: jasmine.createSpy('getAdditionalProperties').and.returnValue([]),
+        getExtends: jasmine.createSpy('getExtends').and.returnValue('')
+      }
       MockTableTasks.__with__({
         AdapterFactory: mockAdapterFactory,
-        ColumnTasks: mockColumnTasks
+        ColumnTasks: mockColumnTasks,
+        TableTasks: mockTableTasks
       })(async () => {
         const mockDB = {}
         const mockConfig: Config = {
+          ...defaultConfig,
           schemas: ['schema1']
         }
         const result = await MockTableTasks.getAllTables(mockDB as any, mockConfig)
+        
         expect(mockAdapter.getAllTables).toHaveBeenCalledWith(mockDB, ['schema1'])
+        expect(mockTableTasks.generateInterfaceName.calls.argsFor(0)).toEqual(['table1name', mockConfig])
+        expect(mockTableTasks.generateInterfaceName.calls.argsFor(1)).toEqual(['table2name', mockConfig])
         expect(mockColumnTasks.getColumnsForTable.calls.argsFor(0)).toEqual([mockDB, mockTables[0], mockConfig])
         expect(mockColumnTasks.getColumnsForTable.calls.argsFor(1)).toEqual([mockDB, mockTables[1], mockConfig])
         expect(result).toEqual([
           {
-            columns: ['column1'],
+            columns: ['column1' as any],
             name: 'table1name',
             schema: 'table1schema',
             extends: '',
+            interfaceName: 'genint1name',
             additionalProperties: []
           },
           {
-            columns: ['column2', 'column3'],
+            columns: ['column2' as any, 'column3' as any],
             name: 'table2name',
             schema: 'table2schema',
             extends: '',
+            interfaceName: 'genint2name',
             additionalProperties: []
           }
-        ] as any)
+        ] as Table[])
         done()
       })
     })
     it('should exclude tables when specified', (done) => {
       const mockTables = [
         {
-          name: 'table2name',
+          name: 'table1name',
           schema: 'table2schema'
         },
         {
-          name: 'table3name',
+          name: 'table2name',
           schema: 'table2schema'
         }
       ]
@@ -158,86 +186,36 @@ describe('TableTasks', () => {
       const mockColumnTasks = {
         getColumnsForTable: jasmine.createSpy('getColumnsForTable').and.returnValues(Promise.resolve(['column1']))
       }
+      const mockTableTasks = {
+        generateInterfaceName: jasmine.createSpy('generateInterfaceName').and.returnValues('genint1name', 'genint2name'),
+        getAdditionalProperties: jasmine.createSpy('getAdditionalProperties').and.returnValue([]),
+        getExtends: jasmine.createSpy('getExtends').and.returnValue('')
+      }
       MockTableTasks.__with__({
         AdapterFactory: mockAdapterFactory,
-        ColumnTasks: mockColumnTasks
+        ColumnTasks: mockColumnTasks,
+        TableTasks: mockTableTasks
       })(async () => {
         const mockDB = {}
         const mockConfig: Config = {
-          schemas: ['table2schema'],
+          ...defaultConfig,
           excludedTables: ['table2schema.table2name']
         }
         const result = await MockTableTasks.getAllTables(mockDB as any, mockConfig)
-        expect(mockAdapter.getAllTables).toHaveBeenCalledWith(mockDB, ['table2schema'])
-        expect(mockColumnTasks.getColumnsForTable.calls.argsFor(0)).toEqual([mockDB, mockTables[1], mockConfig])
-        expect(result).toEqual([
-          {
-            columns: ['column1'],
-            name: 'table3name',
-            schema: 'table2schema',
-            extends: '',
-            additionalProperties: []
-          }
-        ] as any)
-        done()
-      })
-    })
-    it('should include tables when specified', (done) => {
-      const mockTables = [
-        {
-          name: 'table2name',
-          schema: 'table2schema'
-        },
-        {
-          name: 'table3name',
-          schema: 'table2schema'
-        },
-        {
-          name: 'table4name',
-          schema: 'table2schema'
-        },
-        {
-          name: 'table5name',
-          schema: 'table2schema'
-        },
-      ]
-      const mockAdapter = {
-        getAllTables: jasmine.createSpy('getAllTables').and.returnValue(Promise.resolve(mockTables))
-      }
-      const mockAdapterFactory = {
-        buildAdapter: jasmine.createSpy('buildAdapter').and.returnValue(mockAdapter)
-      }
-      const mockColumnTasks = {
-        getColumnsForTable: jasmine.createSpy('getColumnsForTable').and.returnValues(Promise.resolve(['column1']), Promise.resolve(['column2']))
-      }
-      MockTableTasks.__with__({
-        AdapterFactory: mockAdapterFactory,
-        ColumnTasks: mockColumnTasks
-      })(async () => {
-        const mockDB = {}
-        const mockConfig: Config = {
-          tables: ['table2schema.table2name', 'table2schema.table3name']
-        }
-        const result = await MockTableTasks.getAllTables(mockDB as any, mockConfig)
+        
         expect(mockAdapter.getAllTables).toHaveBeenCalledWith(mockDB, [])
+        expect(mockTableTasks.generateInterfaceName.calls.argsFor(0)).toEqual(['table1name', mockConfig])
         expect(mockColumnTasks.getColumnsForTable.calls.argsFor(0)).toEqual([mockDB, mockTables[0], mockConfig])
-        expect(mockColumnTasks.getColumnsForTable.calls.argsFor(1)).toEqual([mockDB, mockTables[1], mockConfig])
         expect(result).toEqual([
           {
-            columns: ['column1'],
-            name: 'table2name',
+            columns: ['column1' as any],
+            name: 'table1name',
             schema: 'table2schema',
             extends: '',
-            additionalProperties: []
-          },
-          {
-            columns: ['column2'],
-            name: 'table3name',
-            schema: 'table2schema',
-            extends: '',
+            interfaceName: 'genint1name',
             additionalProperties: []
           }
-        ] as any)
+        ] as Table[])
         done()
       })
     })
@@ -267,29 +245,38 @@ describe('TableTasks', () => {
         buildAdapter: jasmine.createSpy('buildAdapter').and.returnValue(mockAdapter)
       }
       const mockColumnTasks = {
-        getColumnsForTable: jasmine.createSpy('getColumnsForTable').and.returnValues(Promise.resolve(['column2']))
+        getColumnsForTable: jasmine.createSpy('getColumnsForTable').and.returnValues(Promise.resolve(['column1']))
+      }
+      const mockTableTasks = {
+        generateInterfaceName: jasmine.createSpy('generateInterfaceName').and.returnValues('genint1name', 'genint2name'),
+        getAdditionalProperties: jasmine.createSpy('getAdditionalProperties').and.returnValue([]),
+        getExtends: jasmine.createSpy('getExtends').and.returnValue('')
       }
       MockTableTasks.__with__({
         AdapterFactory: mockAdapterFactory,
-        ColumnTasks: mockColumnTasks
+        ColumnTasks: mockColumnTasks,
+        TableTasks: mockTableTasks
       })(async () => {
         const mockDB = {}
         const mockConfig: Config = {
+          ...defaultConfig,
           tables: ['schema.table2name', 'schema.table3name'],
           excludedTables: ['schema.table2name']
         }
         const result = await MockTableTasks.getAllTables(mockDB as any, mockConfig)
         expect(mockAdapter.getAllTables).toHaveBeenCalledWith(mockDB, [])
+        expect(mockTableTasks.generateInterfaceName.calls.argsFor(0)).toEqual(['table3name', mockConfig])
         expect(mockColumnTasks.getColumnsForTable.calls.argsFor(0)).toEqual([mockDB, mockTables[1], mockConfig])
         expect(result).toEqual([
           {
-            columns: ['column2'],
+            columns: ['column1'] as any[],
+            interfaceName: 'genint1name',
             name: 'table3name',
             schema: 'schema',
             extends: '',
             additionalProperties: []
           }
-        ] as any)
+        ] as Table[])
         done()
       })
     })
@@ -313,14 +300,22 @@ describe('TableTasks', () => {
       const mockColumnTasks = {
         getColumnsForTable: jasmine.createSpy('getColumnsForTable').and.returnValues(Promise.resolve(['column1']), Promise.resolve(['column2', 'column3']))
       }
+      const mockTableTasks = {
+        generateInterfaceName: jasmine.createSpy('generateInterfaceName').and.returnValues('genint1name', 'genint2name'),
+        getAdditionalProperties: jasmine.createSpy('getAdditionalProperties').and.returnValue([]),
+        getExtends: jasmine.createSpy('getExtends').and.returnValue('')
+      }
       MockTableTasks.__with__({
         AdapterFactory: mockAdapterFactory,
-        ColumnTasks: mockColumnTasks
+        ColumnTasks: mockColumnTasks,
+        TableTasks: mockTableTasks
       })(async () => {
         const mockDB = {}
-        const mockConfig: Config = { }
+        const mockConfig: Config = defaultConfig
         const result = await MockTableTasks.getAllTables(mockDB as any, mockConfig)
         expect(mockAdapter.getAllTables).toHaveBeenCalledWith(mockDB, [])
+        expect(mockTableTasks.generateInterfaceName.calls.argsFor(0)).toEqual(['table1name', mockConfig])
+        expect(mockTableTasks.generateInterfaceName.calls.argsFor(1)).toEqual(['table2name', mockConfig])
         expect(mockColumnTasks.getColumnsForTable.calls.argsFor(0)).toEqual([mockDB, mockTables[0], mockConfig])
         expect(mockColumnTasks.getColumnsForTable.calls.argsFor(1)).toEqual([mockDB, mockTables[1], mockConfig])
         expect(result).toEqual([
@@ -328,19 +323,56 @@ describe('TableTasks', () => {
             columns: ['column1'],
             name: 'table1name',
             schema: 'table1schema',
+            interfaceName: 'genint1name',
             extends: '',
             additionalProperties: []
           },
           {
-            columns: ['column2', 'column3'],
+            columns: ['column2', 'column3'] as any[],
             name: 'table2name',
+            interfaceName: 'genint2name',
             schema: 'table2schema',
             extends: '',
             additionalProperties: []
           }
-        ] as any)
+        ] as Table[])
         done()
       })
+    })
+  })
+  describe('getAdditionalProperties', () => {
+    it('should return empty properties when none are specified', () => {
+      var result = TableTasks.getAdditionalProperties('table', 'schema', defaultConfig)
+      expect(result).toEqual([])
+    })
+    it('should return the properties associated with the full name of the table', () => {
+      const mockConfig: Config = {
+        ...defaultConfig,
+        additionalProperties: {
+          'schema.table': ['example property'],
+          'schema2.table': ['not example property'],
+        }
+      }
+      var result = TableTasks.getAdditionalProperties('table', 'schema', mockConfig)
+      expect(result).toEqual(['example property'])
+    })
+  })
+  describe('getExtends', () => {
+    it('should return an empty string if no config option exists', () => {
+      const mockConfig: Config = { }
+      var result = TableTasks.getExtends('table', 'schema', mockConfig)
+      expect(result).toEqual('')
+    })
+    it('should return the config associated with the full table name', () => {
+      const mockConfig: Config = {
+        ...defaultConfig,
+        extends: {
+          'schema.table': 'extend me',
+          'schema2.table': 'not me'
+        }
+      }
+      var result = TableTasks.getExtends('table', 'schema', mockConfig)
+      expect(result).toEqual('extend me')
     })
   })
 })

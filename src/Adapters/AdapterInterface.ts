@@ -1,34 +1,64 @@
-import * as knex from 'knex'
-import { Config } from '../Typings';
+import { Knex } from 'knex'
+import { Config } from '../Typings'
 
-export interface DatabaseDefinition {
-  tables: TableDefinition[]
-}
+// Basic definitions that all databases should return. 
 
+/**
+ * Raw table definition from the database.
+ *
+ * @export
+ * @interface TableDefinition
+ */
 export interface TableDefinition {
   schema: string;
   name: string;
 }
 
+/**
+ * Raw column definition from the database.
+ *
+ * @export
+ * @interface ColumnDefinition
+ */
 export interface ColumnDefinition {
   name: string;
   type: string;
-  isNullable: boolean;
-  isOptional: boolean;
+  nullable: boolean;
+  optional: boolean;
   isEnum: boolean;
   isPrimaryKey: boolean;
 }
 
-export interface EnumDefinition {
+/**
+ * Enum definition for use before and after parsing.
+ *
+ * @export
+ * @interface EnumDefinition
+ * @template T
+ */
+export interface EnumBaseDefinition<T> {
   name: string;
   schema: string;
-  values: {
-    [key: string]: string
-  }
+  values: T
 }
 
+/**
+ * Raw enum definition from the database.
+ *
+ * @export
+ * @interface EnumBaseDefinition
+ * @extends {EnumBaseDefinition<{[key: string]: string}>}
+ */
+export interface EnumDefinition extends EnumBaseDefinition<{[key: string]: string}> { }
+
+/**
+ * Interface that all adapters should implement.
+ *
+ * @export
+ * @interface AdapterInterface
+ */
 export interface AdapterInterface {
-  getAllTables (db: knex, schemas: string[]): Promise<TableDefinition[]>;
-  getAllColumns (db: knex, config: Config, table: string, schema: string): Promise<ColumnDefinition[]>;
-  getAllEnums (db: knex, config: Config): Promise<EnumDefinition[]>;
+  getAllTables (db: Knex, schemas: string[]): Promise<TableDefinition[]>;
+  getAllColumns (db: Knex, config: Config, table: string, schema: string): Promise<ColumnDefinition[]>;
+  getAllEnums (db: Knex, config: Config): Promise<EnumDefinition[]>;
 }

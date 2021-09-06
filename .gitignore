@@ -1,6 +1,4 @@
 node_modules
 __test
 .vscode
-yarn-error.log
-config.json
-Database.ts
+dist

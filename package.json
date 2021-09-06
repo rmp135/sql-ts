@@ -10,6 +10,9 @@
   "author": {
     "name": "Ryan Poole"
   },
+  "files": [
+    "/dist"
+  ],
   "scripts": {
     "build": "tsc",
     "prebuild": "copyfiles -f ./src/template.handlebars ./dist/",

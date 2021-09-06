@@ -1,6 +1,5 @@
-import * as knex from 'knex';
-import { Config, Database } from './Typings';
-import * as DatabaseTasks from './DatabaseTasks'
+import knex, { Knex } from 'knex'
+import { Config, Database } from './Typings'
 import * as TableTasks from './TableTasks'
 import * as EnumTasks from './EnumTasks'
 
@@ -13,7 +12,7 @@ import * as EnumTasks from './EnumTasks'
  */
 export async function buildDatabase (config: Config): Promise<Database> {
   let database: Database
-  let db: knex
+  let db: Knex
   try {
     db = knex(config)
     database = {

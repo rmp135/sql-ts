@@ -1,15 +1,21 @@
 import * as AdapterFactory from './AdapterFactory'
-import * as knex from 'knex'
+import { Knex } from 'knex'
 import { Config, Enum } from './Typings'
 import * as SharedTasks from './SharedTasks'
+import * as EnumTasks from './EnumTasks'
 
-export async function getAllEnums (db: knex, config: Config): Promise<Enum[]> {
+export async function getAllEnums (db: Knex, config: Config): Promise<Enum[]> {
   const adapter = AdapterFactory.buildAdapter(config)
   const allEnums = (await adapter.getAllEnums(db, config))
   return allEnums.map(e => ({
     name: e.name,
     schema: e.schema,
-    values: e.values
+    convertedName: EnumTasks.generateEnumName(e.name, config),
+    values: Object.keys(e.values).map(ee => ({
+      originalKey: ee,
+      convertedKey: ee.replace(/ /g, ''),
+      value: e.values[ee]
+    }))
   } as Enum))
 }
 

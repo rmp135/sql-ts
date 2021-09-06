@@ -1,12 +1,13 @@
-import * as knex from 'knex'
+import { Knex } from 'knex'
 import { AdapterInterface, TableDefinition, ColumnDefinition, EnumDefinition } from './AdapterInterface'
 import { Config } from '..'
 
 export default class implements AdapterInterface {
-  getAllEnums(db: knex, config: Config): Promise<EnumDefinition[]> {
+  getAllEnums(db: Knex, config: Config): Promise<EnumDefinition[]> {
     return Promise.resolve([])
   }
-  async getAllTables(db: knex, schemas: string[]): Promise<TableDefinition[]> {
+
+  async getAllTables(db: Knex, schemas: string[]): Promise<TableDefinition[]> {
     const query = db('INFORMATION_SCHEMA.TABLES')
     .select('TABLE_NAME AS name')
     .select('TABLE_SCHEMA AS schema')
@@ -14,7 +15,8 @@ export default class implements AdapterInterface {
       query.whereIn('TABLE_SCHEMA', schemas)
     return await query
   }
-  async getAllColumns(db: knex, config: Config, table: string, schema: string): Promise<ColumnDefinition[]> {
+  
+  async getAllColumns(db: Knex, config: Config, table: string, schema: string): Promise<ColumnDefinition[]> {
     const sql = `
       SELECT
 				COLUMN_NAME as name,
@@ -41,8 +43,8 @@ export default class implements AdapterInterface {
         {
           name: c.name,
           type: c.type,
-          isNullable: c.isNullable === 'YES', 
-          isOptional: c.isOptional === 1,
+          nullable: c.isNullable === 'YES', 
+          optional: c.isOptional === 1 || c.isNullable == 'YES',
           isEnum: false,
           isPrimaryKey: c.isPrimaryKey == 1
       }) as ColumnDefinition)

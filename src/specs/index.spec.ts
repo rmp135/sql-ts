@@ -1,8 +1,8 @@
 import 'jasmine'
-import * as index from './index';
+import * as index from '../index'
 const rewire = require('rewire')
 
-let Rewireindex = rewire('./index')
+let Rewireindex = rewire('../index')
 const Mockindex: typeof index & typeof Rewireindex = <any> Rewireindex
 
 describe('index', () => {
@@ -13,35 +13,42 @@ describe('index', () => {
       const mockDatabaseFactory = {
         buildDatabase: jasmine.createSpy('buildDatabase').and.returnValue(Promise.resolve(mockDatabase))
       }
-      const mockDatabaseTasks = {
-        decorateDatabase: jasmine.createSpy('decorateDatabase').and.returnValue(Promise.resolve(mockDecoratedDatabase))
+      const mockAppliedConfig = { }
+      const mockConfigTasks = {
+        applyConfigDefaults: jasmine.createSpy('applyDefaultConfigs').and.returnValue(mockAppliedConfig)
       }
       Mockindex.__with__({
         DatabaseFactory: mockDatabaseFactory,
-        DatabaseTasks: mockDatabaseTasks
+        ConfigTasks: mockConfigTasks
       })(async () => {
-        const mockConfig = { }
+        const mockConfig = {}
         const result = await Mockindex.toObject(mockConfig)
+        expect(mockConfigTasks.applyConfigDefaults).toHaveBeenCalledOnceWith(mockConfig)
         expect(result).toEqual(mockDecoratedDatabase as any)
-        expect(mockDatabaseFactory.buildDatabase).toHaveBeenCalledWith(mockConfig)
-        expect(mockDatabaseTasks.decorateDatabase).toHaveBeenCalledWith(mockDatabase, mockConfig)
+        expect(mockDatabaseFactory.buildDatabase).toHaveBeenCalledOnceWith(mockAppliedConfig)
         done()
       })
     })
   })
   describe('fromObject', () => {
     it('should return TypeScript from an object', (done) => {
-      const mockObject = { }
+      const mockAppliedConfig = { }
+      const mockConfigTasks = {
+        applyConfigDefaults: jasmine.createSpy('applyDefaultConfigs').and.returnValue(mockAppliedConfig)
+      }
       const mockDatabaseTasks = {
         stringifyDatabase: jasmine.createSpy('stringifyDatabase').and.returnValue('database string')
       }
       Mockindex.__with__({
-        DatabaseTasks: mockDatabaseTasks
+        DatabaseTasks: mockDatabaseTasks,
+        ConfigTasks: mockConfigTasks
       })(() => {
+        const mockObject = { }
         const mockConfig = { }
         const result = Mockindex.fromObject(mockObject as any, mockConfig)
         expect(result).toBe('database string')
-        expect(mockDatabaseTasks.stringifyDatabase).toHaveBeenCalledWith(mockObject, mockConfig)
+        expect(mockConfigTasks.applyConfigDefaults).toHaveBeenCalledOnceWith(mockConfig)
+        expect(mockDatabaseTasks.stringifyDatabase).toHaveBeenCalledOnceWith(mockObject, mockAppliedConfig)
         done()
       })
     })
@@ -56,15 +63,21 @@ describe('index', () => {
         stringifyDatabase: jasmine.createSpy('stringifyDatabase').and.returnValue('database string'),
         decorateDatabase: jasmine.createSpy('decorateDatabase').and.returnValue(mockDatabase)
       }
+      const mockConfig = { }
+      const mockAppliedConfig = { }
+      const mockConfigTasks = {
+        applyConfigDefaults: jasmine.createSpy('applyDefaultConfigs').and.returnValue(mockAppliedConfig)
+      }
       Mockindex.__with__({
         DatabaseFactory: mockDatabaseFactory,
-        DatabaseTasks: mockDatabaseTasks
+        DatabaseTasks: mockDatabaseTasks,
+        ConfigTasks: mockConfigTasks
       })(async () => {
-        const mockConfig = { }
         const result = await Mockindex.toTypeScript(mockConfig)
         expect(result).toBe('database string')
-        expect(mockDatabaseFactory.buildDatabase).toHaveBeenCalledWith(mockConfig)
-        expect(mockDatabaseTasks.stringifyDatabase).toHaveBeenCalledWith(mockDatabase, mockConfig)
+        expect(mockConfigTasks.applyConfigDefaults).toHaveBeenCalledWith(mockAppliedConfig)
+        expect(mockDatabaseFactory.buildDatabase).toHaveBeenCalledWith(mockAppliedConfig)
+        expect(mockDatabaseTasks.stringifyDatabase).toHaveBeenCalledWith(mockDatabase, mockAppliedConfig)
         done()
       })
     })

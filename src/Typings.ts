@@ -1,4 +1,5 @@
-import * as knex from 'knex'; 
+import { Knex } from 'knex'
+import { ColumnDefinition, EnumBaseDefinition, TableDefinition } from './Adapters/AdapterInterface'
 
 /**
  * The configuration file for creating new databases.
@@ -7,7 +8,7 @@ import * as knex from 'knex';
  * @interface Config
  * @extends {knex.Config}
  */
-export interface Config extends knex.Config {
+export interface Config extends Knex.Config {
   tables?: string[],
   excludedTables?: string[],
   filename?: string,
@@ -35,53 +36,17 @@ export interface Config extends knex.Config {
 } 
 
 /**
- * The JSON definition of a column for importing and exporting.
- * 
- * @export
- * @interface Column
- */
-export interface Column {
-  name: string,
-  type: string,
-  optional: boolean,
-  nullable: boolean,
-  isEnum: boolean,
-  isPrimaryKey: boolean
-}
-
-export interface Enum {
-  name: string;
-  schema: string;
-  values: {
-    [key: string]: string
-  }
-}
-/**
- * The JSON definition of a table for importing and exporting.
+ * The JSON definition of a table with additional properties
  * 
  * @export
  * @interface Table
  */
-export interface Table {
+export interface Table extends TableDefinition {
+  interfaceName: string
   name: string,
   schema: string,
   columns: Column[]
-
-  /**
-   * This string is a class or interface that this definition should extend
-   *
-   * @type {string}
-   * @memberof Table
-   */
   extends?: string
-
-  /**
-   *  This array of string will be added as properties to the object
-   *  when it is exported
-   *
-   * @type {string[]}
-   * @memberof Table
-   */
   additionalProperties?: string[],
 }
 
@@ -97,45 +62,28 @@ export interface Database {
 }
 
 /**
- * JSON definition of a database with additional fields.
+ * Enum value with original and converted keys.
  *
  * @export
- * @interface DecoratedDatabase
+ * @interface EnumValue
  */
-export interface DecoratedDatabase {
-  tables: DecoratedTable[],
-  enums: DecoratedEnum[]
+export interface EnumValue {
+  originalKey: string;
+  convertedKey: string;
+  value: string;
 }
 
-export interface DecoratedEnum {
-  schema: string;
-  name: string;
-  convertedName: string;
-  values: {
-    originalKey: string;
-    convertedKey: string;
-    value: string;
-  }[]
-}
-
-/**
- * JSON definition of a database table with additional fields.
- *
- * @export
- * @interface DecoratedDatabase
- */
-export interface DecoratedTable extends Table {
-  interfaceName: string
-  columns: DecoratedColumn[]
+export interface Enum extends EnumBaseDefinition<EnumValue[]> {
+  convertedName: string
 }
 
 /**
  * JSON definition of a database column with additional fields.
  *
  * @export
- * @interface DecoratedDatabase
+ * @interface Column
  */
-export interface DecoratedColumn extends Column {
+export interface Column extends ColumnDefinition {
   propertyName: string
   propertyType: string
 }

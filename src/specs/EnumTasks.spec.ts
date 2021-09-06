@@ -1,10 +1,10 @@
 import 'jasmine'
-import * as EnumTasks from './EnumTasks';
-import { EnumDefinition } from './Adapters/AdapterInterface';
-import { Config } from './Typings'
+import * as EnumTasks from '../EnumTasks'
+import { EnumDefinition } from '../Adapters/AdapterInterface'
+import { Config, Enum } from '../Typings'
 const rewire = require('rewire')
 
-let RewireEnumTasks = rewire('./EnumTasks')
+let RewireEnumTasks = rewire('../EnumTasks')
 const MockEnumTasks: typeof EnumTasks & typeof RewireEnumTasks = <any> RewireEnumTasks
 
 describe('EnumTasks', () => {
@@ -45,7 +45,7 @@ describe('EnumTasks', () => {
           name: 'cname',
           schema: 'schema',
           values: {
-            'val1': 'val1'
+            'ekey 1': 'val1'
           }
         }
       ]
@@ -55,8 +55,12 @@ describe('EnumTasks', () => {
       const mockAdapterFactory = {
         buildAdapter: jasmine.createSpy('buildAdapter').and.returnValue(mockAdapter)
       }
+      const mockEnumTasks = {
+        generateEnumName: jasmine.createSpy('generateEnumName').and.returnValue('genename')
+      }
       MockEnumTasks.__with__({
-        AdapterFactory: mockAdapterFactory
+        AdapterFactory: mockAdapterFactory,
+        EnumTasks: mockEnumTasks
       })(async () => {
         const db = {}
         const config = {
@@ -66,14 +70,25 @@ describe('EnumTasks', () => {
         const result = await MockEnumTasks.getAllEnums(db as any, config as any)
         expect(mockAdapterFactory.buildAdapter).toHaveBeenCalledWith(config)
         expect(mockAdapter.getAllEnums).toHaveBeenCalledWith(db, config)
+        expect(mockEnumTasks.generateEnumName).toHaveBeenCalledWith('cname', config)
         expect(result).toEqual([
           {
             name: 'cname',
             schema: 'schema',
-            values: {
-              'val1': 'val1'
-            }
-          }
+            convertedName: 'genename',
+            values: [
+              {
+                originalKey: 'ekey 1',
+                convertedKey: 'ekey1',
+                value: 'val1'
+              }
+            ]
+            // name: 'cname',
+            // schema: 'schema',
+            // values: {
+            //   originalKey: ''
+            // }
+          } as Enum
         ])
         done()
       })
