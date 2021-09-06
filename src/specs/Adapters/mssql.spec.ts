@@ -7,7 +7,7 @@ const Mockmssql: typeof mssql & typeof Rewiremssql = <any> Rewiremssql
 
 describe('mssql', () => {
   describe('getAllTables', () => {
-    it('should get all tables from all schemas', async (done) => {
+    it('should get all tables from all schemas', async () => {
       const mockSelectSchema = jasmine.createSpy('select').and.returnValue(Promise.resolve([1,2,3]))
       const mockSelectName = jasmine.createSpy('select').and.returnValue({ select: mockSelectSchema })
       const mockdb = jasmine.createSpy('db').and.returnValue({ select: mockSelectName })
@@ -17,7 +17,6 @@ describe('mssql', () => {
       expect(mockSelectName).toHaveBeenCalledWith('TABLE_NAME AS name')
       expect(mockSelectSchema).toHaveBeenCalledWith('TABLE_SCHEMA AS schema')
       expect(res).toEqual([1,2,3] as any)
-      done()
     })
     it('should get all tables from specific schemas', async () => {
       const mockWhereIn = jasmine.createSpy('whereIn')

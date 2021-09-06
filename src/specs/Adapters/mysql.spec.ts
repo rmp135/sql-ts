@@ -7,7 +7,7 @@ const Mockmysql: typeof mysql & typeof Rewiremysql = <any> Rewiremysql
 
 describe('mysql', () => {
   describe('getAllTables', () => {
-    it('should get all tables from all schemas', async (done) => {
+    it('should get all tables from all schemas', async () => {
       const mockWhereNotIn = jasmine.createSpy('whereNotIn').and.returnValue(Promise.resolve([1,2,3]))
       const mockSelectSchema = jasmine.createSpy('select').and.returnValue({ whereNotIn: mockWhereNotIn })
       const mockSelectName = jasmine.createSpy('select').and.returnValue({ select: mockSelectSchema })
@@ -19,9 +19,8 @@ describe('mysql', () => {
       expect(mockSelectSchema).toHaveBeenCalledWith('TABLE_SCHEMA AS schema')
       expect(mockWhereNotIn).toHaveBeenCalledWith('TABLE_SCHEMA', ['mysql', 'information_schema', 'performance_schema', 'sys'])
       expect(res).toEqual([1,2,3] as any)
-      done()
     })
-    it('should get all tables from specific schemas', async (done) => {
+    it('should get all tables from specific schemas', async () => {
       const mockWhereIn = jasmine.createSpy('whereIn')
       const mockWhereNotIn = jasmine.createSpy('whereNotIn').and.returnValue({ whereIn: mockWhereIn })
       const mockSelectSchema = jasmine.createSpy('select').and.returnValue({ whereNotIn: mockWhereNotIn })
@@ -34,11 +33,10 @@ describe('mysql', () => {
       expect(mockSelectSchema).toHaveBeenCalledWith('TABLE_SCHEMA AS schema')
       expect(mockWhereNotIn).toHaveBeenCalledWith('TABLE_SCHEMA', ['mysql', 'information_schema', 'performance_schema', 'sys'])
       expect(mockWhereIn).toHaveBeenCalledWith('table_schema', ['schema1', 'schema2'])
-      done()
     })
   })
   describe('getAllColumns', () => {
-    it('should get all columns', async (done) => {
+    it('should get all columns', async () => {
       const mockRawReturn = [[
         {
           name: 'name',
@@ -82,7 +80,6 @@ describe('mysql', () => {
             isPrimaryKey: false
           }
         ] as ColumnDefinition[])
-      done()
     })
   })
 })

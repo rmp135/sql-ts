@@ -6,7 +6,7 @@ const Mocksqlite: typeof sqlite & typeof Rewiresqlite = <any> Rewiresqlite
 
 describe('sqlite', () => {
   describe('getAllTables', () => {
-    it('should get all tables settings the schema to the current database', async (done) => {
+    it('should get all tables settings the schema to the current database', async () => {
       const mockMap = jasmine.createSpy('map').and.returnValue([1,2,3])
       const mockWhereIn = jasmine.createSpy('whereIn').and.returnValue({ map: mockMap })
       const mockWhereNot = jasmine.createSpy('whereNot').and.returnValue({ whereIn: mockWhereIn })
@@ -20,11 +20,10 @@ describe('sqlite', () => {
       expect(mockWhereNot).toHaveBeenCalledWith({ tbl_name: 'sqlite_sequence' })
       expect(mockMap).toHaveBeenCalled()
       expect(res).toEqual([1,2,3] as any)
-      done()
     })
   })
   describe('getAllColumns', () => {
-    it('should get all columns', async (done) => {
+    it('should get all columns', async () => {
       const mockTables = [
         {
           name: 'name1',
@@ -51,9 +50,8 @@ describe('sqlite', () => {
           isPrimaryKey: false
         }
       ])
-      done()
     })
-    it('should get all columns with default', async (done) => {
+    it('should get all columns with default', async () => {
       const mockTables = [
         {
           name: 'name1',
@@ -80,9 +78,8 @@ describe('sqlite', () => {
           isPrimaryKey: false
         }
       ])
-      done()
     })
-    it('should get all columns with primary key', async (done) => {
+    it('should get all columns with primary key', async () => {
       const mockTables = [
         {
           name: 'name1',
@@ -109,9 +106,8 @@ describe('sqlite', () => {
           isPrimaryKey: true
         }
       ])
-      done()
     })
-    it('should get all columns not nullable', async (done) => {
+    it('should get all columns not nullable', async () => {
       const mockTables = [
         {
           name: 'name1',
@@ -138,9 +134,8 @@ describe('sqlite', () => {
           isPrimaryKey: false
         }
       ])
-      done()
     })
-    it('should get all columns with parentheses', async (done) => {
+    it('should get all columns with parentheses', async () => {
       const mockTables = [
         {
           name: 'name1',
@@ -167,7 +162,6 @@ describe('sqlite', () => {
           isPrimaryKey: true
         }
       ])
-      done()
     })
   })
 })
