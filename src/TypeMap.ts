@@ -8,6 +8,9 @@ export default {
     Object: ['json', 'TVP'],
     Buffer: ['binary', 'varbinary', 'image', 'UDT']
   },
+  postgres: {
+    string: ['numeric', 'decimal', 'int8', 'money']
+  },
   mssql: {
     string: ['timestamp']
   }
