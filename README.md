@@ -1,7 +1,7 @@
 # sql-ts
 
-![npm (scoped)](https://img.shields.io/npm/v/@rmp135/sql-ts)
-![npm](https://img.shields.io/npm/dw/@rmp135/sql-ts)
+[![npm (scoped)](https://img.shields.io/npm/v/@rmp135/sql-ts)](https://www.npmjs.com/package/@rmp135/sql-ts)
+[![npm](https://img.shields.io/npm/dw/@rmp135/sql-ts)](https://www.npmjs.com/package/@rmp135/sql-ts)
 [![Build Status](https://app.travis-ci.com/rmp135/sql-ts.svg?branch=master)](https://app.travis-ci.com/rmp135/sql-ts)
 
 Generate TypeScript types for tables and views in a SQL database.
