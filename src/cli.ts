@@ -1,9 +1,10 @@
 import * as fs from 'fs'
 import yargs from 'yargs'
+import { hideBin } from 'yargs/helpers'
 import * as path from 'path'
 import sqlts, { Config } from './index'
 
-const args = yargs(process.argv)
+const args = yargs(hideBin(process.argv))
 .alias('c', 'config')
 .describe('c', 'Config file.')
 .demandOption(['c'])
