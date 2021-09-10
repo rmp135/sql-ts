@@ -2,10 +2,9 @@ import 'jasmine'
 import * as ColumnTasks from '../ColumnTasks'
 import { Column, Config } from '../Typings'
 import { ColumnDefinition } from '../Adapters/AdapterInterface'
-const rewire = require('rewire')
+import rewire from 'rewire'
 
-let RewireColumnTasks = rewire('../ColumnTasks')
-const MockColumnTasks: typeof ColumnTasks & typeof RewireColumnTasks = <any> RewireColumnTasks
+const MockColumnTasks = rewire<typeof ColumnTasks>('../ColumnTasks')
 
 describe('ColumnTasks', () => {
   describe('getColumnsForTable', () => {
@@ -100,10 +99,13 @@ describe('ColumnTasks', () => {
           schema: 'schema',
           name: 'table'
         }
-        const mockColumn = {
+        const mockColumn: ColumnDefinition = {
           isEnum: false,
           name: 'column',
-          type: 'tofind'
+          type: 'tofind',
+          isPrimaryKey: false,
+          nullable: false,
+          optional: false
         }
         const mockConfig: Config = {
           typeOverrides: { },
@@ -138,7 +140,10 @@ describe('ColumnTasks', () => {
         const mockColumn = {
           isEnum: false,
           name: 'column',
-          type: 'tofind'
+          type: 'tofind',
+          isPrimaryKey: false,
+          nullable: false,
+          optional: false
         }
         const mockConfig: Config = {
           typeOverrides: { },
@@ -160,9 +165,13 @@ describe('ColumnTasks', () => {
           name: 'tableName',
           schema: 'schema'
         }
-        const mockColumn = {
+        const mockColumn: ColumnDefinition = {
           name: 'tofind',
-          type: 'ctype'
+          type: 'ctype',
+          isEnum: false,
+          isPrimaryKey: false,
+          nullable: false,
+          optional: false
         }
         const mockConfig: Config = {
           typeMap: {
@@ -188,7 +197,12 @@ describe('ColumnTasks', () => {
           schema: 'schema'
         }
         const mockColumn = {
-          type: 'ctype'
+          name: 'column',
+          type: 'ctype',
+          isEnum: false,
+          isPrimaryKey: false,
+          nullable: false,
+          optional: false
         }
         const mockConfig: Config = {
           typeMap: {
@@ -207,9 +221,13 @@ describe('ColumnTasks', () => {
           name: 'tableName',
           schema: 'schema'
         }
-        const mockColumn = {
+        const mockColumn: ColumnDefinition = {
           name: 'cname',
-          type: 'ctype'
+          type: 'ctype',
+          isEnum: false,
+          isPrimaryKey: false,
+          nullable: false,
+          optional: false
         }
         const mockConfig = {
           typeOverrides: {
@@ -234,7 +252,11 @@ describe('ColumnTasks', () => {
         }
         const mockColumn = {
           name: 'column',
-          type: 'ctype'
+          type: 'ctype',
+          isEnum: false,
+          isPrimaryKey: false,
+          nullable: false,
+          optional: false
         }
         const mockConfig = {
           typeOverrides: { 'schema.tableName.column': 'overridetype' },
@@ -270,8 +292,13 @@ describe('ColumnTasks', () => {
           name: 'table',
           schema: 'schema'
         }
-        const mockColumn = {
-          name: 'column'
+        const mockColumn: ColumnDefinition = {
+          name: 'column',
+          isEnum: false,
+          type: 'type',
+          isPrimaryKey: false,
+          nullable: false,
+          optional: false
         }
         const result = MockColumnTasks.convertType(mockColumn, mockTable, mockConfig)
         expect(mockGenerateFullColumnName).toHaveBeenCalledOnceWith('table', 'schema', 'column')

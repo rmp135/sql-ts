@@ -1,10 +1,9 @@
 import 'jasmine'
 import { Config } from '../'
 import * as DatabaseTasks from '../DatabaseTasks'
-const rewire = require('rewire')
+import rewire from 'rewire'
 
-let RewireDatabaseTasks = rewire('../DatabaseTasks')
-const MockDatabaseTasks: typeof DatabaseTasks & typeof RewireDatabaseTasks = <any> RewireDatabaseTasks
+const MockDatabaseTasks = rewire<typeof DatabaseTasks>('../DatabaseTasks')
 
 describe('DatabaseTasks', () => {
   let mockDatabase

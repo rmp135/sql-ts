@@ -2,10 +2,9 @@ import 'jasmine'
 import * as EnumTasks from '../EnumTasks'
 import { EnumDefinition } from '../Adapters/AdapterInterface'
 import { Config, Enum } from '../Typings'
-const rewire = require('rewire')
+import rewire from 'rewire'
 
-let RewireEnumTasks = rewire('../EnumTasks')
-const MockEnumTasks: typeof EnumTasks & typeof RewireEnumTasks = <any> RewireEnumTasks
+const MockEnumTasks = rewire<typeof EnumTasks>('../EnumTasks')
 
 describe('EnumTasks', () => {
   describe('generateEnumName', () => {

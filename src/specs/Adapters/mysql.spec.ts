@@ -1,9 +1,8 @@
 import { ColumnDefinition } from '../../Adapters/AdapterInterface'
 import * as mysql from '../../Adapters/mysql'
-const rewire = require('rewire')
+import rewire from 'rewire'
 
-let Rewiremysql = rewire('../../Adapters/mysql')
-const Mockmysql: typeof mysql & typeof Rewiremysql = <any> Rewiremysql
+const Mockmysql = rewire<typeof mysql>('../../Adapters/mysql')
 
 describe('mysql', () => {
   describe('getAllTables', () => {

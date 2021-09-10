@@ -1,8 +1,7 @@
 import * as sqlite from '../../Adapters/sqlite'
-const rewire = require('rewire')
+import rewire from 'rewire'
 
-let Rewiresqlite = rewire('../../Adapters/sqlite')
-const Mocksqlite: typeof sqlite & typeof Rewiresqlite = <any> Rewiresqlite
+const Mocksqlite = rewire<typeof sqlite>('../../Adapters/sqlite')
 
 describe('sqlite', () => {
   describe('getAllTables', () => {

@@ -1,10 +1,9 @@
 import 'jasmine'
 import * as TableTasks from '../TableTasks'
 import { Config, Table } from '../Typings'
-const rewire = require('rewire')
+import rewire from 'rewire'
 
-let RewireTableTasks = rewire('../TableTasks')
-const MockTableTasks: typeof TableTasks & typeof RewireTableTasks = <any> RewireTableTasks
+const MockTableTasks = rewire<typeof TableTasks>('../TableTasks')
 
 const defaultConfig: Config = {
   filename: 'Database',

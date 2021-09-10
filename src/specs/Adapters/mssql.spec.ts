@@ -1,9 +1,8 @@
 import { ColumnDefinition } from '../../Adapters/AdapterInterface'
 import * as mssql from '../../Adapters/mssql'
-const rewire = require('rewire')
+import rewire from 'rewire'
 
-let Rewiremssql = rewire('../../Adapters/mssql')
-const Mockmssql: typeof mssql & typeof Rewiremssql = <any> Rewiremssql
+const Mockmssql = rewire<typeof mssql>('../../Adapters/mssql')
 
 describe('mssql', () => {
   describe('getAllTables', () => {

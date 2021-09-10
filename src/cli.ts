@@ -1,5 +1,5 @@
 import * as fs from 'fs'
-import * as yargs from 'yargs'
+import yargs from 'yargs'
 import * as path from 'path'
 import sqlts, { Config } from './index'
 

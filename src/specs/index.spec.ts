@@ -1,9 +1,8 @@
 import 'jasmine'
 import * as index from '../index'
-const rewire = require('rewire')
+import rewire from 'rewire'
 
-let Rewireindex = rewire('../index')
-const Mockindex: typeof index & typeof Rewireindex = <any> Rewireindex
+const Mockindex = rewire<typeof index>('../index')
 
 describe('index', () => {
   describe('toObject', () => {

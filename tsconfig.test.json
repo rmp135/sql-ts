@@ -6,6 +6,7 @@
     "target": "es5",
     "sourceMap": false,
     "outDir": "__test",
+    "esModuleInterop": true,
     "lib": [
       "es6",
       "es2016.array.include"

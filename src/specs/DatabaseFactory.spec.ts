@@ -1,9 +1,8 @@
 import 'jasmine'
 import * as DatabaseFactory from '../DatabaseFactory'
-const rewire = require('rewire')
+import rewire from 'rewire'
 
-let RewireDatabaseFactory = rewire('../DatabaseFactory')
-const MockDatabaseFactory: typeof DatabaseFactory & typeof RewireDatabaseFactory = <any> RewireDatabaseFactory
+const MockDatabaseFactory = rewire<typeof DatabaseFactory>('../DatabaseFactory')
 
 describe('DatabaseFactory', () => {
   describe('buildDatabase', () => {
