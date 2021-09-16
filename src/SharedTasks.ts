@@ -10,20 +10,17 @@ import { camelCase, pascalCase } from 'change-case'
  * @returns The converted name.
  */
 export function convertCase (name: string, caseType: string) {
-  /** removes any number at the beginning of the string */
-  const scapedName = name.replace(/^([0-9]+)/g, '');
-
   switch (caseType) {
     case 'pascal':
-      return pascalCase(scapedName)
+      return pascalCase(name)
     case 'camel':
-      return camelCase(scapedName)
+      return camelCase(name)
     case 'lower':
-      return scapedName.toLowerCase()
+      return name.toLowerCase()
     case 'upper':
-      return scapedName.toUpperCase()
+      return name.toUpperCase()
     default:
-      return scapedName
+      return name
   }
 }
 
