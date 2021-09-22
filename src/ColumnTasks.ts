@@ -4,6 +4,7 @@ import { Knex } from 'knex'
 import { Column, Config } from './Typings'
 import * as SharedTasks from './SharedTasks'
 import TypeMap from './TypeMap'
+import * as EnumTasks from './EnumTasks'
 
 /**
  * Returns all columns in a given Table using a knex context.
@@ -54,7 +55,7 @@ export function generateFullColumnName (tableName: string, schemaName: string, c
  */
  export function convertType (column: ColumnDefinition, table: TableDefinition, config: Config): string {
   if (column.isEnum) {
-    return column.type.replace(/ /g, '')
+    return EnumTasks.generateEnumName(column.type, config)
   }
   const fullname = generateFullColumnName(table.name, table.schema, column.name)
   
