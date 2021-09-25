@@ -79,6 +79,28 @@ describe('ColumnTasks', () => {
     })
   })
   describe('convertType', () => {
+    it('should respect the enum casing config if the type is enum', () => {
+      const mockEnumTasks = {
+        generateEnumName: jasmine.createSpy('generateEnumName').and.returnValue('generatedenumname')
+      }
+      MockColumnTasks.__with__({
+        EnumTasks: mockEnumTasks
+      })(() => {
+        const mockColumn: ColumnDefinition = {
+          isEnum: true,
+          isPrimaryKey: false,
+          name: 'enum name',
+          nullable: false,
+          optional: false,
+          type: 'enum type'
+        }
+        const mockTable = {}
+        const mockConfig = {}
+        const result = MockColumnTasks.convertType(mockColumn, mockTable as any, mockConfig)
+        expect(mockEnumTasks.generateEnumName).toHaveBeenCalledOnceWith('enum type', mockConfig)
+        expect(result).toEqual('generatedenumname')
+      })
+    })
     it('should use the built global types when no specific client exists', () => {
       const mockSharedTasks = {
         resolveAdapterName: jasmine.createSpy('resolveAdapterName').and.returnValue('adapterName')
