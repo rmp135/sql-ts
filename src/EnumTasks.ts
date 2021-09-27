@@ -13,7 +13,7 @@ export async function getAllEnums (db: Knex, config: Config): Promise<Enum[]> {
     convertedName: generateEnumName(e.name, config),
     values: Object.keys(e.values).map(ee => ({
       originalKey: ee,
-      convertedKey: ee.replace(/ /g, ''),
+      convertedKey: SharedTasks.convertCase(ee, config.enumKeyCasing),
       value: e.values[ee]
     }))
   } as Enum))

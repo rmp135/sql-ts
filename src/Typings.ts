@@ -19,6 +19,7 @@ export interface Config extends Knex.Config {
   tableNameCasing?: CaseType,
   columnNameCasing?: CaseType,
   enumNameCasing?: CaseType,
+  enumKeyCasing?: CaseType
   singularTableNames?: boolean
   schemaAsNamespace?: boolean,
   schemas?: string[],

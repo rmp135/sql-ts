@@ -77,7 +77,7 @@ describe('EnumTasks', () => {
         expect(mockAdapterFactory.buildAdapter).toHaveBeenCalledWith(config)
         expect(mockAdapter.getAllEnums).toHaveBeenCalledOnceWith(db, config)
         expect(mockGenerateEnumName).toHaveBeenCalledOnceWith('cname', config)
-        expect(mockSchemaTasks.generateSchemaName).toHaveBeenCalledOnceWith('schemaq')
+        expect(mockSchemaTasks.generateSchemaName).toHaveBeenCalledOnceWith('schema')
         expect(mockSharedTasks.convertCase).toHaveBeenCalledOnceWith('ekey 1', 'upper')
         expect(result).toEqual([
           {

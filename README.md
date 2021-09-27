@@ -204,9 +204,13 @@ The below will export interfaces with such names as `UserModel` and `LogModel` f
 }
 ```
 
+The following options concerns modifying the case values of certain elements.
+
+Valid case values are "pascal" for PascalCase, "camel" for camelCase, "lower" for lowercase and "upper" for UPPERCASE. If the value is empty, missing or invalid, no case conversion will be applied to value. Some values will be modified to be TypeScript safe, others are wrapped in quotes.
+
 ### tableNameCasing
 
-Determines the casing for table names before being passed into the name generator. Valid values are "pascal" for PascalCase, "camel" for camelCase, "lower" for lowercase and "upper" for UPPERCASE. If the value is empty, missing or invalid, no case conversion will be applied to the table names.
+Determines the casing for table names 
 
 ```json
 {
@@ -218,7 +222,7 @@ Determines the casing for table names before being passed into the name generato
 
 ### columnNameCasing
 
-Determines the casing for column names before being passed into the name generator. Valid values are "pascal" for PascalCase, "camel" for camelCase, "lower" for lowercase and "upper" for UPPERCASE. If the value is empty, missing or invalid, no case conversion will be applied to the column names.
+Determines the casing for column names.
 
 ```json
 {
@@ -229,13 +233,25 @@ Determines the casing for column names before being passed into the name generat
 ```
 ### enumNameCasing
 
-Determines the casing for enum names before being passed into the name generator. Valid values are "pascal" for PascalCase, "camel" for camelCase, "lower" for lowercase and "upper" for UPPERCASE. If the value is empty, missing or invalid, no case conversion will be applied to the enum names.
+Determines the casing for enum names. Any none alphanumeric charaters will be removed. If the enum starts with numbers, those numbers will be removed.
 
 ```json
 {
   "client": "...",
   "connection": {},
   "enumNameCasing": "lower"
+}
+```
+
+### enumKeyCasing
+
+Determines the casing for enum keys. Keys are wrapped in quotes to allow for any value, use ["index notation"] to references keys will none alphanumeric values.
+
+```json
+{
+  "client": "...",
+  "connection": {},
+  "enumKeyCasing": "upper"
 }
 ```
 
