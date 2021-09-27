@@ -37,21 +37,29 @@ export default class implements AdapterInterface {
   
   async getAllTables(db: Knex, schemas: string[]): Promise<TableDefinition[]> {
     const query = db('pg_tables')
-    .select('schemaname AS schema')
-    .select('tablename AS name')
-    .union(qb => {
-      qb
-      .select('schemaname AS schema')
-      .select('matviewname AS name')
-      .from('pg_matviews')
-      if (schemas.length > 0)
-        qb.whereIn('schemaname', schemas)
+    .select("*").from((qb: Knex) => {
+      qb.select('schemaname AS schema')
+      .select('tablename AS name')
+      .from('pg_tables')
+      .union(qb => {
+        qb
+        .select('schemaname AS schema')
+        .select('matviewname AS name')
+        .from('pg_matviews')
+      })
+      .union(qb => {
+        qb
+        .select('schemaname AS schema')
+        .select('viewname AS name')
+        .from('pg_views')
+      }).as('Unioned')
     })
-    .whereNotIn('schemaname', ['pg_catalog', 'information_schema'])
+    .whereNotIn('schema', ['pg_catalog', 'information_schema'])
     if (schemas.length > 0)
-      query.whereIn('schemaname', schemas)
+      query.whereIn('schema', schemas)
     return await query
   }
+
   async getAllColumns(db: Knex, config: Config, table: string, schema: string): Promise<ColumnDefinition[]> {
     const sql = `
       SELECT
