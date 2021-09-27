@@ -20,7 +20,7 @@ export async function getAllEnums (db: Knex, config: Config): Promise<Enum[]> {
 }
 
 /**
- * Converts an enum name, taking configuration options into account.
+ * Generates an enum name, removing invalid characters.
  * 
  * @export
  * @param {string} name The name of the enum.
@@ -28,6 +28,8 @@ export async function getAllEnums (db: Knex, config: Config): Promise<Enum[]> {
  * @returns 
  */
 export function generateEnumName (name: string, config: Config): string {
-  const newName = name.replace(/ /g, '')
+  const newName =  name
+    .replace(/\W/g, '')
+    .replace(/^\d+/g, '')
   return SharedTasks.convertCase(newName, config.enumNameCasing)
 }
