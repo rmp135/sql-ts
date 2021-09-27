@@ -1,6 +1,6 @@
 {
   "name": "@rmp135/sql-ts",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "main": "./dist/index.js",
   "license": "MIT",
   "description": "Generate TypeScript definitions from database schemas.",
@@ -23,8 +23,8 @@
     "mssql": "^6.3.1",
     "mysql": "^2.18.1",
     "mysql2": "^2.2.5",
-    "pg": "^8.5.1",
-    "sqlite3": "5.0.0"
+    "pg": "^8.7.1",
+    "sqlite3": "^5.0.0"
   },
   "peerDependenciesMeta": {
     "mssql": {
