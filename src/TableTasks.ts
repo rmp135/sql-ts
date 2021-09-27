@@ -4,6 +4,7 @@ import { Config, Table } from './Typings'
 import * as ColumnTasks from './ColumnTasks'
 import * as TableTasks from './TableTasks'
 import * as SharedTasks from './SharedTasks'
+import * as SchemaTasks from './SchemaTasks'
 
 /**
  * Returns all tables from a given database using a configuration.
@@ -25,7 +26,7 @@ export async function getAllTables (db: Knex, config: Config): Promise<Table[]> 
     columns: await ColumnTasks.getColumnsForTable(db, table, config),
     interfaceName: TableTasks.generateInterfaceName(table.name, config),
     name: table.name,
-    schema: table.schema,
+    schema: SchemaTasks.generateSchemaName(table.schema),
     additionalProperties: TableTasks.getAdditionalProperties(table.name, table.schema, config),
     extends: TableTasks.getExtends(table.name, table.schema, config)
   } as Table)))

@@ -27,6 +27,8 @@ export interface ColumnDefinition {
   optional: boolean;
   isEnum: boolean;
   isPrimaryKey: boolean;
+  // The schema the enum belongs to. Currently only used for postgres.
+  enumSchema?: string; 
 }
 
 /**

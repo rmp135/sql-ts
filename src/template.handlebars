@@ -12,7 +12,7 @@ export interface {{interfaceName}} {{#if extends}}extends {{extends}} {{/if}}{
 {{#each enums as |enum|}}
 export enum {{convertedName}} {
 {{#each values as |value|}}
-  {{value.convertedKey}} = '{{value.value}}',
+  '{{value.convertedKey}}' = '{{value.value}}',
 {{/each}}
 }
 {{/each}}

@@ -79,12 +79,10 @@ describe('ColumnTasks', () => {
     })
   })
   describe('convertType', () => {
-    it('should respect the enum casing config if the type is enum', () => {
-      const mockEnumTasks = {
-        generateEnumName: jasmine.createSpy('generateEnumName').and.returnValue('generatedenumname')
-      }
+    it('should call convertEnumType if the type is an enum', () => {
+      const mockConvertEnumType = jasmine.createSpy('convertEnumType').and.returnValue('convertedEnumName')
       MockColumnTasks.__with__({
-        EnumTasks: mockEnumTasks
+        convertEnumType: mockConvertEnumType
       })(() => {
         const mockColumn: ColumnDefinition = {
           isEnum: true,
@@ -97,8 +95,8 @@ describe('ColumnTasks', () => {
         const mockTable = {}
         const mockConfig = {}
         const result = MockColumnTasks.convertType(mockColumn, mockTable as any, mockConfig)
-        expect(mockEnumTasks.generateEnumName).toHaveBeenCalledOnceWith('enum type', mockConfig)
-        expect(result).toEqual('generatedenumname')
+        expect(mockConvertEnumType).toHaveBeenCalledOnceWith(mockColumn, mockConfig)
+        expect(result).toEqual('convertedEnumName')
       })
     })
     it('should use the built global types when no specific client exists', () => {
@@ -326,6 +324,122 @@ describe('ColumnTasks', () => {
         expect(mockGenerateFullColumnName).toHaveBeenCalledOnceWith('table', 'schema', 'column')
         expect(mockSharedTasks.resolveAdapterName).toHaveBeenCalledOnceWith(mockConfig)
         expect(result).toBe('any')
+      })
+    })
+  })
+  describe('convertEnumType', () => {
+    it('should add the schema if the setting is enabled and schema is provided', () => {
+      const mockEnumTasks = {
+        generateEnumName: jasmine.createSpy('generateEnumName').and.returnValue('genEnumName')
+      }
+      const mockSchemaTasks = {
+        generateSchemaName: jasmine.createSpy('generateSchemaName').and.returnValue('genSchemaName')
+      }
+      MockColumnTasks.__with__({
+        EnumTasks: mockEnumTasks,
+        SchemaTasks: mockSchemaTasks
+      })(() => {
+        const mockColumn: ColumnDefinition = {
+          isEnum: true,
+          isPrimaryKey: false,
+          name: 'enum name',
+          nullable: false,
+          optional: false,
+          type: 'enum type',
+          enumSchema: 'enum schema'
+        }
+        const mockConfig = {
+          schemaAsNamespace: true
+        } as Config
+        const result = MockColumnTasks.convertEnumType(mockColumn, mockConfig)
+        expect(mockEnumTasks.generateEnumName).toHaveBeenCalledOnceWith('enum type', mockConfig)
+        expect(mockSchemaTasks.generateSchemaName).toHaveBeenCalledOnceWith('enum schema')
+        expect(result).toEqual('genSchemaName.genEnumName')
+      })
+    })
+    it('should not add a schema if the schema is null and setting is disabled', () => {
+      const mockEnumTasks = {
+        generateEnumName: jasmine.createSpy('generateEnumName').and.returnValue('genEnumName')
+      }
+      const mockSchemaTasks = {
+        generateSchemaName: jasmine.createSpy('generateSchemaName')
+      }
+      MockColumnTasks.__with__({
+        EnumTasks: mockEnumTasks,
+        SchemaTasks: mockSchemaTasks
+      })(() => {
+        const mockColumn: ColumnDefinition = {
+          isEnum: true,
+          isPrimaryKey: false,
+          name: 'enum name',
+          nullable: false,
+          optional: false,
+          type: 'enum type'
+        }
+        const mockConfig = {
+          schemaAsNamespace: true
+        } as Config
+        const result = MockColumnTasks.convertEnumType(mockColumn, mockConfig)
+        expect(mockEnumTasks.generateEnumName).toHaveBeenCalledOnceWith('enum type', mockConfig)
+        expect(mockSchemaTasks.generateSchemaName).not.toHaveBeenCalled()
+        expect(result).toEqual('genEnumName')
+      })
+    })
+    it('should not add the schem if schema is not null and setting is disabled', () => {
+      const mockEnumTasks = {
+        generateEnumName: jasmine.createSpy('generateEnumName').and.returnValue('genEnumName')
+      }
+      const mockSchemaTasks = {
+        generateSchemaName: jasmine.createSpy('generateSchemaName')
+      }
+      MockColumnTasks.__with__({
+        EnumTasks: mockEnumTasks,
+        SchemaTasks: mockSchemaTasks
+      })(() => {
+        const mockColumn: ColumnDefinition = {
+          isEnum: true,
+          isPrimaryKey: false,
+          name: 'enum name',
+          nullable: false,
+          optional: false,
+          type: 'enum type',
+          enumSchema: 'enum schema'
+        }
+        const mockConfig = {
+          schemaAsNamespace: false
+        } as Config
+        const result = MockColumnTasks.convertEnumType(mockColumn, mockConfig)
+        expect(mockEnumTasks.generateEnumName).toHaveBeenCalledOnceWith('enum type', mockConfig)
+        expect(mockSchemaTasks.generateSchemaName).not.toHaveBeenCalled()
+        expect(result).toEqual('genEnumName')
+      })
+    })
+    it('should not add the schema if schema is null and setting is enabled', () => {
+      const mockEnumTasks = {
+        generateEnumName: jasmine.createSpy('generateEnumName').and.returnValue('genEnumName')
+      }
+      const mockSchemaTasks = {
+        generateSchemaName: jasmine.createSpy('generateSchemaName')
+      }
+      MockColumnTasks.__with__({
+        EnumTasks: mockEnumTasks,
+        SchemaTasks: mockSchemaTasks
+      })(() => {
+        const mockColumn: ColumnDefinition = {
+          isEnum: true,
+          isPrimaryKey: false,
+          name: 'enum name',
+          nullable: false,
+          optional: false,
+          type: 'enum type'
+        }
+        const mockConfig = {
+          schemaAsNamespace: false
+        } as Config
+        const result = MockColumnTasks.convertEnumType(mockColumn, mockConfig)
+        expect(mockEnumTasks.generateEnumName).toHaveBeenCalledOnceWith('enum type', mockConfig)
+        expect(mockSchemaTasks.generateSchemaName).not.toHaveBeenCalled()
+        expect(result).toEqual('genEnumName')
       })
     })
   })

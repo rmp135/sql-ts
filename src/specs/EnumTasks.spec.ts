@@ -54,39 +54,43 @@ describe('EnumTasks', () => {
       const mockAdapterFactory = {
         buildAdapter: jasmine.createSpy('buildAdapter').and.returnValue(mockAdapter)
       }
-      const mockEnumTasks = {
-        generateEnumName: jasmine.createSpy('generateEnumName').and.returnValue('genename')
+      const mockGenerateEnumName = jasmine.createSpy('generateEnumName').and.returnValue('genename')
+      const mockSchemaTasks = {
+        generateSchemaName: jasmine.createSpy('generateSchemaName').and.returnValue('genSchemaName')
+      }
+      const mockSharedTasks = {
+        convertCase: jasmine.createSpy('convertCase').and.returnValue('convertedKey')
       }
       MockEnumTasks.__with__({
         AdapterFactory: mockAdapterFactory,
-        EnumTasks: mockEnumTasks
+        SharedTasks: mockSharedTasks,
+        SchemaTasks: mockSchemaTasks,
+        generateEnumName: mockGenerateEnumName
       })(async () => {
         const db = {}
         const config = {
           dialect: 'dialect',
-          columnNameCasing: 'camel'
-        }
+          columnNameCasing: 'camel',
+          enumKeyCasing: 'upper'
+        } as Config
         const result = await MockEnumTasks.getAllEnums(db as any, config as any)
         expect(mockAdapterFactory.buildAdapter).toHaveBeenCalledWith(config)
-        expect(mockAdapter.getAllEnums).toHaveBeenCalledWith(db, config)
-        expect(mockEnumTasks.generateEnumName).toHaveBeenCalledWith('cname', config)
+        expect(mockAdapter.getAllEnums).toHaveBeenCalledOnceWith(db, config)
+        expect(mockGenerateEnumName).toHaveBeenCalledOnceWith('cname', config)
+        expect(mockSchemaTasks.generateSchemaName).toHaveBeenCalledOnceWith('schemaq')
+        expect(mockSharedTasks.convertCase).toHaveBeenCalledOnceWith('ekey 1', 'upper')
         expect(result).toEqual([
           {
             name: 'cname',
-            schema: 'schema',
+            schema: 'genSchemaName',
             convertedName: 'genename',
             values: [
               {
                 originalKey: 'ekey 1',
-                convertedKey: 'ekey1',
+                convertedKey: 'convertedKey',
                 value: 'val1'
               }
             ]
-            // name: 'cname',
-            // schema: 'schema',
-            // values: {
-            //   originalKey: ''
-            // }
           } as Enum
         ])
         done()

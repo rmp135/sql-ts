@@ -2,15 +2,15 @@ import * as AdapterFactory from './AdapterFactory'
 import { Knex } from 'knex'
 import { Config, Enum } from './Typings'
 import * as SharedTasks from './SharedTasks'
-import * as EnumTasks from './EnumTasks'
+import * as SchemaTasks from './SchemaTasks'
 
 export async function getAllEnums (db: Knex, config: Config): Promise<Enum[]> {
   const adapter = AdapterFactory.buildAdapter(config)
   const allEnums = (await adapter.getAllEnums(db, config))
   return allEnums.map(e => ({
     name: e.name,
-    schema: e.schema,
-    convertedName: EnumTasks.generateEnumName(e.name, config),
+    schema: SchemaTasks.generateSchemaName(e.schema),
+    convertedName: generateEnumName(e.name, config),
     values: Object.keys(e.values).map(ee => ({
       originalKey: ee,
       convertedKey: ee.replace(/ /g, ''),
@@ -20,7 +20,7 @@ export async function getAllEnums (db: Knex, config: Config): Promise<Enum[]> {
 }
 
 /**
- * Converts an db enum name to an enum name given a configuration.
+ * Converts an enum name, taking configuration options into account.
  * 
  * @export
  * @param {string} name The name of the enum.
@@ -28,6 +28,6 @@ export async function getAllEnums (db: Knex, config: Config): Promise<Enum[]> {
  * @returns 
  */
 export function generateEnumName (name: string, config: Config): string {
-  name = name.replace(/ /g, '')
-  return SharedTasks.convertCase(name, config.enumNameCasing)
+  const newName = name.replace(/ /g, '')
+  return SharedTasks.convertCase(newName, config.enumNameCasing)
 }

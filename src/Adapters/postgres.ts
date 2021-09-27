@@ -25,7 +25,11 @@ export default class implements AdapterInterface {
     for (const row of enums) {
       const mapKey = row.schema + '.' + row.name
       if (foundEnums[mapKey] == undefined) {
-        foundEnums[mapKey] = { name: row.name, schema: row.schema, values: getValues(row.schema, row.name) }
+        foundEnums[mapKey] = {
+          name: row.name,
+          schema: row.schema,
+          values: getValues(row.schema, row.name)
+        }
       }
     }
     return Object.values(foundEnums)
@@ -51,8 +55,8 @@ export default class implements AdapterInterface {
   async getAllColumns(db: Knex, config: Config, table: string, schema: string): Promise<ColumnDefinition[]> {
     const sql = `
       SELECT
-        typns.nspname AS enumSchema,
-        pg_type.typname AS enumType,
+        typns.nspname typeschema,
+        pg_type.typname,
         pg_attribute.attname AS name,
         pg_namespace.nspname AS schema,
         pg_catalog.format_type(pg_attribute.atttypid, null) as type,
@@ -74,15 +78,17 @@ export default class implements AdapterInterface {
       AND pg_class.relname = :table
       AND pg_namespace.nspname = :schema
     `
-    return (await db.raw(sql, { table, schema })).rows
-    .map((c: { name: string, type: string, notnullable: boolean, hasdefault: boolean, typcategory: string, enumschema: string, enumtype: string, isprimarykey: number } ) => (
-      {
-        name: c.name,
-        type: c.typcategory == 'E' && config.schemaAsNamespace ? `${c.enumschema}.${c.enumtype}` : c.enumtype,
-        nullable: !c.notnullable,
-        optional: c.hasdefault || !c.notnullable,
-        isEnum: c.typcategory == 'E',
-        isPrimaryKey: c.isprimarykey == 1
-      }) as ColumnDefinition)
+    return (await db.raw(sql, { table, schema }))
+      .rows
+      .map((c: { name: string, type: string, notnullable: boolean, hasdefault: boolean, typcategory: string, typeschema: string, typname: string, isprimarykey: number } ) => (
+        {
+          name: c.name,
+          type: c.typname,
+          nullable: !c.notnullable,
+          optional: c.hasdefault || !c.notnullable,
+          isEnum: c.typcategory == 'E',
+          isPrimaryKey: c.isprimarykey == 1,
+          enumSchema: c.typeschema
+        }) as ColumnDefinition)
   }
 }

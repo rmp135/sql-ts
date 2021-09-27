@@ -9,7 +9,7 @@ describe('SharedTasks', () => {
       expect(result).toEqual('table_name')
     })
     it('should return the original table if the case type is invalid', () => {
-      const result = SharedTasks.convertCase('table_name', 'invalid')
+      const result = SharedTasks.convertCase('table_name', 'invalid' as any)
       expect(result).toEqual('table_name')
     })
     it('should return pascal if caseType is pascal', () => {

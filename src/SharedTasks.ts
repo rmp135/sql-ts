@@ -1,5 +1,6 @@
 import { Config } from '.'
 import { camelCase, pascalCase } from 'change-case'
+import { CaseType } from './Typings'
 
 /**
  * Converts the casing of a string.
@@ -9,7 +10,7 @@ import { camelCase, pascalCase } from 'change-case'
  * @param {string} caseType The case type to convert into.
  * @returns The converted name.
  */
-export function convertCase (name: string, caseType: string) {
+export function convertCase (name: string, caseType: CaseType) {
   switch (caseType) {
     case 'pascal':
       return pascalCase(name)

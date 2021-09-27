@@ -5,6 +5,7 @@ import { Column, Config } from './Typings'
 import * as SharedTasks from './SharedTasks'
 import TypeMap from './TypeMap'
 import * as EnumTasks from './EnumTasks'
+import * as SchemaTasks from './SchemaTasks'
 
 /**
  * Returns all columns in a given Table using a knex context.
@@ -55,7 +56,7 @@ export function generateFullColumnName (tableName: string, schemaName: string, c
  */
  export function convertType (column: ColumnDefinition, table: TableDefinition, config: Config): string {
   if (column.isEnum) {
-    return EnumTasks.generateEnumName(column.type, config)
+    return convertEnumType(column, config)
   }
   const fullname = generateFullColumnName(table.name, table.schema, column.name)
   
@@ -87,4 +88,21 @@ export function generateFullColumnName (tableName: string, schemaName: string, c
 
   // Finally just any type.
   return convertedType == null ? 'any' : convertedType
+}
+
+/**
+ * Converts the enum type, prepending the schema if required.
+ *
+ * @export
+ * @param {ColumnDefinition} column The column definition with an enum type.
+ * @param {Config} config The configuration object.
+ * @returns {string}
+ */
+export function convertEnumType (column:  ColumnDefinition, config: Config): string {
+  const enumName = EnumTasks.generateEnumName(column.type, config)
+  if (column.enumSchema != null && config.schemaAsNamespace) {
+    const schemaName = SchemaTasks.generateSchemaName(column.enumSchema)
+    return `${schemaName}.${enumName}`
+  }
+  return enumName
 }
