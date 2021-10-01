@@ -69,7 +69,7 @@ export default class implements AdapterInterface {
         pg_namespace.nspname AS schema,
         pg_catalog.format_type(pg_attribute.atttypid, null) as type,
         pg_attribute.attnotnull AS notNullable,
-        pg_attribute.atthasdef AS hasDefault,
+        pg_attribute.atthasdef OR pg_attribute.attidentity <> '' AS hasDefault,
         pg_class.relname AS table,
         pg_type.typcategory AS typcategory,
         CASE WHEN EXISTS (
