@@ -20,7 +20,8 @@ interface Template {
 export function stringifyDatabase (database: Database, config: Config): string {
   const templateString = fs.readFileSync(config.template, 'utf-8')
   const compiler = handlebars.compile(templateString)
-  database.tables.sort((tableA, tableB) => tableA.name.localeCompare(tableB.name));
+  database.tables.sort((tableA, tableB) => tableA.name.localeCompare(tableB.name))
+  database.enums.sort((enumA, enumB) => enumB.name.localeCompare(enumA.name))
   const template: Template = {}
   for (let table of database.tables) {
     if (template[table.schema] === undefined) {
