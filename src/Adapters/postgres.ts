@@ -1,38 +1,42 @@
 import { Knex } from 'knex'
 import { AdapterInterface, TableDefinition, ColumnDefinition, EnumDefinition } from './AdapterInterface'
 import { Config } from '..'
+import { uniqBy } from 'lodash'
+
+interface PostgresEnum {
+  schema: string,
+  name: string,
+  value: string,
+  order: number
+}
 
 export default class implements AdapterInterface {
   async getAllEnums(db: Knex, config: Config): Promise<EnumDefinition[]> {
     const query = db('pg_type')
       .select('pg_namespace.nspname AS schema')
+      .select('pg_enum.enumsortorder AS order')
       .select('pg_type.typname AS name')
       .select('pg_enum.enumlabel AS value')
       .join('pg_enum', 'pg_enum.enumtypid', 'pg_type.oid')
       .join('pg_namespace', 'pg_namespace.oid', 'pg_type.typnamespace')
-    if (config.schemas?.length > 0)
+    if (config.schemas?.length > 0) {
       query.whereIn('pg_namespace.nspname', config.schemas)
-    
-    const enums: { schema: string, name: string, value: string }[] = await query
-    const foundEnums: {[key: string]: EnumDefinition} = { }
-    function getValues(schema: string, name: string) {
-      const values = {}
-      for (const row of enums.filter(e => e.schema == schema && e.name == name)) {
-        values[row.value] = row.value
-      }
-      return values
     }
-    for (const row of enums) {
-      const mapKey = row.schema + '.' + row.name
-      if (foundEnums[mapKey] == undefined) {
-        foundEnums[mapKey] = {
-          name: row.name,
-          schema: row.schema,
-          values: getValues(row.schema, row.name)
-        }
-      }
-    }
-    return Object.values(foundEnums)
+
+    const ungroupedEnums: PostgresEnum[] = await query
+
+    const groupedEnums: EnumDefinition[] = uniqBy(ungroupedEnums, e => e.name + '.' + e.schema)
+      .map(row => ({
+        name: row.name,
+        schema: row.schema,
+        values: Object.fromEntries(
+          ungroupedEnums
+            .filter(e => e.schema == row.schema && e.name == row.name)
+            .sort()
+            .map(e => [e.value, e.value])
+        )
+      }))
+    return groupedEnums
   }
   
   async getAllTables(db: Knex, schemas: string[]): Promise<TableDefinition[]> {

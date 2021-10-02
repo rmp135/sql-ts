@@ -32,26 +32,17 @@ export interface ColumnDefinition {
 }
 
 /**
- * Enum definition for use before and after parsing.
- *
- * @export
- * @interface EnumDefinition
- * @template T
- */
-export interface EnumBaseDefinition<T> {
-  name: string;
-  schema: string;
-  values: T
-}
-
-/**
  * Raw enum definition from the database.
  *
  * @export
  * @interface EnumBaseDefinition
  * @extends {EnumBaseDefinition<{[key: string]: string}>}
  */
-export interface EnumDefinition extends EnumBaseDefinition<{[key: string]: string}> { }
+ export interface EnumDefinition {
+  name: string;
+  schema: string;
+  values: {[key: string]: string}
+}
 
 /**
  * Interface that all adapters should implement.

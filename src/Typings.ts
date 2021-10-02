@@ -1,5 +1,5 @@
 import { Knex } from 'knex'
-import { ColumnDefinition, EnumBaseDefinition, TableDefinition } from './Adapters/AdapterInterface'
+import { ColumnDefinition, TableDefinition } from './Adapters/AdapterInterface'
 
 export type CaseType = 'pascal' | 'camel' | 'lower' | 'upper'
 
@@ -76,8 +76,11 @@ export interface EnumValue {
   value: string;
 }
 
-export interface Enum extends EnumBaseDefinition<EnumValue[]> {
-  convertedName: string
+export interface Enum {
+  schema: string;
+  name: string;
+  convertedName: string,
+  values: EnumValue[]
 }
 
 /**
