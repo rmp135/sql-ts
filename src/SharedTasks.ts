@@ -1,6 +1,5 @@
 import { Config } from '.'
 import { camelCase, pascalCase } from 'change-case'
-import { CaseType } from './Typings'
 
 /**
  * Converts the casing of a string.
@@ -10,7 +9,7 @@ import { CaseType } from './Typings'
  * @param {string} caseType The case type to convert into.
  * @returns The converted name.
  */
-export function convertCase (name: string, caseType: CaseType) {
+export function convertCase (name: string, caseType: string) {
   switch (caseType) {
     case 'pascal':
       return pascalCase(name)
@@ -26,14 +25,14 @@ export function convertCase (name: string, caseType: CaseType) {
 }
 
 /**
- * Resolves a name of an adapter from an alias.
+ * Resolves a common adapter name from an alias.
  * 
  * @param config The knex configuration.
  * @returns The resolved dialect name.
  */
-export function resolveAdapterName (config: Config) {
-  const dialect = config.dialect ?? config.client as string
+export function resolveAdapterName (dialect: string) {
   const aliases = {
+    'postgresql' : 'postgres',
     'pg' : 'postgres',
     'sqlite3' : 'sqlite',
     'mysql2': 'mysql'

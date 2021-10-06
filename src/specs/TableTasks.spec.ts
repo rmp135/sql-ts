@@ -132,7 +132,11 @@ describe('TableTasks', () => {
         ColumnTasks: mockColumnTasks,
         TableTasks: mockTableTasks
       })(async () => {
-        const mockDB = {}
+        const mockDB = {
+          client: {
+            dialect: 'dialect'
+          }
+        }
         const mockConfig: Config = {
           ...defaultConfig,
           schemas: ['schema1']
@@ -140,6 +144,7 @@ describe('TableTasks', () => {
         const result = await MockTableTasks.getAllTables(mockDB as any, mockConfig)
         
         expect(mockAdapter.getAllTables).toHaveBeenCalledWith(mockDB, ['schema1'])
+        expect(mockAdapterFactory.buildAdapter).toHaveBeenCalledOnceWith('dialect')
         expect(mockTableTasks.generateInterfaceName.calls.argsFor(0)).toEqual(['table1name', mockConfig])
         expect(mockTableTasks.generateInterfaceName.calls.argsFor(1)).toEqual(['table2name', mockConfig])
         expect(mockColumnTasks.getColumnsForTable.calls.argsFor(0)).toEqual([mockDB, mockTables[0], mockConfig])
@@ -195,7 +200,11 @@ describe('TableTasks', () => {
         ColumnTasks: mockColumnTasks,
         TableTasks: mockTableTasks
       })(async () => {
-        const mockDB = {}
+        const mockDB = {
+          client: {
+            dialect: 'dialect'
+          }
+        }
         const mockConfig: Config = {
           ...defaultConfig,
           excludedTables: ['table2schema.table2name']
@@ -203,6 +212,7 @@ describe('TableTasks', () => {
         const result = await MockTableTasks.getAllTables(mockDB as any, mockConfig)
         
         expect(mockAdapter.getAllTables).toHaveBeenCalledWith(mockDB, [])
+        expect(mockAdapterFactory.buildAdapter).toHaveBeenCalledOnceWith('dialect')
         expect(mockTableTasks.generateInterfaceName.calls.argsFor(0)).toEqual(['table1name', mockConfig])
         expect(mockColumnTasks.getColumnsForTable.calls.argsFor(0)).toEqual([mockDB, mockTables[0], mockConfig])
         expect(result).toEqual([
@@ -256,13 +266,18 @@ describe('TableTasks', () => {
         ColumnTasks: mockColumnTasks,
         TableTasks: mockTableTasks
       })(async () => {
-        const mockDB = {}
+        const mockDB = {
+          client: {
+            dialect: 'dialect'
+          }
+        }
         const mockConfig: Config = {
           ...defaultConfig,
           tables: ['schema.table2name', 'schema.table3name'],
           excludedTables: ['schema.table2name']
         }
         const result = await MockTableTasks.getAllTables(mockDB as any, mockConfig)
+        expect(mockAdapterFactory.buildAdapter).toHaveBeenCalledOnceWith('dialect')
         expect(mockAdapter.getAllTables).toHaveBeenCalledWith(mockDB, [])
         expect(mockTableTasks.generateInterfaceName.calls.argsFor(0)).toEqual(['table3name', mockConfig])
         expect(mockColumnTasks.getColumnsForTable.calls.argsFor(0)).toEqual([mockDB, mockTables[1], mockConfig])
@@ -309,10 +324,15 @@ describe('TableTasks', () => {
         ColumnTasks: mockColumnTasks,
         TableTasks: mockTableTasks
       })(async () => {
-        const mockDB = {}
+        const mockDB = {
+          client: {
+            dialect: 'dialect'
+          }
+        }
         const mockConfig: Config = defaultConfig
         const result = await MockTableTasks.getAllTables(mockDB as any, mockConfig)
         expect(mockAdapter.getAllTables).toHaveBeenCalledWith(mockDB, [])
+        expect(mockAdapterFactory.buildAdapter).toHaveBeenCalledOnceWith('dialect')
         expect(mockTableTasks.generateInterfaceName.calls.argsFor(0)).toEqual(['table1name', mockConfig])
         expect(mockTableTasks.generateInterfaceName.calls.argsFor(1)).toEqual(['table2name', mockConfig])
         expect(mockColumnTasks.getColumnsForTable.calls.argsFor(0)).toEqual([mockDB, mockTables[0], mockConfig])

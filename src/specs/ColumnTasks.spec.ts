@@ -34,20 +34,24 @@ describe('ColumnTasks', () => {
         SharedTasks: mockSharedTasks,
         convertType: mockConvertType
       })(async () => {
-        const db = {}
+        const db = {
+          client: {
+            dialect: 'dialect'
+          }
+        }
         const table = {
           name: 'name',
           schema: 'schema'
         }
         const config: Config = {
-          dialect: 'dialect',
+          dialect: 'configDialect',
           columnNameCasing: 'camel'
         }
         const result = await MockColumnTasks.getColumnsForTable(db as any, table as any, config as any)
-        expect(mockAdapterFactory.buildAdapter).toHaveBeenCalledWith(config)
+        expect(mockAdapterFactory.buildAdapter).toHaveBeenCalledWith('dialect')
         expect(mockAdapter.getAllColumns).toHaveBeenCalledWith(db, config, 'name', 'schema')
         expect(mockSharedTasks.convertCase).toHaveBeenCalledWith('cname', 'camel')
-        expect(mockConvertType).toHaveBeenCalledWith(mockColumns[0], table, config)
+        expect(mockConvertType).toHaveBeenCalledWith(mockColumns[0], table, config, 'dialect')
         expect(result).toEqual([
           {
             nullable: false,
@@ -94,7 +98,7 @@ describe('ColumnTasks', () => {
         }
         const mockTable = {}
         const mockConfig = {}
-        const result = MockColumnTasks.convertType(mockColumn, mockTable as any, mockConfig)
+        const result = MockColumnTasks.convertType(mockColumn, mockTable as any, mockConfig, 'dialect')
         expect(mockConvertEnumType).toHaveBeenCalledOnceWith(mockColumn, mockConfig)
         expect(result).toEqual('convertedEnumName')
       })
@@ -131,9 +135,9 @@ describe('ColumnTasks', () => {
           typeOverrides: { },
           typeMap: { }
         }
-        const result = MockColumnTasks.convertType(mockColumn, mockTable, mockConfig)
+        const result = MockColumnTasks.convertType(mockColumn, mockTable, mockConfig, 'dialect')
         expect(mockGenerateFullColumnName).toHaveBeenCalledOnceWith('table', 'schema', 'column')
-        expect(mockSharedTasks.resolveAdapterName).toHaveBeenCalledOnceWith(mockConfig)
+        expect(mockSharedTasks.resolveAdapterName).toHaveBeenCalledOnceWith('dialect')
         expect(result).toBe('globaltype')
       })
     })
@@ -169,8 +173,8 @@ describe('ColumnTasks', () => {
           typeOverrides: { },
           typeMap: { }
         }
-        const result = MockColumnTasks.convertType(mockColumn, mockTable, mockConfig)
-        expect(mockSharedTasks.resolveAdapterName).toHaveBeenCalledOnceWith(mockConfig)
+        const result = MockColumnTasks.convertType(mockColumn, mockTable, mockConfig, 'dialect')
+        expect(mockSharedTasks.resolveAdapterName).toHaveBeenCalledOnceWith('dialect')
         expect(mockGenerateFullColumnName).toHaveBeenCalledOnceWith('table', 'schema', 'column')
         expect(result).toBe('type')
         done()
@@ -199,7 +203,7 @@ describe('ColumnTasks', () => {
           },
           typeOverrides: { }
         }
-        const result = MockColumnTasks.convertType(mockColumn, mockTable, mockConfig)
+        const result = MockColumnTasks.convertType(mockColumn, mockTable, mockConfig, 'dialect')
         expect(mockGenerateFullColumnName).toHaveBeenCalledOnceWith('tableName', 'schema', 'tofind')
         expect(result).toBe('type')
       })
@@ -230,7 +234,7 @@ describe('ColumnTasks', () => {
           },
           typeOverrides: { }
         }
-        const result = MockColumnTasks.convertType(mockColumn, mockTable, mockConfig)
+        const result = MockColumnTasks.convertType(mockColumn, mockTable, mockConfig, 'dialect')
         expect(result).toBe('type')
       })
     })
@@ -254,7 +258,7 @@ describe('ColumnTasks', () => {
             'schema.tableName.cname': 'type'
           }
         }
-        const result = MockColumnTasks.convertType(mockColumn, mockTable, mockConfig)
+        const result = MockColumnTasks.convertType(mockColumn, mockTable, mockConfig, 'dialect')
         expect(result).toBe('type')
       })
     })
@@ -282,7 +286,7 @@ describe('ColumnTasks', () => {
           typeOverrides: { 'schema.tableName.column': 'overridetype' },
           typeMap: { usertype: ['ctype'] }
         }
-        const result = MockColumnTasks.convertType(mockColumn, mockTable, mockConfig)
+        const result = MockColumnTasks.convertType(mockColumn, mockTable, mockConfig, 'dialect')
         expect(result).toBe('overridetype')
       })
     })
@@ -320,9 +324,9 @@ describe('ColumnTasks', () => {
           nullable: false,
           optional: false
         }
-        const result = MockColumnTasks.convertType(mockColumn, mockTable, mockConfig)
+        const result = MockColumnTasks.convertType(mockColumn, mockTable, mockConfig, 'dialect')
         expect(mockGenerateFullColumnName).toHaveBeenCalledOnceWith('table', 'schema', 'column')
-        expect(mockSharedTasks.resolveAdapterName).toHaveBeenCalledOnceWith(mockConfig)
+        expect(mockSharedTasks.resolveAdapterName).toHaveBeenCalledOnceWith('dialect')
         expect(result).toBe('any')
       })
     })

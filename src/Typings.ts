@@ -1,8 +1,6 @@
 import { Knex } from 'knex'
 import { ColumnDefinition, TableDefinition } from './Adapters/AdapterInterface'
 
-export type CaseType = 'pascal' | 'camel' | 'lower' | 'upper'
-
 /**
  * The configuration file for creating new databases.
  * 
@@ -16,10 +14,10 @@ export interface Config extends Knex.Config {
   filename?: string,
   folder?: string,
   interfaceNameFormat?: string,
-  tableNameCasing?: CaseType,
-  columnNameCasing?: CaseType,
-  enumNameCasing?: CaseType,
-  enumKeyCasing?: CaseType
+  tableNameCasing?: string,
+  columnNameCasing?: string,
+  enumNameCasing?: string,
+  enumKeyCasing?: string
   singularTableNames?: boolean
   schemaAsNamespace?: boolean,
   schemas?: string[],
@@ -31,7 +29,7 @@ export interface Config extends Knex.Config {
     [key: string]: string 
   },
   additionalProperties?: { 
-    [key: string]: string []
+    [key: string]: string[]
   },
   extends?: { 
     [key: string]: string

@@ -5,7 +5,7 @@ import * as SharedTasks from './SharedTasks'
 import * as SchemaTasks from './SchemaTasks'
 
 export async function getAllEnums (db: Knex, config: Config): Promise<Enum[]> {
-  const adapter = AdapterFactory.buildAdapter(config)
+  const adapter = AdapterFactory.buildAdapter(db.client.dialect)
   const allEnums = (await adapter.getAllEnums(db, config))
   return allEnums.map(e => ({
     name: e.name,

@@ -25,7 +25,7 @@ export default class implements AdapterInterface {
 
     const ungroupedEnums: PostgresEnum[] = await query
 
-    const groupedEnums: EnumDefinition[] = uniqBy(ungroupedEnums, e => e.name + '.' + e.schema)
+    const groupedEnums: EnumDefinition[] = uniqBy(ungroupedEnums, e => `${e.name}.${e.schema}`)
       .map(row => ({
         name: row.name,
         schema: row.schema,
@@ -59,8 +59,9 @@ export default class implements AdapterInterface {
       }).as('Unioned')
     })
     .whereNotIn('schema', ['pg_catalog', 'information_schema'])
-    if (schemas.length > 0)
+    if (schemas.length > 0) {
       query.whereIn('schema', schemas)
+    }
     return await query
   }
 

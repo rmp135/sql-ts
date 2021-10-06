@@ -1,16 +1,16 @@
 import { AdapterInterface } from './Adapters/AdapterInterface'
-import { Config } from '.'
 import { resolveAdapterName } from './SharedTasks'
+import { Knex } from 'knex'
 
 /**
  * Returns an AdapterInterface that matches the dialect.
  * 
  * @export
- * @param {any} dialect The name of SQL adapter that should be returned.
+ * @param {string} adapterName The name of SQL adapter that should be returned.
  * @returns {AdapterInterface} The adapter for connecting to a SQL database.
  */
-export function buildAdapter (config: Config): AdapterInterface {
-  const dialect = resolveAdapterName(config)
+export function buildAdapter (adapterName: string): AdapterInterface {
+  const dialect = resolveAdapterName(adapterName)
   let adapter = null
   try {
     adapter = require(`./Adapters/${dialect}`)

@@ -37,14 +37,18 @@ describe('EnumTasks', () => {
         SchemaTasks: mockSchemaTasks,
         generateEnumName: mockGenerateEnumName
       })(async () => {
-        const db = {}
+        const db = {
+          client: {
+            dialect: 'dialect'
+          }
+        }
         const config = {
-          dialect: 'dialect',
+          dialect: 'configDialect',
           columnNameCasing: 'camel',
           enumKeyCasing: 'upper'
         } as Config
         const result = await MockEnumTasks.getAllEnums(db as any, config as any)
-        expect(mockAdapterFactory.buildAdapter).toHaveBeenCalledWith(config)
+        expect(mockAdapterFactory.buildAdapter).toHaveBeenCalledWith('dialect')
         expect(mockAdapter.getAllEnums).toHaveBeenCalledOnceWith(db, config)
         expect(mockGenerateEnumName).toHaveBeenCalledOnceWith('cname', config)
         expect(mockSchemaTasks.generateSchemaName).toHaveBeenCalledOnceWith('schema')

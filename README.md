@@ -55,8 +55,9 @@ Run `npx @rmp135/sql-ts` with the path of the configuration file created above.
 The file will be exported with the filename `Database.ts` (or with the name specified in the configuration) at the current working directory. Warning: if this file exists, it will be overwritten.
 
 ---
-
 Alternatively, use as a node module, passing the configuration object as the first argument.
+
+Both `toObject` and `toTypeScript` accept a knex connection object as the second argument. If this is passed it will be used to generate the file, and you will not require any knex related options in your config object. If this is not passed, a temporary connection will be made using the config.
 
 ### toObject
 
@@ -70,6 +71,10 @@ const config = {
 }
 
 const definitions = await sqlts.toObject(config)
+
+// If you have a knex connections already, you can pass that along with the schema.
+const db = knex({ ... })
+const definition = await sqlts.toObject(config, db)
 ```
 
 ### fromObject
@@ -92,7 +97,7 @@ For those using TypeScript, you can import the Config definition.
 
 ### toTypeScript
 
-Retrieves the raw string of the definition file.
+Retrieves the raw TypeScript string from a config file. Essentially combining the two functions above. 
 
 ```javascript
 import sqlts from '@rmp135/sql-ts'
@@ -101,12 +106,17 @@ const config = {
   ...
 }
 
-const definitions = await sqlts.toTypeScript(config)
+const tsString = await sqlts.toTypeScript(config)
+
+// If you have a knex connection already, you can pass that along with the schema.
+const db = knex({ ... })
+const tsString = await sqlts.toObject(config, db)
+
 ```
 
 ## Config
 
-The configuration extends the [knex configuration](http://knexjs.org/#Installation-client) with some additional properties for table filtering and type overriding.
+The configuration extends the [knex configuration](http://knexjs.org/#Installation-client) with some additional properties for table filtering and type overriding. If you're using your own knex object, the knex related information is not required.
 
 ### tables
 

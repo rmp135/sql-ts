@@ -18,7 +18,7 @@ export async function getAllTables (db: Knex, config: Config): Promise<Table[]> 
   const tables = config.tables
   const excludedTables = config.excludedTables
   const schemas = config.schemas
-  const adapter = AdapterFactory.buildAdapter(config)
+  const adapter = AdapterFactory.buildAdapter(db.client.dialect)
   const allTables = (await adapter.getAllTables(db, schemas))
     .filter(table => tables.length == 0 || tables.includes(`${table.schema}.${table.name}`))
     .filter(table => !excludedTables.includes(`${table.schema}.${table.name}`))

@@ -1,6 +1,10 @@
 import { Config, Database, Table, Enum } from './Typings'
 import * as handlebars from 'handlebars'
 import * as fs from 'fs'
+import { Knex } from 'knex'
+import * as TableTasks from './TableTasks'
+import * as EnumTasks from './EnumTasks'
+
 
 interface Template {
   [key:string]: {
@@ -39,4 +43,20 @@ export function stringifyDatabase (database: Database, config: Config): string {
     grouped: template,
     config
   })
+}
+
+/**
+ * Constructs a database by fetching the tables and enums.
+ *
+ * @export
+ * @param {Config} config The sql-ts config to use.
+ * @param {Knex} db The database context to use.
+ * @returns {Promise<Database>} The constructed Database.
+ */
+export async function generateDatabase (config: Config, db: Knex): Promise<Database> {
+  const database = {
+    tables: await TableTasks.getAllTables(db, config),
+    enums: await EnumTasks.getAllEnums(db, config)
+  }
+  return database
 }

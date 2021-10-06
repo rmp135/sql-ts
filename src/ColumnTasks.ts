@@ -17,13 +17,13 @@ import * as SchemaTasks from './SchemaTasks'
  * @returns {Promise<Column[]>} 
  */
 export async function getColumnsForTable (db: Knex, table: TableDefinition, config: Config): Promise<Column[]> {
-  const adapter = AdapterFactory.buildAdapter(config)
+  const adapter = AdapterFactory.buildAdapter(db.client.dialect)
   const columns = await adapter.getAllColumns(db, config, table.name, table.schema)
   return columns.map(c => (
     {
       ...c,
       propertyName: SharedTasks.convertCase(c.name.replace(/ /g,''), config.columnNameCasing),
-      propertyType: convertType(c, table, config),
+      propertyType: convertType(c, table, config, (db.client as Knex.Client).dialect),
     } as Column))
 }
 
@@ -39,10 +39,9 @@ export async function getColumnsForTable (db: Knex, table: TableDefinition, conf
 export function generateFullColumnName (tableName: string, schemaName: string, columnName: string): string {
   let result = tableName
   if  (schemaName != null && schemaName !== '') {
-    result = `${schemaName}.` + result
+    result = `${schemaName}.${result}`
   }
-  result += `.${columnName}`
-  return result
+  return `${result}.${columnName}`
 }
 
 /**
@@ -54,7 +53,7 @@ export function generateFullColumnName (tableName: string, schemaName: string, c
  * @param {Config} config The configuration object.
  * @returns {string}
  */
- export function convertType (column: ColumnDefinition, table: TableDefinition, config: Config): string {
+ export function convertType (column: ColumnDefinition, table: TableDefinition, config: Config, dialect: string): string {
   if (column.isEnum) {
     return convertEnumType(column, config)
   }
@@ -73,8 +72,8 @@ export function generateFullColumnName (tableName: string, schemaName: string, c
 
   // Then the schema specific typemap.
   if (convertedType == null) {
-    const adapterName = SharedTasks.resolveAdapterName(config)
-    const perDBTypeMap = TypeMap[adapterName]
+    const resolvedDialect = SharedTasks.resolveAdapterName(dialect)
+    const perDBTypeMap = TypeMap[resolvedDialect]
     if (perDBTypeMap != null) {
       convertedType = Object.keys(perDBTypeMap).find(f => perDBTypeMap[f].includes(column.type))
     }

@@ -38,28 +38,15 @@ describe('SharedTasks', () => {
       const mockConfig: Config = {
         dialect: 'test'
       }
-      const result = SharedTasks.resolveAdapterName(mockConfig)
-      expect(result).toEqual('test')
-    })
-    it('should resolve the same adapter name if no matching client alias exists', () => {
-      const mockConfig: Config = {
-        client: 'test'
-      }
-      const result = SharedTasks.resolveAdapterName(mockConfig)
+      const result = SharedTasks.resolveAdapterName('test')
       expect(result).toEqual('test')
     })
     it('should resolve adapter alias from client', () => {
-      const mockConfig: Config = {
-        client: 'pg'
-      }
-      const result = SharedTasks.resolveAdapterName(mockConfig)
+      const result = SharedTasks.resolveAdapterName('pg')
       expect(result).toEqual('postgres')
     })
     it('should resolve adapter alias from dialect', () => {
-      const mockConfig: Config = {
-        client: 'pg'
-      }
-      const result = SharedTasks.resolveAdapterName(mockConfig)
+      const result = SharedTasks.resolveAdapterName('pg')
       expect(result).toEqual('postgres')
     })
   })
