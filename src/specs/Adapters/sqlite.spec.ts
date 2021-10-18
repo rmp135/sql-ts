@@ -28,7 +28,7 @@ describe('sqlite', () => {
           name: 'name1',
           notnull: 0,
           type: 'type(123)',
-          dflt: null,
+          dflt_value: null,
           pk: 0
         }
       ]
@@ -56,7 +56,7 @@ describe('sqlite', () => {
           name: 'name1',
           notnull: 0,
           type: 'type',
-          dflt: 1234,
+          dflt_value: '1234',
           pk: 0
         }
       ]
@@ -84,8 +84,15 @@ describe('sqlite', () => {
           name: 'name1',
           notnull: 0,
           type: 'type',
-          dflt: null,
+          dflt_value: null,
           pk: 1
+        },
+        {
+          name: 'name2',
+          notnull: 1,
+          type: "type",
+          dflt_value: null,
+          pk: 2,
         }
       ]
       const mockRaw = jasmine.createSpy('raw').and.returnValue(mockTables)
@@ -103,6 +110,14 @@ describe('sqlite', () => {
           optional: true,
           isEnum: false,
           isPrimaryKey: true
+        },
+        {
+          name: 'name2',
+          nullable: false,
+          type: 'type',
+          optional: false,
+          isEnum: false,
+          isPrimaryKey: true
         }
       ])
     })
@@ -112,7 +127,7 @@ describe('sqlite', () => {
           name: 'name1',
           notnull: 1,
           type: 'type',
-          dflt: null,
+          dflt_value: null,
           pk: 0
         }
       ]
@@ -140,7 +155,7 @@ describe('sqlite', () => {
           name: 'name1',
           notnull: 0,
           type: 'type(123,33)',
-          dflt: null,
+          dflt_value: null,
           pk: 1
         }
       ]
