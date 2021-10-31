@@ -9,7 +9,8 @@ export default {
     Buffer: ['binary', 'varbinary', 'image', 'UDT']
   },
   postgres: {
-    string: ['numeric', 'decimal', 'int8', 'money']
+    string: ['numeric', 'decimal', 'int8', 'money', 'bpchar', 'character_data' ] ,
+    'string[]' : ['_char', '_varchar', '_bpchar', '_character_data']
   },
   mssql: {
     string: ['timestamp']
