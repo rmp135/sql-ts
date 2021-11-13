@@ -116,7 +116,7 @@ const tsString = await sqlts.toObject(config, db)
 
 ## Config
 
-The configuration extends the [knex configuration](http://knexjs.org/#Installation-client) with some additional properties for table filtering and type overriding. If you're using your own knex object, the knex related information is not required.
+The configuration extends the [knex configuration](http://knexjs.org/#Installation-client) with some additional properties. If you're using your own knex object, the knex related information is not required.
 
 ### tables
 
@@ -176,7 +176,7 @@ Adds additional types to the type resolution. The order in which types are resol
 
 ### filename
 
-Specifies the name that the file should be saved as. Defaults to "Database.ts". The .ts extensions is not required.
+Specifies the name that the file should be saved as. Defaults to "Database". The .ts extension is not required.
 
 ```json
 {
@@ -255,7 +255,7 @@ Determines the casing for enum names. Any none alphanumeric charaters will be re
 
 ### enumKeyCasing
 
-Determines the casing for enum keys. Keys are wrapped in quotes to allow for any value, use ["index notation"] to references keys will none alphanumeric values.
+Determines the casing for enum keys. Keys are wrapped in quotes to allow for any value, use ["index notation"] to reference keys with none alphanumeric values.
 
 ```json
 {
@@ -345,7 +345,7 @@ Specifies the superclass than should be applied to the generated interface. Key 
 
 Specifies the [handlebars](https://handlebarsjs.com) template to use when creating the output TypeScript file relative to the current working directory. See [dist/template.handlebars](./dist/template.handlebars) for the default template. 
 
-See the section on templating for more info on how to use the template.
+See the below section on templating for more info on how to use the template.
 
 ```json
 {
