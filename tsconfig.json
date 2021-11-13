@@ -9,7 +9,7 @@
     "target": "es5",
     "declaration": true,
     "esModuleInterop": true,
-    "sourceMap": true,
+    "sourceMap": false,
     "outDir": "dist",
     "lib": [
       "es6",
