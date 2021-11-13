@@ -2,6 +2,7 @@ import 'jasmine'
 import * as TableTasks from '../TableTasks'
 import { Config, Table } from '../Typings'
 import rewire from 'rewire'
+import { TableDefinition } from '../Adapters/AdapterInterface'
 
 const MockTableTasks = rewire<typeof TableTasks>('../TableTasks')
 
@@ -103,14 +104,16 @@ describe('TableTasks', () => {
   })
   describe('getAllTables', () => {
     it('should return all tables of a particular schema from a database', (done) => {
-      const mockTables = [
+      const mockTables: TableDefinition[] = [
         {
           name: 'table1name',
-          schema: 'table1schema'
+          schema: 'table1schema',
+          comment: 'table1comment'
         },
         {
           name: 'table2name',
-          schema: 'table2schema'
+          schema: 'table2schema',
+          comment: 'table2comment'
         }
       ]
       const mockAdapter = {
@@ -156,7 +159,8 @@ describe('TableTasks', () => {
             schema: 'table1schema',
             extends: '',
             interfaceName: 'genint1name',
-            additionalProperties: []
+            additionalProperties: [],
+            comment: 'table1comment'
           },
           {
             columns: ['column2' as any, 'column3' as any],
@@ -164,21 +168,24 @@ describe('TableTasks', () => {
             schema: 'table2schema',
             extends: '',
             interfaceName: 'genint2name',
-            additionalProperties: []
+            additionalProperties: [],
+            comment: 'table2comment'
           }
         ] as Table[])
         done()
       })
     })
     it('should exclude tables when specified', (done) => {
-      const mockTables = [
+      const mockTables: TableDefinition[] = [
         {
           name: 'table1name',
-          schema: 'table2schema'
+          schema: 'table2schema',
+          comment: 'table1comment'
         },
         {
           name: 'table2name',
-          schema: 'table2schema'
+          schema: 'table2schema',
+          comment: 'table2comment'
         }
       ]
       const mockAdapter = {
@@ -222,29 +229,34 @@ describe('TableTasks', () => {
             schema: 'table2schema',
             extends: '',
             interfaceName: 'genint1name',
-            additionalProperties: []
+            additionalProperties: [],
+            comment: 'table1comment'
           }
         ] as Table[])
         done()
       })
     })
     it('should include then exclude tables when specified', (done) => {
-      const mockTables = [
+      const mockTables: TableDefinition[] = [
         {
           name: 'table2name',
-          schema: 'schema'
+          schema: 'schema',
+          comment: 'table2comment'
         },
         {
           name: 'table3name',
-          schema: 'schema'
+          schema: 'schema',
+          comment: 'table3comment'
         },
         {
           name: 'table4name',
-          schema: 'schema'
+          schema: 'schema',
+          comment: 'table4comment'
         },
         {
           name: 'table5name',
-          schema: 'schema'
+          schema: 'schema',
+          comment: 'table5comment'
         },
       ]
       const mockAdapter = {
@@ -288,21 +300,24 @@ describe('TableTasks', () => {
             name: 'table3name',
             schema: 'schema',
             extends: '',
-            additionalProperties: []
+            additionalProperties: [],
+            comment: 'table3comment'
           }
         ] as Table[])
         done()
       })
     })
     it('should revert to all schemas if none are provided', (done) => {
-      const mockTables = [
+      const mockTables: TableDefinition[] = [
         {
           name: 'table1name',
-          schema: 'table1schema'
+          schema: 'table1schema',
+          comment: 'table1comment'
         },
         {
           name: 'table2name',
-          schema: 'table2schema'
+          schema: 'table2schema',
+          comment: 'table2comment'
         }
       ]
       const mockAdapter = {
@@ -344,6 +359,7 @@ describe('TableTasks', () => {
             schema: 'table1schema',
             interfaceName: 'genint1name',
             extends: '',
+            comment: 'table1comment',
             additionalProperties: []
           },
           {
@@ -352,6 +368,7 @@ describe('TableTasks', () => {
             interfaceName: 'genint2name',
             schema: 'table2schema',
             extends: '',
+            comment: 'table2comment',
             additionalProperties: []
           }
         ] as Table[])

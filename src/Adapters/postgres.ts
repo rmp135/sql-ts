@@ -40,29 +40,22 @@ export default class implements AdapterInterface {
   }
   
   async getAllTables(db: Knex, schemas: string[]): Promise<TableDefinition[]> {
-    const query = db('pg_tables')
-    .select("*").from((qb: Knex) => {
-      qb.select('schemaname AS schema')
-      .select('tablename AS name')
-      .from('pg_tables')
-      .union(qb => {
-        qb
-        .select('schemaname AS schema')
-        .select('matviewname AS name')
-        .from('pg_matviews')
-      })
-      .union(qb => {
-        qb
-        .select('schemaname AS schema')
-        .select('viewname AS name')
-        .from('pg_views')
-      }).as('Unioned')
-    })
-    .whereNotIn('schema', ['pg_catalog', 'information_schema'])
-    if (schemas.length > 0) {
-      query.whereIn('schema', schemas)
-    }
-    return await query
+    const sql = `
+      WITH schemas AS (
+        SELECT nspname AS name, oid AS oid
+        FROM pg_namespace
+        WHERE nspname <> 'information_schema' AND nspname NOT LIKE 'pg_%'
+        ${schemas.length > 0 ? ` AND nspname = ANY(:schemas)` : ''}
+        )
+        SELECT schemas.name AS schema,
+            pg_class.relname AS name,
+            COALESCE(pg_catalog.OBJ_DESCRIPTION( pg_class.oid , 'pg_class' ), '') AS comment
+        FROM pg_class
+            JOIN schemas ON schemas.oid = pg_class.relnamespace
+        WHERE pg_class.relkind IN ('r', 'p', 'v', 'm')
+    `
+    const results = await db.raw(sql, { schemas }) as { rows: TableDefinition[] }
+    return results.rows
   }
 
   async getAllColumns(db: Knex, config: Config, table: string, schema: string): Promise<ColumnDefinition[]> {
@@ -77,6 +70,7 @@ export default class implements AdapterInterface {
         pg_attribute.atthasdef OR pg_attribute.attidentity <> '' AS hasDefault,
         pg_class.relname AS table,
         pg_type.typcategory AS typcategory,
+        COALESCE(pg_catalog.col_description(pg_class.oid, pg_attribute.attnum), '') as comment,
         CASE WHEN EXISTS (
           SELECT null FROM pg_index
           WHERE pg_index.indrelid = pg_attribute.attrelid
@@ -93,7 +87,7 @@ export default class implements AdapterInterface {
     `
     return (await db.raw(sql, { table, schema }))
       .rows
-      .map((c: { name: string, type: string, notnullable: boolean, hasdefault: boolean, typcategory: string, typeschema: string, typname: string, isprimarykey: number } ) => (
+      .map((c: PostgresColumn) => (
         {
           name: c.name,
           type: c.typname,
@@ -101,7 +95,20 @@ export default class implements AdapterInterface {
           optional: c.hasdefault || !c.notnullable,
           isEnum: c.typcategory == 'E',
           isPrimaryKey: c.isprimarykey == 1,
-          enumSchema: c.typeschema
+          enumSchema: c.typeschema,
+          comment: c.comment
         }) as ColumnDefinition)
   }
+}
+
+interface PostgresColumn {
+  name: string,
+  type: string,
+  notnullable: boolean,
+  hasdefault: boolean,
+  typcategory: string,
+  typeschema: string,
+  typname: string,
+  isprimarykey: number,
+  comment: string
 }

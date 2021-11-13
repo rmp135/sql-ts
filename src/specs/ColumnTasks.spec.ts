@@ -16,7 +16,8 @@ describe('ColumnTasks', () => {
           type: 'ctype',
           optional: false,
           isEnum: false,
-          isPrimaryKey: true
+          isPrimaryKey: true,
+          comment: 'cname comment'
         }
       ]
       const mockAdapter = {
@@ -61,7 +62,8 @@ describe('ColumnTasks', () => {
             type: 'ctype',
             optional: false,
             isEnum: false,
-            isPrimaryKey: true
+            isPrimaryKey: true,
+            comment: 'cname comment'
           } as Column
         ])
         done()
@@ -94,7 +96,8 @@ describe('ColumnTasks', () => {
           name: 'enum name',
           nullable: false,
           optional: false,
-          type: 'enum type'
+          type: 'enum type',
+          comment: 'comment'
         }
         const mockTable = {}
         const mockConfig = {}
@@ -121,7 +124,8 @@ describe('ColumnTasks', () => {
       })(() => {
         const mockTable = {
           schema: 'schema',
-          name: 'table'
+          name: 'table',
+          comment: 'comment'
         }
         const mockColumn: ColumnDefinition = {
           isEnum: false,
@@ -129,7 +133,8 @@ describe('ColumnTasks', () => {
           type: 'tofind',
           isPrimaryKey: false,
           nullable: false,
-          optional: false
+          optional: false,
+          comment: 'comment'
         }
         const mockConfig: Config = {
           typeOverrides: { },
@@ -159,7 +164,8 @@ describe('ColumnTasks', () => {
       })(() => {
         const mockTable = {
           schema: 'schema',
-          name: 'table'
+          name: 'table',
+          comment: 'comment'
         }
         const mockColumn = {
           isEnum: false,
@@ -167,7 +173,8 @@ describe('ColumnTasks', () => {
           type: 'tofind',
           isPrimaryKey: false,
           nullable: false,
-          optional: false
+          optional: false,
+          comment: 'comment'
         }
         const mockConfig: Config = {
           typeOverrides: { },
@@ -187,7 +194,8 @@ describe('ColumnTasks', () => {
       })(() => {
         const mockTable = {
           name: 'tableName',
-          schema: 'schema'
+          schema: 'schema',
+          comment: 'comment'
         }
         const mockColumn: ColumnDefinition = {
           name: 'tofind',
@@ -195,7 +203,8 @@ describe('ColumnTasks', () => {
           isEnum: false,
           isPrimaryKey: false,
           nullable: false,
-          optional: false
+          optional: false,
+          comment: 'comment'
         }
         const mockConfig: Config = {
           typeMap: {
@@ -218,7 +227,8 @@ describe('ColumnTasks', () => {
       })(() => {
         const mockTable = {
           name: 'tableName',
-          schema: 'schema'
+          schema: 'schema',
+          comment: 'comment'
         }
         const mockColumn = {
           name: 'column',
@@ -226,7 +236,8 @@ describe('ColumnTasks', () => {
           isEnum: false,
           isPrimaryKey: false,
           nullable: false,
-          optional: false
+          optional: false,
+          comment: 'comment'
         }
         const mockConfig: Config = {
           typeMap: {
@@ -243,7 +254,8 @@ describe('ColumnTasks', () => {
       })(() => {
         const mockTable = {
           name: 'tableName',
-          schema: 'schema'
+          schema: 'schema',
+          comment: 'comment'
         }
         const mockColumn: ColumnDefinition = {
           name: 'cname',
@@ -251,7 +263,8 @@ describe('ColumnTasks', () => {
           isEnum: false,
           isPrimaryKey: false,
           nullable: false,
-          optional: false
+          optional: false,
+          comment: 'comment'
         }
         const mockConfig = {
           typeOverrides: {
@@ -272,7 +285,8 @@ describe('ColumnTasks', () => {
       })(() => {
         const mockTable = {
           name: 'tableName',
-          schema: 'schema'
+          schema: 'schema',
+          comment: 'comment'
         }
         const mockColumn = {
           name: 'column',
@@ -280,7 +294,8 @@ describe('ColumnTasks', () => {
           isEnum: false,
           isPrimaryKey: false,
           nullable: false,
-          optional: false
+          optional: false,
+          comment: 'comment'
         }
         const mockConfig = {
           typeOverrides: { 'schema.tableName.column': 'overridetype' },
@@ -314,7 +329,8 @@ describe('ColumnTasks', () => {
       })(() => {
         const mockTable = {
           name: 'table',
-          schema: 'schema'
+          schema: 'schema',
+          comment: 'comment'
         }
         const mockColumn: ColumnDefinition = {
           name: 'column',
@@ -322,7 +338,8 @@ describe('ColumnTasks', () => {
           type: 'type',
           isPrimaryKey: false,
           nullable: false,
-          optional: false
+          optional: false,
+          comment: 'comment'
         }
         const result = MockColumnTasks.convertType(mockColumn, mockTable, mockConfig, 'dialect')
         expect(mockGenerateFullColumnName).toHaveBeenCalledOnceWith('table', 'schema', 'column')
@@ -350,7 +367,8 @@ describe('ColumnTasks', () => {
           nullable: false,
           optional: false,
           type: 'enum type',
-          enumSchema: 'enum schema'
+          enumSchema: 'enum schema',
+          comment: 'comment'
         }
         const mockConfig = {
           schemaAsNamespace: true
@@ -378,7 +396,8 @@ describe('ColumnTasks', () => {
           name: 'enum name',
           nullable: false,
           optional: false,
-          type: 'enum type'
+          type: 'enum type',
+          comment: 'enum comment',
         }
         const mockConfig = {
           schemaAsNamespace: true
@@ -407,7 +426,8 @@ describe('ColumnTasks', () => {
           nullable: false,
           optional: false,
           type: 'enum type',
-          enumSchema: 'enum schema'
+          enumSchema: 'enum schema',
+          comment: 'enum comment'
         }
         const mockConfig = {
           schemaAsNamespace: false
@@ -435,7 +455,8 @@ describe('ColumnTasks', () => {
           name: 'enum name',
           nullable: false,
           optional: false,
-          type: 'enum type'
+          type: 'enum type',
+          comment: 'comment'
         }
         const mockConfig = {
           schemaAsNamespace: false

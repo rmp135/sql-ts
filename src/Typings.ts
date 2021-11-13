@@ -49,6 +49,7 @@ export interface Table extends TableDefinition {
   columns: Column[]
   extends?: string
   additionalProperties?: string[],
+  comment: string
 }
 
 /**

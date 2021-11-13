@@ -28,7 +28,8 @@ export async function getAllTables (db: Knex, config: Config): Promise<Table[]> 
     name: table.name,
     schema: SchemaTasks.generateSchemaName(table.schema),
     additionalProperties: TableTasks.getAdditionalProperties(table.name, table.schema, config),
-    extends: TableTasks.getExtends(table.name, table.schema, config)
+    extends: TableTasks.getExtends(table.name, table.schema, config),
+    comment: table.comment
   } as Table)))
 }
 

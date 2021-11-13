@@ -374,6 +374,7 @@ The inputs to this file are as followed.
           },
           "extends": "DBEntity", // The superclass, if any, that should be extended.
           "interfaceName": "UserEntity", // The computed interface name.
+          "comment": "a table comment", // A table comment (see Comments below).
           "columns": [ // List of columns in this table.
             {
               "name": "ID", // The original database column name.
@@ -384,6 +385,7 @@ The inputs to this file are as followed.
               "optional": true, // Whether the column is optional for insertion (has a default value).
               "isEnum": false, // Whether the column is an enum type (currently only Postgres).
               "isPrimaryKey": true // Whether the column is a primary key.
+              "comment": "a comment" // A column comment (see Comments below).
             }
           ]
         }
@@ -406,6 +408,19 @@ The inputs to this file are as followed.
   }
 }
 ```
+
+### Comments
+
+Comments provided on tables, views and columns can be imported into the template. 
+
+Different database providers provide these comments in different ways.
+
+Provider   | Source
+-----------|---------------------------------------------
+MySQL      | "Comments" field
+SQL Server | Extended property with name "MS_Description"
+Postgres   | "Comment" field
+SQLite     | Not supported
 
 ## Bespoke Configuration
 

@@ -1,10 +1,9 @@
 import { Config, Database, Table, Enum } from './Typings'
-import * as handlebars from 'handlebars'
+import * as Handlebars from 'handlebars'
 import * as fs from 'fs'
 import { Knex } from 'knex'
 import * as TableTasks from './TableTasks'
 import * as EnumTasks from './EnumTasks'
-
 
 interface Template {
   [key:string]: {
@@ -23,7 +22,7 @@ interface Template {
  */
 export function stringifyDatabase (database: Database, config: Config): string {
   const templateString = fs.readFileSync(config.template, 'utf-8')
-  const compiler = handlebars.compile(templateString)
+  const compiler = Handlebars.compile(templateString)
   database.tables.sort((tableA, tableB) => tableA.name.localeCompare(tableB.name))
   database.enums.sort((enumA, enumB) => enumB.name.localeCompare(enumA.name))
   const template: Template = {}

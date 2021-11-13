@@ -54,7 +54,7 @@ describe('DatabaseTasks', () => {
       }
       MockDatabaseTasks.__with__({
         fs: mockFs,
-        handlebars: mockHandlebars
+        Handlebars: mockHandlebars
       })(() => {
         const mockConfig: Config = {
           template: 'template',
@@ -77,7 +77,7 @@ describe('DatabaseTasks', () => {
       }
       MockDatabaseTasks.__with__({
         fs: mockFs,
-        handlebars: mockHandlebars
+        Handlebars: mockHandlebars
       })(() => {
         const mockConfig = {
           schemaAsNamespace: true,
@@ -100,7 +100,7 @@ describe('DatabaseTasks', () => {
       }
       MockDatabaseTasks.__with__({
         fs: mockFs,
-        handlebars: mockHandlebars
+        Handlebars: mockHandlebars
       })(() => {
         const mockConfig = {
           schemaAsNamespace: true,

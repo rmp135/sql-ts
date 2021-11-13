@@ -12,6 +12,7 @@ import { Config } from '../Typings'
 export interface TableDefinition {
   schema: string;
   name: string;
+  comment: string;
 }
 
 /**
@@ -28,7 +29,8 @@ export interface ColumnDefinition {
   isEnum: boolean;
   isPrimaryKey: boolean;
   // The schema the enum belongs to. Currently only used for postgres.
-  enumSchema?: string; 
+  enumSchema?: string;
+  comment: string
 }
 
 /**

@@ -1,10 +1,18 @@
 {{#*inline "dataPartial"}}
 {{#each tables as |table|}}
+{{#if comment}}
+
+/** {{comment}} */
+{{/if}}
 export interface {{interfaceName}} {{#if extends}}extends {{extends}} {{/if}}{
   {{#each additionalProperties as |prop|}}
   {{prop}}
   {{/each}}
   {{#each columns}}
+  {{#if comment}}
+  
+  /** {{comment}} */
+  {{/if}}
   '{{propertyName}}'{{#if optional}}?{{/if}}: {{propertyType}}{{#if nullable}} | null{{/if}};
   {{/each}}
 }
