@@ -1,5 +1,5 @@
 import * as fs from 'fs'
-import yargs from 'yargs'
+import * as yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
 import * as path from 'path'
 import sqlts, { Config } from './index'
