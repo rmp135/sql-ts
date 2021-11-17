@@ -10,13 +10,13 @@ import { Config } from './Typings'
  * @param {(d: Knex) => T} func The function to run.
  * @returns {T}
  */
-export function createAndRun<T> (config: Config, func: (d: Knex) => T): T {
+export async function createAndRun<T> (config: Config, func: (d: Knex) => Promise<T>): Promise<T> {
   let db: Knex
   try {
     db = knex(config)
-    return func(db)
+    return await func(db)
   }
   finally {
-    db?.destroy()
+    await db?.destroy()
   }
 }
