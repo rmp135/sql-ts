@@ -40,6 +40,9 @@ export function stringifyDatabase (database: Database, config: Config): string {
   }
   return compiler({
     grouped: template,
+    tables: database.tables,
+    enums: database.enums,
+    custom: database.custom ?? {},
     config
   })
 }
