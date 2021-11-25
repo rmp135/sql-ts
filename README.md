@@ -405,7 +405,8 @@ The inputs to this file are as followed.
         }
       ]
     }
-  }
+  },
+  custom : {} , // Attach custom data if needed.
 }
 ```
 
