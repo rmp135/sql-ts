@@ -61,6 +61,7 @@ export interface Table extends TableDefinition {
 export interface Database {
   tables: Table[]
   enums: Enum[]
+  custom?: Record<string,any>
 }
 
 /**
