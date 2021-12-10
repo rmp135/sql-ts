@@ -32,7 +32,7 @@ export default class implements AdapterInterface {
         values: Object.fromEntries(
           ungroupedEnums
             .filter(e => e.schema == row.schema && e.name == row.name)
-            .sort()
+            .sort((a, b) => a.order - b.order)
             .map(e => [e.value, e.value])
         )
       }))
