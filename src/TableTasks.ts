@@ -76,7 +76,7 @@ export function getExtends (tableName: string, schemaName: string, config: Confi
   name = SharedTasks.convertCase(name, config.tableNameCasing)
   if (config.singularTableNames) {
     if(name.match(/ies$/)) {
-     name = name.replace(/ies$/, 'y'); 
+     name = name.replace(/ies$/, 'y')
     } else if(name[name.length - 1] == "s") {
       name = name.substr(0, name.length - 1)
     }
