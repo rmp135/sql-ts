@@ -101,6 +101,23 @@ describe('TableTasks', () => {
         done()
       })
     })
+    it('should convert to singular with a name ending in "ies"', (done) => {
+      const mockConfig: Config = {
+        interfaceNameFormat: '${table}Name',
+        singularTableNames: true
+      }
+      const mockSharedTasks = {
+        convertCase: jasmine.createSpy('convertCase').and.returnValue('babies')
+      }
+      MockTableTasks.__with__({
+        SharedTasks: mockSharedTasks
+      })(() => {
+        const result = MockTableTasks.generateInterfaceName('babies', mockConfig)
+        expect(mockSharedTasks.convertCase).toHaveBeenCalledWith('babies', undefined)
+        expect(result).toBe('babyName')
+        done()
+      })
+    })
   })
   describe('getAllTables', () => {
     it('should return all tables of a particular schema from a database', (done) => {
