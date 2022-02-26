@@ -15,12 +15,6 @@ Includes comments from tables, views and columns for [supported providers](https
 
 Highly configurable: choose your own [naming](#interfacenameformat) and [casing schemes](#tablenamecasing), [add types](#typemap), [extend base types](#extends), and more.
 
-Supports the following database providers: MySQL, Microsoft SQL Server, SQLite and Postgres.
-
-Generate TypeScript types for tables and views in a SQL database.
-
-Highly configurable: choose your own naming and casing schemes, add types, extend base types, and more.
-
 Supports the following databases: MySQL, Microsoft SQL Server, SQLite and Postgres courtesy of [knex](https://knexjs.org/). 
 
 
