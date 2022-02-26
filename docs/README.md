@@ -8,6 +8,15 @@
 
 </div>
 
+
+Generate TypeScript types for tables and views in a SQL database. 
+
+Includes comments from tables, views and columns for [supported providers](https://rmp135.github.io/sql-ts/#/?id=comments).
+
+Highly configurable: choose your own [naming](#interfacenameformat) and [casing schemes](#tablenamecasing), [add types](#typemap), [extend base types](#extends), and more.
+
+Supports the following database providers: MySQL, Microsoft SQL Server, SQLite and Postgres.
+
 Generate TypeScript types for tables and views in a SQL database.
 
 Highly configurable: choose your own naming and casing schemes, add types, extend base types, and more.
@@ -86,7 +95,9 @@ Run `npx @rmp135/sql-ts` with the path of the configuration file created above.
 
 `npx @rmp135/sql-ts -c ./mysql.json`
 
-The file will be exported with the filename `Database.ts` (or with the name specified in the configuration) at the current working directory. Warning: if this file exists, it will be overwritten.
+The file will be exported with the filename `Database.ts` (or with the name specified in the configuration) at the current working directory. 
+
+!> Warning: if this file exists, it will be overwritten.
 
 ---
 Alternatively, use as a node module, passing the configuration object as the first argument.
@@ -485,7 +496,7 @@ For example, column `ID` in table `Customer` in database `Live` in a MySQL would
 
 ## Templating
 
-The `template.handlebars` file controls the output of the generated .ts file. You can modify this file and use the `template` config option to specify a custom template file.
+The [`template.handlbars`](https://github.com/rmp135/sql-ts/blob/master/src/template.handlebars) file controls the output of the generated .ts file. You can modify this file and use the `template` config option to specify a custom template file.
 
 The inputs to this file are as followed.
 
