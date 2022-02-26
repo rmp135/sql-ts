@@ -442,7 +442,7 @@ Specifies the superclass than should be applied to the generated interface. Key 
 ### template
 
 <!-- div:left-panel -->
-Specifies the [handlebars](https://handlebarsjs.com) template to use when creating the output TypeScript file relative to the current working directory. See [dist/template.handlebars](./dist/template.handlebars) for the default template. 
+Specifies the [handlebars](https://handlebarsjs.com) template to use when creating the output TypeScript file relative to the current working directory. See [src/template.handlebars](https://github.com/rmp135/sql-ts/blob/master/src/template.handlebars) for the default template. 
 
 See the below section on [templating](#templating) for more info on how to use the template.
 
