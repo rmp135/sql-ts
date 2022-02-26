@@ -547,7 +547,7 @@ However, this can cause issues when using the generated interface for passing ar
 
 To resolve this, you will need to remove the optionality from the template. 
 
-- Copy the [`template.handlbars`](https://github.com/rmp135/sql-ts/blob/master/src/template.handlebars) file, removing the `{{#if optional}}?{{/if}}` from the property definition and use the [filename](#filename) config option to specify the new template. This will require you to set the property to `null` on inserting to prevent TypeScript compaining.
+- Copy the [`template.handlbars`](https://github.com/rmp135/sql-ts/blob/master/src/template.handlebars) file, removing the `{{#if optional}}?{{/if}}` from the property definition and use the [template](#template) config option to specify the new template. This will require you to set the property to `null` on inserting to prevent TypeScript complaining.
 - Alternatively, do the above with a second config file (e.g. `sql-ts-read.json`) that uses the [interfaceNameFormat](#interfacenameformat) config option to rename interfaces to be be readable (e.g. `${table}ReadEntity`) to generate read models of the database. 
 
 
