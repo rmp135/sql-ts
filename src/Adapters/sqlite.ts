@@ -22,7 +22,7 @@ export default class implements AdapterInterface {
         name: c.name,
         nullable: c.notnull === 0,
         type: (c.type.includes('(') ? c.type.split('(')[0] : c.type).toLowerCase(),
-        optional: c.dflt_value !== null || c.notnull === 0,
+        optional: c.dflt_value !== null || c.notnull === 0 || c.pk !== 0,
         isEnum: false,
         isPrimaryKey: c.pk !== 0,
         comment: ''

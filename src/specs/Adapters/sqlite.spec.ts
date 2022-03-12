@@ -118,7 +118,7 @@ describe('sqlite', () => {
           name: 'name2',
           nullable: false,
           type: 'type',
-          optional: false,
+          optional: true,
           isEnum: false,
           isPrimaryKey: true,
           comment: ''
