@@ -10,6 +10,8 @@ import { Config } from './Typings'
 export function applyConfigDefaults(config: Config): Config {
   const defaultConfig: Config = {
     filename: 'Database',
+    globalOptionality: 'dynamic',
+    columnOptionality: {},
     folder: '.',
     tables: [],
     excludedTables: [],

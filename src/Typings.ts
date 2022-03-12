@@ -22,6 +22,10 @@ export interface Config extends Knex.Config {
   schemaAsNamespace?: boolean,
   schemas?: string[],
   template?: string,
+  globalOptionality?: 'optional' | 'required' | 'dynamic'
+  columnOptionality?: {
+    [key: string]: 'optional' | 'required' | 'dynamic'
+  }
   typeMap?: {
     [key: string]: string[]
   }

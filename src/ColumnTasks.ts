@@ -24,7 +24,31 @@ export async function getColumnsForTable (db: Knex, table: TableDefinition, conf
       ...c,
       propertyName: SharedTasks.convertCase(c.name.replace(/ /g,''), config.columnNameCasing),
       propertyType: convertType(c, table, config, (db.client as Knex.Client).dialect),
+      optional: getOptionality(c, table, config)
     } as Column))
+}
+
+/**
+ * Generates the optionality specification for a given column, given the optionality option.
+ *
+ * @export
+ * @param {ColumnDefinition} column The column to generate optionality for.
+ * @param {Config} config The configuration object.
+ * @returns {boolean} The optionality of the specified column.
+ */
+export function getOptionality (column: ColumnDefinition, table: TableDefinition, config: Config): boolean {
+  let optionality = config.globalOptionality
+  const columnName = generateFullColumnName(table.name, table.schema, column.name)
+  if (config.columnOptionality[columnName]) {
+    optionality = config.columnOptionality[columnName]
+  }
+  if (optionality == 'optional') {
+    return true
+  }
+  else if (optionality == 'required') {
+    return false
+  }
+  return column.optional
 }
 
 /**

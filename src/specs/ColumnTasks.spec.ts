@@ -1,7 +1,7 @@
 import 'jasmine'
 import * as ColumnTasks from '../ColumnTasks'
 import { Column, Config } from '../Typings'
-import { ColumnDefinition } from '../Adapters/AdapterInterface'
+import { ColumnDefinition, TableDefinition } from '../Adapters/AdapterInterface'
 import rewire from 'rewire'
 
 const MockColumnTasks = rewire<typeof ColumnTasks>('../ColumnTasks')
@@ -30,10 +30,12 @@ describe('ColumnTasks', () => {
         convertCase: jasmine.createSpy('convertCase').and.returnValue('newname'),
       }
       const mockConvertType = jasmine.createSpy('convertType').and.returnValue('newType')
+      const mockGetOptionality = jasmine.createSpy('getOptionality').and.returnValue(false)
       MockColumnTasks.__with__({
         AdapterFactory: mockAdapterFactory,
         SharedTasks: mockSharedTasks,
-        convertType: mockConvertType
+        convertType: mockConvertType,
+        getOptionality: mockGetOptionality
       })(async () => {
         const db = {
           client: {
@@ -48,11 +50,12 @@ describe('ColumnTasks', () => {
           dialect: 'configDialect',
           columnNameCasing: 'camel'
         }
-        const result = await MockColumnTasks.getColumnsForTable(db as any, table as any, config as any)
+        const result = await MockColumnTasks.getColumnsForTable(db as any, table as TableDefinition, config)
         expect(mockAdapterFactory.buildAdapter).toHaveBeenCalledWith('dialect')
         expect(mockAdapter.getAllColumns).toHaveBeenCalledWith(db, config, 'name', 'schema')
         expect(mockSharedTasks.convertCase).toHaveBeenCalledWith('cname', 'camel')
         expect(mockConvertType).toHaveBeenCalledWith(mockColumns[0], table, config, 'dialect')
+        expect(mockGetOptionality).toHaveBeenCalledWith(mockColumns[0], table, config)
         expect(result).toEqual([
           {
             nullable: false,
@@ -82,6 +85,104 @@ describe('ColumnTasks', () => {
     it('should skip schema if null', () => {
       const result = MockColumnTasks.generateFullColumnName('table', null, 'column')
       expect(result).toBe('table.column')
+    })
+  })
+  describe('getOptionality', () => {
+    it('should return false if optionality is set to required', () => {
+      const mockColumn: ColumnDefinition = {
+        isEnum: true,
+        isPrimaryKey: false,
+        name: 'enum name',
+        nullable: false,
+        optional: false,
+        type: 'enum type',
+        comment: 'comment'
+      }
+      const mockConfig: Config = {
+        globalOptionality: 'required',
+        columnOptionality: {}
+      }
+      const mockTable: any = {}
+      const result = MockColumnTasks.getOptionality(mockColumn, mockTable, mockConfig)
+      expect(result).toEqual(false)
+    })
+    it('should return true if optionality is set to optional', () => {
+      const mockColumn: ColumnDefinition = {
+        isEnum: true,
+        isPrimaryKey: false,
+        name: 'enum name',
+        nullable: false,
+        optional: true,
+        type: 'enum type',
+        comment: 'comment'
+      }
+      const mockConfig: Config = {
+        globalOptionality: 'optional',
+        columnOptionality: {}
+      }
+      const mockTable: any = {}
+      const result = MockColumnTasks.getOptionality(mockColumn, mockTable, mockConfig)
+      expect(result).toEqual(true)
+    })
+    it('should return true if optionality is dynamic and column is optional', () => {
+      const mockColumn: ColumnDefinition = {
+        isEnum: true,
+        isPrimaryKey: false,
+        name: 'enum name',
+        nullable: false,
+        optional: true,
+        type: 'enum type',
+        comment: 'comment'
+      }
+      const mockConfig: Config = {
+        globalOptionality: 'dynamic',
+        columnOptionality: {}
+      }
+      const mockTable: any = {}
+      const result = MockColumnTasks.getOptionality(mockColumn, mockTable, mockConfig)
+      expect(result).toEqual(true)
+    })
+    it('should return false if optionality is dynamic and column is not optional', () => {
+      const mockColumn: ColumnDefinition = {
+        isEnum: true,
+        isPrimaryKey: false,
+        name: 'enum name',
+        nullable: false,
+        optional: false,
+        type: 'enum type',
+        comment: 'comment'
+      }
+      const mockConfig: Config = {
+        globalOptionality: 'dynamic',
+        columnOptionality: {}
+      }
+      const mockTable: any = {}
+      const result = MockColumnTasks.getOptionality(mockColumn, mockTable, mockConfig)
+      expect(result).toEqual(false)
+    })
+    it('should return false if column name matches and optionality is required', () => {
+      const mockColumn: ColumnDefinition = {
+        isEnum: true,
+        isPrimaryKey: false,
+        name: 'columnname',
+        nullable: false,
+        optional: false,
+        type: 'enum type',
+        comment: 'comment'
+      }
+      const mockConfig: Config = {
+        globalOptionality: 'dynamic',
+        columnOptionality: {
+          'schema.table.columnname': 'required'
+        }
+      }
+      const mockTable: TableDefinition = {
+        name: 'tablename',
+        schema: 'schema',
+        comment: ''
+      }
+      const result = MockColumnTasks.getOptionality(mockColumn, mockTable, mockConfig)
+      expect(result).toEqual(false)
     })
   })
   describe('convertType', () => {

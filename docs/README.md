@@ -454,6 +454,52 @@ See the below section on [templating](#templating) for more info on how to use t
   "template": "./template.handlebars"
 }
 ```
+
+<!-- div:title-panel -->
+### globalOptionality
+
+<!-- div:left-panel -->
+Determines the optionality of all generated columns. Available options are `optional`, `required` and `dynamic`. Defaults to `dynamic`.
+
+- `optional`: The generated columns will be optional.
+- `required`: The generated columns will be required.
+- `dynamic`: The generated column will match the optionality of the underlying column. Columns with default or generated values, or that are nullable will be optional.
+
+This can be used to create specific "read" interfaces by removing all optionality from columns.
+
+<!-- div:right-panel -->
+```json
+{
+  "client": "...",
+  "connection": {},
+  "globalOptionality": "dynamic"
+}
+```
+<!-- div:title-panel -->
+
+### columnOptionality
+
+<!-- div:left-panel -->
+Determines the optionality on a per-columns basis.
+
+Key is the fully qualified column name (see [Object Name Format](#object-name-format)) and the value is the optionality (see [Global Optionality](#globaloptionality)).
+
+This option will override the global optionality setting of the specified column.
+
+Useful if the dynamic optionality detection is not working as intended.
+
+<!-- div:right-panel -->
+```json
+{
+  "client": "...",
+  "connection": {},
+  "columnOptionality": {
+    "dbo.Table_1.Column_1": "optional",
+    "dbo.Table_2.Column_2": "required",
+    "dbo.Table_3.Column_3": "dynamic"
+  }
+}
+```
 <!-- panels:end -->
 
 ## Comments
@@ -550,10 +596,17 @@ By default, sql-ts builds the configuration from an INSERT perspective. That is 
 
 However, this can cause issues when using the generated interface for passing around to other areas of an application that are requiring a concrete value.
 
-To resolve this, you will need to remove the optionality from the template. 
+To resolve this, you can use the [optionality](#optionality), [filename](#filename) and [interfaceNameFormat](#interfacenameformat) config options to create read models in a separate database models file. 
 
-- Copy the [`template.handlbars`](https://github.com/rmp135/sql-ts/blob/master/src/template.handlebars) file, removing the `{{#if optional}}?{{/if}}` from the property definition and use the [template](#template) config option to specify the new template. This may require you to set the property to `null` on inserting to prevent TypeScript complaining.
-- Alternatively, do the above with a second config file (e.g. `sql-ts-read.json`) that uses the [interfaceNameFormat](#interfacenameformat) config option to rename interfaces to be be readable (e.g. `${table}ReadEntity`) to generate read models of the database. 
+```json
+{
+  "client": "...",
+  "connection": {},
+  "optionality": "required",
+  "interfaceNameFormat": "${table}ReadEntity",
+  "filename": "ReadDatabase.ts"
+}
+```
 
 
 ## Bespoke Configuration
