@@ -25,17 +25,15 @@ describe('EnumTasks', () => {
         buildAdapter: jasmine.createSpy('buildAdapter').and.returnValue(mockAdapter)
       }
       const mockGenerateEnumName = jasmine.createSpy('generateEnumName').and.returnValue('genename')
+      const mockGenerateEnumKey = jasmine.createSpy('generateEnumKey').and.returnValue('genkey')
       const mockSchemaTasks = {
         generateSchemaName: jasmine.createSpy('generateSchemaName').and.returnValue('genSchemaName')
       }
-      const mockSharedTasks = {
-        convertCase: jasmine.createSpy('convertCase').and.returnValue('convertedKey')
-      }
       MockEnumTasks.__with__({
         AdapterFactory: mockAdapterFactory,
-        SharedTasks: mockSharedTasks,
         SchemaTasks: mockSchemaTasks,
-        generateEnumName: mockGenerateEnumName
+        generateEnumName: mockGenerateEnumName,
+        generateEnumKey: mockGenerateEnumKey
       })(async () => {
         const db = {
           client: {
@@ -51,8 +49,8 @@ describe('EnumTasks', () => {
         expect(mockAdapterFactory.buildAdapter).toHaveBeenCalledWith('dialect')
         expect(mockAdapter.getAllEnums).toHaveBeenCalledOnceWith(db, config)
         expect(mockGenerateEnumName).toHaveBeenCalledOnceWith('cname', config)
+        expect(mockGenerateEnumKey).toHaveBeenCalledWith('ekey 1', config)
         expect(mockSchemaTasks.generateSchemaName).toHaveBeenCalledOnceWith('schema')
-        expect(mockSharedTasks.convertCase).toHaveBeenCalledOnceWith('ekey 1', 'upper')
         expect(result).toEqual([
           {
             name: 'cname',
@@ -61,7 +59,7 @@ describe('EnumTasks', () => {
             values: [
               {
                 originalKey: 'ekey 1',
-                convertedKey: 'convertedKey',
+                convertedKey: 'genkey',
                 value: 'val1'
               }
             ]
@@ -101,6 +99,42 @@ describe('EnumTasks', () => {
         const result = MockEnumTasks.generateEnumName('128738n1a2m3e4', mockConfig)
         expect(mockSharedTasks.convertCase).toHaveBeenCalledWith('n1a2m3e4', 'lower')
         expect(result).toBe('newname')
+        done()
+      })
+    })
+  })
+  describe('generateEnumKey', () => {
+    it('should not modify non number keys', (done) => {
+      const mockConfig: Config = {
+        enumKeyCasing: 'lower',
+        enumNumericKeyFormat: '_${key}',
+      }
+      const mockSharedTasks = {
+        convertCase: jasmine.createSpy('convertCase').and.returnValue('newkey')
+      }
+      MockEnumTasks.__with__({
+        SharedTasks: mockSharedTasks
+      })(() => {
+        const result = MockEnumTasks.generateEnumKey('originalkey', mockConfig)
+        expect(mockSharedTasks.convertCase).toHaveBeenCalledWith('originalkey', 'lower')
+        expect(result).toBe('newkey')
+        done()
+      })
+    })
+    it('should transform number keys', (done) => {
+      const mockConfig: Config = {
+        enumKeyCasing: 'lower',
+        enumNumericKeyFormat: '$_${key}',
+      }
+      const mockSharedTasks = {
+        convertCase: jasmine.createSpy('convertCase').and.returnValue('42')
+      }
+      MockEnumTasks.__with__({
+        SharedTasks: mockSharedTasks
+      })(() => {
+        const result = MockEnumTasks.generateEnumKey('originalkey', mockConfig)
+        expect(mockSharedTasks.convertCase).toHaveBeenCalledWith('originalkey', 'lower')
+        expect(result).toBe('$_42')
         done()
       })
     })

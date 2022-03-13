@@ -17,6 +17,7 @@ export function applyConfigDefaults(config: Config): Config {
     excludedTables: [],
     schemas: [],
     interfaceNameFormat: '${table}Entity',
+    enumNumericKeyFormat: '_${key}',
     additionalProperties: {},
     schemaAsNamespace: false,
     typeOverrides: {},

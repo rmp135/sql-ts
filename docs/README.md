@@ -459,11 +459,11 @@ See the below section on [templating](#templating) for more info on how to use t
 ### globalOptionality
 
 <!-- div:left-panel -->
-Determines the optionality of all generated columns. Available options are `optional`, `required` and `dynamic`. Defaults to `dynamic`.
+Determines the optionality of all generated properties. Available options are `optional`, `required` and `dynamic`. Defaults to `dynamic`.
 
-- `optional`: The generated columns will be optional.
-- `required`: The generated columns will be required.
-- `dynamic`: The generated column will match the optionality of the underlying column. Columns with default or generated values, or that are nullable will be optional.
+- `optional`: The generated properties will be optional.
+- `required`: The generated properties will be required.
+- `dynamic`: The generated properties will match the optionality of the underlying column. Columns with default or generated values, or that are nullable will be optional.
 
 This can be used to create specific "read" interfaces by removing all optionality from columns.
 
@@ -480,11 +480,11 @@ This can be used to create specific "read" interfaces by removing all optionalit
 ### columnOptionality
 
 <!-- div:left-panel -->
-Determines the optionality on a per-columns basis.
+Determines the optionality on a per-column basis.
 
 Key is the fully qualified column name (see [Object Name Format](#object-name-format)) and the value is the optionality (see [Global Optionality](#globaloptionality)).
 
-This option will override the global optionality setting of the specified column.
+This option will override the global optionality setting of the specified property.
 
 Useful if the dynamic optionality detection is not working as intended.
 
@@ -498,6 +498,24 @@ Useful if the dynamic optionality detection is not working as intended.
     "dbo.Table_2.Column_2": "required",
     "dbo.Table_3.Column_3": "dynamic"
   }
+}
+```
+<!-- div:title-panel -->
+
+### enumNumericKeyFormat
+
+<!-- div:left-panel -->
+
+Because enum keys cannot numeric, we must convert them before populating the interface file. This option allows you to specify a custom format for numeric keys. Keys that are not numbers are not effected. 
+
+The `${key}` token will be replaced with the key name. Defaults to `_${key}`, thus turning an enum key of "2" into "_2".
+
+<!-- div:right-panel -->
+```json
+{
+  "client": "...",
+  "connection": {},
+  "enumNumericKeyFormat": "$${key}" // "2" becomes "$2"
 }
 ```
 <!-- panels:end -->

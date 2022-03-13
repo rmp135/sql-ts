@@ -21,12 +21,12 @@
     "docs:serve": "docsify serve docs"
   },
   "peerDependencies": {
+    "better-sqlite3": "^7.5.0",
     "mssql": "^8.0.2",
     "mysql": "^2.18.1",
     "mysql2": "^2.3.3",
     "pg": "^8.7.3",
-    "sqlite3": "^5.0.2",
-    "better-sqlite3": "^7.5.0"
+    "sqlite3": "^5.0.2"
   },
   "peerDependenciesMeta": {
     "mssql": {
