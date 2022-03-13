@@ -74,8 +74,12 @@ export function getExtends (tableName: string, schemaName: string, config: Confi
   const interfaceNamePattern = config.interfaceNameFormat
   name = name.replace(/ /g, '_')
   name = SharedTasks.convertCase(name, config.tableNameCasing)
-  if (config.singularTableNames && name[name.length - 1] == "s") {
-    name = name.substr(0, name.length - 1)
+  if (config.singularTableNames) {
+    if(name.match(/ies$/)) {
+     name = name.replace(/ies$/, 'y')
+    } else if(name[name.length - 1] == "s") {
+      name = name.substr(0, name.length - 1)
+    }
   }
   return interfaceNamePattern.replace('${table}', name)
 }
