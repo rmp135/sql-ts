@@ -8,15 +8,13 @@
 
 </div>
 
-
 Generate TypeScript types for tables and views in a SQL database. 
 
 Includes comments from tables, views and columns for [supported providers](https://rmp135.github.io/sql-ts/#/?id=comments).
 
-Highly configurable: choose your own [naming](#interfacenameformat) and [casing schemes](#tablenamecasing), [add types](#typemap), [extend base types](#extends), and more.
+Highly configurable: choose your own [naming](#interfacenameformat) and [casing schemes](#tablenamecasing), [add types](#typemap), [extend base types](#extends), [generating enums from table data](#table-generated-enums) and more.
 
 Supports the following databases: MySQL, Microsoft SQL Server, SQLite and Postgres courtesy of [knex](https://knexjs.org/). 
-
 
 <!-- panels:start -->
 
@@ -85,11 +83,13 @@ The most basic MySQL setup is below, modify as appropriate. Additional options c
 
 ## Usage
 
+### CLI
+
 Run `npx @rmp135/sql-ts` with the path of the configuration file created above.
 
 `npx @rmp135/sql-ts -c ./mysql.json`
 
-The file will be exported with the filename `Database.ts` (or with the name specified in the configuration) at the current working directory. 
+The file will be exported with the filename `Database.ts` (or with the name specified by [filename](#filename)) at the current working directory. 
 
 !> Warning: if this file exists, it will be overwritten.
 
@@ -237,7 +237,7 @@ Adds additional types to the type resolution. The order in which types are resol
 ### filename
 
 <!-- div:left-panel -->
-Specifies the filepath and name that the file should be saved as. Defaults to "Database". The .ts extension is not required.
+Specifies the filepath and name that the file should be saved as, in relation to the current working directory. Defaults to "Database". The .ts extension is not required.
 
 <!-- div:right-panel -->
 ```json
@@ -252,6 +252,8 @@ Specifies the filepath and name that the file should be saved as. Defaults to "D
 ### folder
 
 <!-- div:left-panel -->
+
+!> Deprecated. Use `filename` with a path instead.
 
 Specifies a folder where the file will be generated. This will be relative to the current working directory if no absolute path is given. Folders will not be created and will error if they do not exist.
 
@@ -270,16 +272,52 @@ For unix systems, the home shortcut `~`  will not work, use the fully qualified 
 ### interfaceNameFormat
 
 <!-- div:left-panel -->
-Specifies the pattern that the exported interface names will take. The token "${table}" will be replaced with the table name. Defaults to `${table}Entity`.
+Specifies the format that the exported interface names will take. The token `${table}` will be replaced with the table name. 
 
-`${table}Model` will export interfaces with such names as `UserModel` and `LogModel` for tables with names `User` and `Log` respectively.
+Defaults to `${table}Entity`.
 
 <!-- div:right-panel -->
 ```json
 {
   "client": "...",
   "connection": {},
-  "interfaceNameFormat": "${table}Model"
+  "interfaceNameFormat": "${table}Model" // User becomes UserModel
+}
+```
+<!-- div:title-panel -->
+
+### enumNameFormat
+
+<!-- div:left-panel -->
+
+Specifices the format for exported enums will take. The token `${name}` will be replaced with the table name. 
+
+Defaults to `${name}` (no change).
+
+<!-- div:right-panel -->
+```json
+{
+  "client": "...",
+  "connection": {},
+  "enumNameFormat": "${name}Enum" // LogLevel becomes LogLevelEnum
+}
+```
+<!-- div:title-panel -->
+
+### enumNumericKeyFormat
+
+<!-- div:left-panel -->
+
+Because enum keys cannot numeric, we must convert them before populating the interface file. This option allows you to specify a custom format for numeric keys. Keys that are not numbers are not effected. The `${key}` token will be replaced with the key name.
+
+Defaults to `_${key}`.
+
+<!-- div:right-panel -->
+```json
+{
+  "client": "...",
+  "connection": {},
+  "enumNumericKeyFormat": "$${key}" // "2" becomes "$2"
 }
 ```
 
@@ -386,11 +424,11 @@ See [Object Name Format](#object-name-format) for information on how schemas are
 ### schemas
 
 <!-- div:left-panel -->
-Specifies which schemas to import. This has no effect on SQLite databases. If MySQL is connected to without specifying a database, this can be used to import from multiple databases. Default `[]` (all schemas).
+Specifies which schemas to import. If MySQL is connected to without specifying a database, this can be used to import from multiple databases. Default `[]` (all schemas).
 
 !> The default schema on Postgres is `public` which is a reserved keyword in TypeScript. You may need to use the `noImplicitUseStrict` flag when transpiling.
 
-This has no effect on SQLite as the concept of schemas do not exist. 
+See [Object Name Format](#object-name-format) for information on how schemas are read from different providers.
 
 <!-- div:right-panel -->
 ```json
@@ -500,25 +538,108 @@ Useful if the dynamic optionality detection is not working as intended.
   }
 }
 ```
+
 <!-- div:title-panel -->
 
-### enumNumericKeyFormat
+### tableEnums
 
 <!-- div:left-panel -->
+Defines tables to be used to generate enums.
 
-Because enum keys cannot numeric, we must convert them before populating the interface file. This option allows you to specify a custom format for numeric keys. Keys that are not numbers are not effected. 
+Enums can be defined by specifying the fully qualified table name (see [Object Name Format](#object-name-format)) as the key, and the key/value of the enum as the value.
 
-The `${key}` token will be replaced with the key name. Defaults to `_${key}`, thus turning an enum key of "2" into "_2".
+Take the example on the right. This will select all records from the "dbo.LogLevel" table, generating an enum with the "Level" column as the key and the "ID" column as the value.
+
+**dbo.LogLevel**
+
+| ID | Level    |
+|----|----------|
+| 1  | Warning  |
+| 2  | Error    |
+| 3  | Info     |
+
+
+```ts
+export enum LogLevel {
+  Warning = '1',
+  Error = '2',
+  Info = '3'
+}
+
+```
+
+For further information, see [Table Generated Enums](#table-generated-enums).
 
 <!-- div:right-panel -->
 ```json
 {
   "client": "...",
   "connection": {},
-  "enumNumericKeyFormat": "$${key}" // "2" becomes "$2"
+  "dbo.LogLevel": {
+    "key": "Level",
+    "value": "ID"
+  }
 }
 ```
+
 <!-- panels:end -->
+
+## Table Generated Enums
+
+TypeScript enums can be generated from data stored in a table and set as the type on another property, allowing for static enum data to be shared between database and TypeScript code as well as providing intellisense during development.
+
+Take for example, a Log and LogLevel table. The Log table references LogLevel by foreign key and the LogLevel contains a static list of levels.
+
+**dbo.Log**
+
+| ID | Level | Message              |
+|----|-------|----------------------|
+| 1  | 1     | Verbose log.         | 
+| 2  | 2     | A warning log.       |
+| 3  | 2     | Another warning log. |
+
+**dbo.LogLevel**
+
+| ID | Level    |
+|----|----------|
+| 1  | Verbose  |
+| 2  | Info     |
+| 3  | Warning  |
+| 4  | Error    |
+
+We can extract the LogLevels as enums using [tableEnums](#tableenums) and set the Log.Level column type using [typeOverrides][#typeOverrides].
+
+```json
+{
+  "typeOverrides": {
+    "dbo.Log.Level": "LogLevel"
+  },
+  "tableEnums": {
+    "dbo.LogLevel": {
+      "key": "Level",
+      "value": "ID"
+    }
+  }
+}
+```
+
+This creates the following interface file.
+
+```ts
+export interface LogEntity {
+  'ID'?: number;
+  'Level': LogLevel;
+}
+export enum LogLevel {
+  'Verbose' = 1,
+  'Info' = 2,
+  'Warning' = 3,
+  'Error' = 4,
+}
+
+```
+
+Allowing for example, `LogEntity.LogLevel = LogLevel.Warning` which when persisted to the database will use the underlying ID as the value, keeping referential constraint intact.
 
 ## Comments
 

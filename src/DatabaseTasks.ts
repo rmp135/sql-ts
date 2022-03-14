@@ -4,6 +4,7 @@ import * as fs from 'fs'
 import { Knex } from 'knex'
 import * as TableTasks from './TableTasks'
 import * as EnumTasks from './EnumTasks'
+import { isNumber } from 'lodash'
 
 interface Template {
   [key:string]: {
@@ -23,6 +24,10 @@ interface Template {
 export function stringifyDatabase (database: Database, config: Config): string {
   const templateString = fs.readFileSync(config.template, 'utf-8')
   const compiler = Handlebars.compile(templateString)
+  // For table enums, we want numeric values to not be wrapped in quotes.
+  Handlebars.registerHelper('handleNumeric', function (aString) {
+    return isNumber(aString) ? aString : new Handlebars.SafeString(`'${aString}'`)
+  })
   database.tables.sort((tableA, tableB) => tableA.name.localeCompare(tableB.name))
   database.enums.sort((enumA, enumB) => enumB.name.localeCompare(enumA.name))
   const template: Template = {}

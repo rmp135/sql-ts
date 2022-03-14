@@ -1,7 +1,7 @@
 import { Knex } from 'knex'
 import { Config } from '../Typings'
 
-// Basic definitions that all databases should return. 
+// Basic definitions that all databases should implement. 
 
 /**
  * Raw table definition from the database.
@@ -37,13 +37,12 @@ export interface ColumnDefinition {
  * Raw enum definition from the database.
  *
  * @export
- * @interface EnumBaseDefinition
- * @extends {EnumBaseDefinition<{[key: string]: string}>}
+ * @interface EnumDefinition
  */
  export interface EnumDefinition {
   name: string;
   schema: string;
-  values: {[key: string]: string}
+  values: {[key: string]: string | number}
 }
 
 /**

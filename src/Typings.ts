@@ -14,6 +14,7 @@ export interface Config extends Knex.Config {
   filename?: string,
   folder?: string,
   interfaceNameFormat?: string,
+  enumNameFormat?: string,
   tableNameCasing?: string,
   columnNameCasing?: string,
   enumNameCasing?: string,
@@ -23,6 +24,12 @@ export interface Config extends Knex.Config {
   schemas?: string[],
   template?: string,
   enumNumericKeyFormat?: string,
+  tableEnums?: {
+    [key: string]: {
+      key: string,
+      value: string
+    }
+  },
   globalOptionality?: 'optional' | 'required' | 'dynamic'
   columnOptionality?: {
     [key: string]: 'optional' | 'required' | 'dynamic'
@@ -77,7 +84,7 @@ export interface Database {
 export interface EnumValue {
   originalKey: string;
   convertedKey: string;
-  value: string;
+  value: string | number;
 }
 
 export interface Enum {

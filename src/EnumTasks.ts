@@ -29,10 +29,11 @@ export async function getAllEnums (db: Knex, config: Config): Promise<Enum[]> {
  * @returns 
  */
 export function generateEnumName (name: string, config: Config): string {
-  const newName =  name
+  let newName =  name
     .replace(/\W/g, '')
     .replace(/^\d+/g, '')
-  return SharedTasks.convertCase(newName, config.enumNameCasing)
+  newName = SharedTasks.convertCase(newName, config.enumNameCasing)
+  return config.enumNameFormat.replace('${name}', newName)
 }
 
 /**

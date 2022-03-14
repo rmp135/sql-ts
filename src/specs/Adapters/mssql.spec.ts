@@ -5,6 +5,32 @@ import rewire from 'rewire'
 const Mockmssql = rewire<typeof mssql>('../../Adapters/mssql')
 
 describe('mssql', () => {
+  describe('getAllEnums', () => {
+    it('should get call the shared enum fetching code', (done) => {
+      const mockReturn = [{}]
+      const mockSharedAdapterTasks = {
+        getTableEnums: jasmine.createSpy('getTableEnums').and.returnValue(Promise.resolve(mockReturn))
+      } 
+      Mockmssql.__with__({
+        SharedAdapterTasks: mockSharedAdapterTasks
+      })(async () => {
+          const adapter = new Mockmssql.default();
+          const mockConfig = {
+            tableEnums: {
+              'schema.table': {
+                key: 'key',
+                value: 'value'
+              }
+            }
+          }
+          const mockDB = {}
+          const res = await adapter.getAllEnums(mockDB as any, mockConfig as any)
+          expect(mockSharedAdapterTasks.getTableEnums).toHaveBeenCalledOnceWith(mockDB, mockConfig)
+          expect(res).toEqual(mockReturn as any)
+          done()
+      })          
+    })
+  })
   describe('getAllTables', () => {
     it('should get all tables from all schemas', async () => {
       const mockRawReturn = []

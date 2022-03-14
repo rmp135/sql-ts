@@ -5,6 +5,32 @@ import rewire from 'rewire'
 const Mockmysql = rewire<typeof mysql>('../../Adapters/mysql')
 
 describe('mysql', () => {
+  describe('getAllEnums', () => {
+    it('should get call the shared enum fetching code', (done) => {
+      const mockReturn = [{}]
+      const mockSharedAdapterTasks = {
+        getTableEnums: jasmine.createSpy('getTableEnums').and.returnValue(Promise.resolve(mockReturn))
+      } 
+      Mockmysql.__with__({
+        SharedAdapterTasks: mockSharedAdapterTasks
+      })(async () => {
+          const adapter = new Mockmysql.default();
+          const mockConfig = {
+            tableEnums: {
+              'schema.table': {
+                key: 'key',
+                value: 'value'
+              }
+            }
+          }
+          const mockDB = {}
+          const res = await adapter.getAllEnums(mockDB as any, mockConfig as any)
+          expect(mockSharedAdapterTasks.getTableEnums).toHaveBeenCalledOnceWith(mockDB, mockConfig)
+          expect(res).toEqual(mockReturn as any)
+          done()
+      })          
+    })
+  })
   describe('getAllTables', () => {
     it('should get all tables from all schemas', async () => {
       const mockRawReturn = [[]]

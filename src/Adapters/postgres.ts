@@ -2,28 +2,22 @@ import { Knex } from 'knex'
 import { AdapterInterface, TableDefinition, ColumnDefinition, EnumDefinition } from './AdapterInterface'
 import { Config } from '..'
 import { uniqBy } from 'lodash'
-
-interface PostgresEnum {
-  schema: string,
-  name: string,
-  value: string,
-  order: number
-}
+import * as SharedAdapterTasks from './SharedAdapterTasks'
 
 export default class implements AdapterInterface {
   async getAllEnums(db: Knex, config: Config): Promise<EnumDefinition[]> {
-    const query = db('pg_type')
-      .select('pg_namespace.nspname AS schema')
-      .select('pg_enum.enumsortorder AS order')
-      .select('pg_type.typname AS name')
-      .select('pg_enum.enumlabel AS value')
-      .join('pg_enum', 'pg_enum.enumtypid', 'pg_type.oid')
-      .join('pg_namespace', 'pg_namespace.oid', 'pg_type.typnamespace')
-    if (config.schemas?.length > 0) {
-      query.whereIn('pg_namespace.nspname', config.schemas)
-    }
-
-    const ungroupedEnums: PostgresEnum[] = await query
+    const sql = `
+    SELECT 
+      pg_namespace.nspname AS schema, 
+      pg_enum.enumsortorder AS order, 
+      pg_type.typname AS name, 
+      pg_enum.enumlabel AS value 
+    FROM pg_type
+    JOIN pg_enum ON pg_enum.enumtypid = pg_type.oid
+    JOIN pg_namespace ON pg_namespace.oid = pg_type.typnamespace
+    ${config.schemas.length > 0 ? ` WHERE pg_namespace.nspname = ANY(:schemas)` : ''}
+    `
+    const ungroupedEnums = (await db.raw(sql, { schemas: config.schemas }) as { rows: PostgresEnum[] }).rows
 
     const groupedEnums: EnumDefinition[] = uniqBy(ungroupedEnums, e => `${e.name}.${e.schema}`)
       .map(row => ({
@@ -36,7 +30,8 @@ export default class implements AdapterInterface {
             .map(e => [e.value, e.value])
         )
       }))
-    return groupedEnums
+    const tableEnums = await SharedAdapterTasks.getTableEnums(db, config)
+    return groupedEnums.concat(tableEnums)
   }
   
   async getAllTables(db: Knex, schemas: string[]): Promise<TableDefinition[]> {
@@ -111,4 +106,11 @@ interface PostgresColumn {
   typname: string,
   isprimarykey: number,
   comment: string
+}
+
+interface PostgresEnum {
+  schema: string,
+  name: string,
+  value: string,
+  order: number
 }

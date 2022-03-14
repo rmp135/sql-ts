@@ -5,6 +5,52 @@ import rewire from 'rewire'
 const Mockpostgres = rewire<typeof postgres>('../../Adapters/postgres')
 
 describe('postgres', () => {
+  describe('getAllEnums', () => {
+    it('should get all enums from all schemas', (done) => {
+      const mockRawReturn = { rows: [] }
+      const mockRaw = jasmine.createSpy('raw').and.returnValue(Promise.resolve(mockRawReturn))
+      const mockdb = { raw: mockRaw }
+      const mockSharedAdapterTasks = {
+        getTableEnums: jasmine.createSpy('getTableEnums').and.returnValue(Promise.resolve([]))
+      }
+      Mockpostgres.__with__({
+        SharedAdapterTasks: mockSharedAdapterTasks
+      })(async () => {
+        const adapter = new Mockpostgres.default();
+        const mockConfig = {
+          schemas: []
+        } as Config
+        const res = await adapter.getAllEnums(mockdb as any, mockConfig)
+        expect(mockRaw.calls.first().args[0]).not.toContain('WHERE pg_namespace.nspname = ANY(:schemas)')
+        expect(mockRaw.calls.first().args[1]).toEqual({ schemas: [] })
+        expect(mockSharedAdapterTasks.getTableEnums).toHaveBeenCalledOnceWith(mockdb, mockConfig)
+        expect(res).toEqual([] as any)
+        done()
+      })
+    })
+    it('should get all enums from specified schemas', (done) => {
+      const mockRawReturn = { rows: [] }
+      const mockRaw = jasmine.createSpy('raw').and.returnValue(Promise.resolve(mockRawReturn))
+      const mockdb = { raw: mockRaw }
+      const mockSharedAdapterTasks = {
+        getTableEnums: jasmine.createSpy('getTableEnums').and.returnValue(Promise.resolve([]))
+      }
+      Mockpostgres.__with__({
+        SharedAdapterTasks: mockSharedAdapterTasks
+      })(async () => {
+        const adapter = new Mockpostgres.default();
+        const mockConfig = {
+          schemas: ['schema1', 'schema2']
+        } as Config
+        const res = await adapter.getAllEnums(mockdb as any, mockConfig)
+        expect(mockRaw.calls.first().args[0]).toContain('WHERE pg_namespace.nspname = ANY(:schemas)')
+        expect(mockRaw.calls.first().args[1]).toEqual({ schemas: ['schema1', 'schema2'] })
+        expect(mockSharedAdapterTasks.getTableEnums).toHaveBeenCalledOnceWith(mockdb, mockConfig)
+        expect(res).toEqual([] as any)
+        done()
+      })
+    })
+  })
   describe('getAllTables', () => {
     it('should get all tables from all schemas', async () => {
       const mockRawReturn = { rows: [] }

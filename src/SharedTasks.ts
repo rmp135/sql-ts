@@ -1,4 +1,3 @@
-import { Config } from '.'
 import { camelCase, pascalCase } from 'change-case'
 
 /**

@@ -1,10 +1,11 @@
 import { Knex } from 'knex'
 import { AdapterInterface, TableDefinition, ColumnDefinition, EnumDefinition } from './AdapterInterface'
 import { Config } from '..'
+import * as SharedAdapterTasks from './SharedAdapterTasks'
 
 export default class implements AdapterInterface {
-  getAllEnums(db: Knex, config: Config): Promise<EnumDefinition[]> {
-    return Promise.resolve([])
+  async getAllEnums(db: Knex, config: Config): Promise<EnumDefinition[]> {
+    return await SharedAdapterTasks.getTableEnums(db, config)
   }
 
   async getAllTables(db: Knex, schemas: string[]): Promise<TableDefinition[]> {
