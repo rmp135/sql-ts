@@ -50,7 +50,8 @@ describe('DatabaseTasks', () => {
       }
       const mockCompileReturn = jasmine.createSpy().and.returnValue('compiledTemplate')
       const mockHandlebars = {
-        compile: jasmine.createSpy('compile').and.returnValue(mockCompileReturn)
+        compile: jasmine.createSpy('compile').and.returnValue(mockCompileReturn),
+        registerHelper: jasmine.createSpy('registerHelper')
       }
       MockDatabaseTasks.__with__({
         fs: mockFs,
@@ -73,7 +74,8 @@ describe('DatabaseTasks', () => {
       }
       const mockCompileReturn = jasmine.createSpy().and.returnValue('compiledTemplate')
       const mockHandlebars = {
-        compile: jasmine.createSpy('compile').and.returnValue(mockCompileReturn)
+        compile: jasmine.createSpy('compile').and.returnValue(mockCompileReturn),
+        registerHelper: jasmine.createSpy('registerHelper')
       }
       MockDatabaseTasks.__with__({
         fs: mockFs,
@@ -96,7 +98,8 @@ describe('DatabaseTasks', () => {
       }
       const mockCompileReturn = jasmine.createSpy().and.returnValue('compiledTemplate')
       const mockHandlebars = {
-        compile: jasmine.createSpy('compile').and.returnValue(mockCompileReturn)
+        compile: jasmine.createSpy('compile').and.returnValue(mockCompileReturn),
+        registerHelper: jasmine.createSpy('registerHelper')
       }
       MockDatabaseTasks.__with__({
         fs: mockFs,
