@@ -626,7 +626,7 @@ Take for example, a Log and LogLevel table. The Log table references LogLevel by
 | 3  | Warning  |
 | 4  | Error    |
 
-We can extract the LogLevels as enums using [tableEnums](#tableenums) and set the Log.Level column type using [typeOverrides][#typeOverrides].
+We can extract the LogLevels as enums using [tableEnums](#tableenums) and set the Log.Level column type using [typeOverrides](#typeOverrides).
 
 ```json
 {
