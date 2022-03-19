@@ -45,7 +45,8 @@ export interface Config extends Knex.Config {
   },
   extends?: { 
     [key: string]: string
-  }
+  },
+  custom?: Record<string, any>
 } 
 
 /**
@@ -73,6 +74,7 @@ export interface Table extends TableDefinition {
 export interface Database {
   tables: Table[]
   enums: Enum[]
+  custom?: Record<string,any>
 }
 
 /**

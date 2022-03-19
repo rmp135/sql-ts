@@ -681,7 +681,7 @@ The inputs to this file are as followed.
 
 ```js
 {
-  {
+  "grouped": { // Tables and enums grouped by schema.
     "dbo": { // Key is schema name.
       "tables": [ // List of all non-filtered tables.
         {
@@ -708,7 +708,7 @@ The inputs to this file are as followed.
           ]
         }
       ],
-      "enums": [ // List of enums (Postgres only).
+      "enums": [ // List of enums, including table defined.
         { 
           "name": "Severity", // The original database enum name.
           "convertedName": "SeverityEnum", // The converted name of the enum.
@@ -716,14 +716,17 @@ The inputs to this file are as followed.
           "values": [
             {
               "originalKey": "very high", // The original database key that represents the enum.
-              "convertedKey": "veryhigh", // Converted value name (strips spaces).
+              "convertedKey": "veryhigh", // Converted value name.
               "value": "Very High" // Value this enum represents.
             }
           ]
         }
       ]
     }
-  }
+  },
+  "tables": [], // See grouped[schema].tables above. For ease of use.
+  "enums": [],  // See grouped[schemaa].enums above. For ease of use.
+  "custom": { } // The custom block defined in the configuration.
 }
 ```
 
@@ -762,8 +765,8 @@ Sample configuration (replace the `HostName` and `DatabaseName` accordingly).
 {
     "client": "mssql",
     "connection": {
-        "driver": "msnodesqlv8",
-        "connectionString": "Driver={SQL Server Native Client 10.0};Server=HostName;Database=DatabaseName;Trusted_Connection=yes;"
+      "driver": "msnodesqlv8",
+      "connectionString": "Driver={SQL Server Native Client 10.0};Server=HostName;Database=DatabaseName;Trusted_Connection=yes;"
     }
 }
 ```

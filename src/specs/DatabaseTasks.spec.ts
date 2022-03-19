@@ -92,7 +92,7 @@ describe('DatabaseTasks', () => {
         expect(result).toBe(`compiledTemplate`)
       })
     })
-    it('should call the copmiler with the correct schema', () => {
+    it('should call the compiler with the correct schema', () => {
       const mockFs = {
         readFileSync: jasmine.createSpy('readFileSync').and.returnValue('template')
       }
@@ -107,7 +107,10 @@ describe('DatabaseTasks', () => {
       })(() => {
         const mockConfig = {
           schemaAsNamespace: true,
-          template: 'userdefinedtemplate'
+          template: 'userdefinedtemplate',
+          custom: {
+            customKey: 'customValue'
+          }
         }
         const result = MockDatabaseTasks.stringifyDatabase(mockDatabase as any, mockConfig as any)
         expect(mockFs.readFileSync).toHaveBeenCalledWith('userdefinedtemplate', 'utf-8')
@@ -156,7 +159,43 @@ describe('DatabaseTasks', () => {
               ]
             }            
           },
-          config: mockConfig
+          tables: [ 
+            {
+              name: 'tname1',
+              schema: 'schema1',
+              columns: [
+                {
+                  name: 'col1',
+                  type: 'type1'
+                }
+              ]
+            },
+            {
+              name: 'tname2',
+              schema: 'schema1',
+              columns: [
+                {
+                  name: 'col2',
+                  type: 'type2'
+                }
+              ]
+            },
+            {
+              name: 'tname3',
+              schema: 'schema2',
+              columns: [
+                {
+                  name: 'col3',
+                  type: 'type3'
+                }
+              ]
+            }
+          ],
+          enums: [],
+          config: mockConfig,
+          custom: { 
+            customKey: 'customValue'
+          }
         })
         expect(result).toBe(`compiledTemplate`)
       })

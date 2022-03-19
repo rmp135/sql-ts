@@ -24,7 +24,8 @@ export function applyConfigDefaults(config: Config): Config {
     schemaAsNamespace: false,
     typeOverrides: {},
     typeMap: {},
-    template: path.join(__dirname, './template.handlebars')
+    template: path.join(__dirname, './template.handlebars'),
+    custom: {}
   }
   return Object.assign(defaultConfig, config)
 }
