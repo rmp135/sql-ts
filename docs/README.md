@@ -581,6 +581,25 @@ For further information, see [Table Generated Enums](#table-generated-enums).
   }
 }
 ```
+<!-- div:title-panel -->
+
+### custom
+
+<!-- div:left-panel -->
+A simple object that is passed through to the template. Useful for defining items at runtime.
+
+The default template does not use this field, it requires modifying the template to your needs.
+
+<!-- div:right-panel -->
+```json
+{
+  "client": "...",
+  "connection": {},
+  "custom": {
+    "version": "1.2.3"
+  }
+}
+```
 
 <!-- panels:end -->
 
