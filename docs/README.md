@@ -614,8 +614,8 @@ Take for example, a Log and LogLevel table. The Log table references LogLevel by
 | ID | Level | Message              |
 |----|-------|----------------------|
 | 1  | 1     | Verbose log.         | 
-| 2  | 2     | A warning log.       |
-| 3  | 2     | Another warning log. |
+| 2  | 3     | A warning log.       |
+| 3  | 3     | Another warning log. |
 
 **dbo.LogLevel**
 
