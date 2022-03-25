@@ -575,9 +575,11 @@ For further information, see [Table Generated Enums](#table-generated-enums).
 {
   "client": "...",
   "connection": {},
-  "dbo.LogLevel": {
-    "key": "Level",
-    "value": "ID"
+  "tableEnums": {
+    "dbo.LogLevel": {
+      "key": "Level",
+      "value": "ID"
+    }
   }
 }
 ```
@@ -658,7 +660,7 @@ export enum LogLevel {
 
 ```
 
-Allowing for example, `LogEntity.LogLevel = LogLevel.Warning` which when persisted to the database will use the underlying ID as the value, keeping referential constraint intact.
+Allowing for example, `log.LogLevel = LogLevel.Warning` which when persisted to the database will use the underlying ID as the value, keeping referential constraint intact.
 
 ## Comments
 
