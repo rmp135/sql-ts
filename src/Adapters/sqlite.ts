@@ -3,6 +3,8 @@ import { AdapterInterface, TableDefinition, ColumnDefinition, EnumDefinition } f
 import { Config } from '..'
 import * as SharedAdapterTasks from './SharedAdapterTasks'
 
+// SQLite default values are always strings regardless of the column types. So
+// here we convert it to the correct type.
 const formatDefaultValue = (value:string | null, type: string):null | number | string => {
   if (value === null) return value;
 
@@ -30,7 +32,7 @@ const formatDefaultValue = (value:string | null, type: string):null | number | s
     'DATETIME',
   ];
 
-  // SQLite default values are always surrounded by quote - eg `"3"` (for
+  // SQLite default values are always surrounded by quotes - eg `"3"` (for
   // numeric value 3) or `"example"` (for string `example`). So here we remove
   // the quotes, but to safe we check that they are actually present.
   if (value.length && value[0] === '"') value = value.substr(1);
