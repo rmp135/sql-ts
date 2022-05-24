@@ -57,7 +57,8 @@ export default class implements AdapterInterface {
           optional: c.isOptional === 1 || c.isNullable == 'YES',
           isEnum: false,
           isPrimaryKey: c.isPrimaryKey == 1,
-          comment: c.comment
+          comment: c.comment,
+          defaultValue: null, // TODO
       }) as ColumnDefinition)
   }
 }

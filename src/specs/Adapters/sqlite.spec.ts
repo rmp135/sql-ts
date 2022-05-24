@@ -54,7 +54,7 @@ describe('sqlite', () => {
           name: 'name1',
           notnull: 0,
           type: 'type(123)',
-          dflt_value: null,
+          dflt_value: 10,
           pk: 0
         }
       ]
@@ -73,7 +73,8 @@ describe('sqlite', () => {
           optional: true,
           isEnum: false,
           isPrimaryKey: false,
-          comment: ''
+          comment: '',
+          defaultValue: 10,
         }
       ])
     })
@@ -102,7 +103,8 @@ describe('sqlite', () => {
           optional: true,
           isEnum: false,
           isPrimaryKey: false,
-          comment: ''
+          comment: '',
+          defaultValue: '1234',
         }
       ])
     })
@@ -138,7 +140,8 @@ describe('sqlite', () => {
           optional: true,
           isEnum: false,
           isPrimaryKey: true,
-          comment: ''
+          comment: '',
+          defaultValue: null,
         },
         {
           name: 'name2',
@@ -147,7 +150,8 @@ describe('sqlite', () => {
           optional: true,
           isEnum: false,
           isPrimaryKey: true,
-          comment: ''
+          comment: '',
+          defaultValue: null,
         }
       ])
     })
@@ -176,7 +180,8 @@ describe('sqlite', () => {
           optional: false,
           isEnum: false,
           isPrimaryKey: false,
-          comment: ''
+          comment: '',
+          defaultValue: null,
         }
       ])
     })
@@ -205,7 +210,8 @@ describe('sqlite', () => {
           optional: true,
           isEnum: false,
           isPrimaryKey: true,
-          comment: ''
+          comment: '',
+          defaultValue: null,
         }
       ])
     })

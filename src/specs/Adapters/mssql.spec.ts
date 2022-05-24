@@ -108,7 +108,8 @@ describe('mssql', () => {
           optional: true,
           isEnum: false,
           isPrimaryKey: true,
-          comment: 'comment'
+          comment: 'comment',
+          defaultValue: null,
         },
         {
           name: 'name2',
@@ -117,7 +118,8 @@ describe('mssql', () => {
           optional: true,
           isEnum: false,
           isPrimaryKey: false,
-          comment: 'comment2'
+          comment: 'comment2',
+          defaultValue: null,
         },
         {
           name: 'name3',
@@ -126,7 +128,8 @@ describe('mssql', () => {
           optional: false,
           isEnum: false,
           isPrimaryKey: false,
-          comment: 'comment3'
+          comment: 'comment3',
+          defaultValue: null,
         },
         {
           name: 'name4',
@@ -135,7 +138,8 @@ describe('mssql', () => {
           optional: true,
           isEnum: false,
           isPrimaryKey: false,
-          comment: 'comment4'
+          comment: 'comment4',
+          defaultValue: null,
         },
       ])
     })

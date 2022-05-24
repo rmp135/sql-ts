@@ -31,6 +31,7 @@ export interface ColumnDefinition {
   // The schema the enum belongs to. Currently only used for postgres.
   enumSchema?: string;
   comment: string
+  defaultValue: any;
 }
 
 /**
