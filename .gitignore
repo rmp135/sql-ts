@@ -2,3 +2,4 @@ node_modules
 __test
 .vscode
 dist
+.idea
