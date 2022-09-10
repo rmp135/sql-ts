@@ -47,5 +47,5 @@ export function generateEnumName (name: string, config: Config): string {
 export function generateEnumKey (name: string, config: Config): string {
   const newKey = SharedTasks.convertCase(name, config.enumKeyCasing)
   // Numeric keys are not allowed and must be converted to a suitable format.
-  return !toNumber(newKey) ? newKey : config.enumNumericKeyFormat.replace('${key}', newKey)
+  return isNaN(toNumber(newKey)) ? newKey : config.enumNumericKeyFormat.replace('${key}', newKey)
 }

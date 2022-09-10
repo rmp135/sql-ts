@@ -157,5 +157,39 @@ describe('EnumTasks', () => {
         done()
       })
     })
+    it('should transform 0 number key', (done) => {
+      const mockConfig: Config = {
+        enumKeyCasing: 'lower',
+        enumNumericKeyFormat: '$_${key}',
+      }
+      const mockSharedTasks = {
+        convertCase: jasmine.createSpy('convertCase').and.returnValue('0')
+      }
+      MockEnumTasks.__with__({
+        SharedTasks: mockSharedTasks
+      })(() => {
+        const result = MockEnumTasks.generateEnumKey('originalkey', mockConfig)
+        expect(mockSharedTasks.convertCase).toHaveBeenCalledWith('originalkey', 'lower')
+        expect(result).toBe('$_0')
+        done()
+      })
+    })
+    it('should transform minus number key', (done) => {
+      const mockConfig: Config = {
+        enumKeyCasing: 'lower',
+        enumNumericKeyFormat: '$_${key}',
+      }
+      const mockSharedTasks = {
+        convertCase: jasmine.createSpy('convertCase').and.returnValue('-232')
+      }
+      MockEnumTasks.__with__({
+        SharedTasks: mockSharedTasks
+      })(() => {
+        const result = MockEnumTasks.generateEnumKey('originalkey', mockConfig)
+        expect(mockSharedTasks.convertCase).toHaveBeenCalledWith('originalkey', 'lower')
+        expect(result).toBe('$_-232')
+        done()
+      })
+    })
   })
 })
