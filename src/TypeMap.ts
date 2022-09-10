@@ -1,7 +1,7 @@
 export default {
   global: {
     string: ['nchar', 'nvarchar', 'varchar', 'char', 'tinytext', 'text', 'longtext', 'mediumtext', 'ntext', 'citext', 'varbinary', 'uuid', 'uniqueidentifier', 'character varying', 'bigint', 'xml'],
-    'string[]': ['_text'],
+    'string[]': ['_text', '_uuid'],
     number: ['tinyint', 'int', 'numeric', 'integer', 'real', 'smallint', 'decimal', 'float', 'float4', 'float8', 'double precision', 'double', 'dec', 'fixed', 'year', 'serial', 'bigserial', 'int2', 'int4', 'money', 'smallmoney'],
     Date: ['datetime', 'timestamp', 'date', 'time', 'timestamptz', 'datetime2', 'smalldatetime', 'datetimeoffset'],
     boolean: ['bit', 'boolean', 'bool'],
