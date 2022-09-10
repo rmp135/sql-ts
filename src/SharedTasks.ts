@@ -1,4 +1,4 @@
-import { camelCase, pascalCase } from 'change-case'
+import { camelCase, pascalCase, camelCaseTransformMerge, pascalCaseTransformMerge } from 'change-case'
 
 /**
  * Converts the casing of a string.
@@ -11,9 +11,9 @@ import { camelCase, pascalCase } from 'change-case'
 export function convertCase (name: string, caseType: string) {
   switch (caseType) {
     case 'pascal':
-      return pascalCase(name)
+      return pascalCase(name, { transform: pascalCaseTransformMerge })
     case 'camel':
-      return camelCase(name)
+      return camelCase(name, { transform: camelCaseTransformMerge })
     case 'lower':
       return name.toLowerCase()
     case 'upper':
@@ -26,7 +26,7 @@ export function convertCase (name: string, caseType: string) {
 /**
  * Resolves a common adapter name from an alias.
  * 
- * @param config The knex configuration.
+ * @param dialect The ambiguous adapter name.
  * @returns The resolved dialect name.
  */
 export function resolveAdapterName (dialect: string) {

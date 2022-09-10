@@ -32,6 +32,14 @@ describe('SharedTasks', () => {
       const result = SharedTasks.convertCase('TableNameWithUppercase', 'camel')
       expect(result).toEqual('tableNameWithUppercase')
     })
+    it('should merge numbers at the end of camel case', () => {
+      const result = SharedTasks.convertCase('Table_Name-With_2', 'camel')
+      expect(result).toEqual('tableNameWith2')
+    })
+    it('should merge numbers at the end of pascal case', () => {
+      const result = SharedTasks.convertCase('Table_Name-With_2', 'pascal')
+      expect(result).toEqual('TableNameWith2')
+    })
   })
   describe('resolveAdapterName', () => {
     it('should resolve the same adapter name if no matching dialect alias exists', () => {
