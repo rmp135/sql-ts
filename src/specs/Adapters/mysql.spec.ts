@@ -88,7 +88,8 @@ describe('mysql', () => {
           optional: true,
           isEnum: false,
           isPrimaryKey: true,
-          comment: 'comment'
+          comment: 'comment',
+          defaultValue: null,
         },
         {
           name: 'name2',
@@ -97,7 +98,8 @@ describe('mysql', () => {
           optional: false,
           isEnum: false,
           isPrimaryKey: false,
-          comment: 'comment2'
+          comment: 'comment2',
+          defaultValue: null,
         },
       ])
     })

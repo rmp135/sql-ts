@@ -139,7 +139,8 @@ describe('postgres', () => {
           optional: true,
           isEnum: true,
           isPrimaryKey: false,
-          comment: 'comment'
+          comment: 'comment',
+          defaultValue: null,
         },
         {
           name: 'name2',
@@ -149,7 +150,8 @@ describe('postgres', () => {
           optional: true,
           isEnum: false,
           isPrimaryKey: true,
-          comment: 'comment2'
+          comment: 'comment2',
+          defaultValue: null,
         },
         {
           name: 'name3',
@@ -159,7 +161,8 @@ describe('postgres', () => {
           optional: true,
           isEnum: true,
           isPrimaryKey: false,
-          comment: 'comment3'
+          comment: 'comment3',
+          defaultValue: null,
         },
         {
           name: 'name4',
@@ -169,7 +172,8 @@ describe('postgres', () => {
           optional: false,
           isEnum: false,
           isPrimaryKey: false,
-          comment: ''
+          comment: '',
+          defaultValue: null,
         },
       ])
     })

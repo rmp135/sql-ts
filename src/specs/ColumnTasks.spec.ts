@@ -17,7 +17,8 @@ describe('ColumnTasks', () => {
           optional: false,
           isEnum: false,
           isPrimaryKey: true,
-          comment: 'cname comment'
+          comment: 'cname comment',
+          defaultValue: null,
         }
       ]
       const mockAdapter = {
@@ -96,7 +97,8 @@ describe('ColumnTasks', () => {
         nullable: false,
         optional: false,
         type: 'enum type',
-        comment: 'comment'
+        comment: 'comment',
+        defaultValue: null,
       }
       const mockConfig: Config = {
         globalOptionality: 'required',
@@ -114,7 +116,8 @@ describe('ColumnTasks', () => {
         nullable: false,
         optional: true,
         type: 'enum type',
-        comment: 'comment'
+        comment: 'comment',
+        defaultValue: null,
       }
       const mockConfig: Config = {
         globalOptionality: 'optional',
@@ -132,7 +135,8 @@ describe('ColumnTasks', () => {
         nullable: false,
         optional: true,
         type: 'enum type',
-        comment: 'comment'
+        comment: 'comment',
+        defaultValue: null,
       }
       const mockConfig: Config = {
         globalOptionality: 'dynamic',
@@ -150,7 +154,8 @@ describe('ColumnTasks', () => {
         nullable: false,
         optional: false,
         type: 'enum type',
-        comment: 'comment'
+        comment: 'comment',
+        defaultValue: null,
       }
       const mockConfig: Config = {
         globalOptionality: 'dynamic',
@@ -168,7 +173,8 @@ describe('ColumnTasks', () => {
         nullable: false,
         optional: false,
         type: 'enum type',
-        comment: 'comment'
+        comment: 'comment',
+        defaultValue: null,
       }
       const mockConfig: Config = {
         globalOptionality: 'dynamic',
@@ -198,7 +204,8 @@ describe('ColumnTasks', () => {
           nullable: false,
           optional: false,
           type: 'enum type',
-          comment: 'comment'
+          comment: 'comment',
+          defaultValue: null,
         }
         const mockTable = {}
         const mockConfig = {}
@@ -226,7 +233,8 @@ describe('ColumnTasks', () => {
         const mockTable = {
           schema: 'schema',
           name: 'table',
-          comment: 'comment'
+          comment: 'comment',
+          defaultValue: null,
         }
         const mockColumn: ColumnDefinition = {
           isEnum: false,
@@ -235,7 +243,8 @@ describe('ColumnTasks', () => {
           isPrimaryKey: false,
           nullable: false,
           optional: false,
-          comment: 'comment'
+          comment: 'comment',
+          defaultValue: null,
         }
         const mockConfig: Config = {
           typeOverrides: { },
@@ -266,7 +275,8 @@ describe('ColumnTasks', () => {
         const mockTable = {
           schema: 'schema',
           name: 'table',
-          comment: 'comment'
+          comment: 'comment',
+          defaultValue: null,
         }
         const mockColumn = {
           isEnum: false,
@@ -275,7 +285,8 @@ describe('ColumnTasks', () => {
           isPrimaryKey: false,
           nullable: false,
           optional: false,
-          comment: 'comment'
+          comment: 'comment',
+          defaultValue: null,
         }
         const mockConfig: Config = {
           typeOverrides: { },
@@ -296,7 +307,8 @@ describe('ColumnTasks', () => {
         const mockTable = {
           name: 'tableName',
           schema: 'schema',
-          comment: 'comment'
+          comment: 'comment',
+          defaultValue: null,
         }
         const mockColumn: ColumnDefinition = {
           name: 'tofind',
@@ -305,7 +317,8 @@ describe('ColumnTasks', () => {
           isPrimaryKey: false,
           nullable: false,
           optional: false,
-          comment: 'comment'
+          comment: 'comment',
+          defaultValue: null,
         }
         const mockConfig: Config = {
           typeMap: {
@@ -329,7 +342,8 @@ describe('ColumnTasks', () => {
         const mockTable = {
           name: 'tableName',
           schema: 'schema',
-          comment: 'comment'
+          comment: 'comment',
+          defaultValue: null,
         }
         const mockColumn = {
           name: 'column',
@@ -338,7 +352,8 @@ describe('ColumnTasks', () => {
           isPrimaryKey: false,
           nullable: false,
           optional: false,
-          comment: 'comment'
+          comment: 'comment',
+          defaultValue: null,
         }
         const mockConfig: Config = {
           typeMap: {
@@ -356,7 +371,8 @@ describe('ColumnTasks', () => {
         const mockTable = {
           name: 'tableName',
           schema: 'schema',
-          comment: 'comment'
+          comment: 'comment',
+          defaultValue: null,
         }
         const mockColumn: ColumnDefinition = {
           name: 'cname',
@@ -365,7 +381,8 @@ describe('ColumnTasks', () => {
           isPrimaryKey: false,
           nullable: false,
           optional: false,
-          comment: 'comment'
+          comment: 'comment',
+          defaultValue: null,
         }
         const mockConfig = {
           typeOverrides: {
@@ -387,7 +404,8 @@ describe('ColumnTasks', () => {
         const mockTable = {
           name: 'tableName',
           schema: 'schema',
-          comment: 'comment'
+          comment: 'comment',
+          defaultValue: null,
         }
         const mockColumn = {
           name: 'column',
@@ -396,7 +414,8 @@ describe('ColumnTasks', () => {
           isPrimaryKey: false,
           nullable: false,
           optional: false,
-          comment: 'comment'
+          comment: 'comment',
+          defaultValue: null,
         }
         const mockConfig = {
           typeOverrides: { 'schema.tableName.column': 'overridetype' },
@@ -431,7 +450,8 @@ describe('ColumnTasks', () => {
         const mockTable = {
           name: 'table',
           schema: 'schema',
-          comment: 'comment'
+          comment: 'comment',
+          defaultValue: null,
         }
         const mockColumn: ColumnDefinition = {
           name: 'column',
@@ -440,7 +460,8 @@ describe('ColumnTasks', () => {
           isPrimaryKey: false,
           nullable: false,
           optional: false,
-          comment: 'comment'
+          comment: 'comment',
+          defaultValue: null,
         }
         const result = MockColumnTasks.convertType(mockColumn, mockTable, mockConfig, 'dialect')
         expect(mockGenerateFullColumnName).toHaveBeenCalledOnceWith('table', 'schema', 'column')
@@ -469,7 +490,8 @@ describe('ColumnTasks', () => {
           optional: false,
           type: 'enum type',
           enumSchema: 'enum schema',
-          comment: 'comment'
+          comment: 'comment',
+          defaultValue: null,
         }
         const mockConfig = {
           schemaAsNamespace: true
@@ -499,6 +521,7 @@ describe('ColumnTasks', () => {
           optional: false,
           type: 'enum type',
           comment: 'enum comment',
+          defaultValue: null,
         }
         const mockConfig = {
           schemaAsNamespace: true
@@ -528,7 +551,8 @@ describe('ColumnTasks', () => {
           optional: false,
           type: 'enum type',
           enumSchema: 'enum schema',
-          comment: 'enum comment'
+          comment: 'enum comment',
+          defaultValue: null,
         }
         const mockConfig = {
           schemaAsNamespace: false
@@ -557,7 +581,8 @@ describe('ColumnTasks', () => {
           nullable: false,
           optional: false,
           type: 'enum type',
-          comment: 'comment'
+          comment: 'comment',
+          defaultValue: null,
         }
         const mockConfig = {
           schemaAsNamespace: false

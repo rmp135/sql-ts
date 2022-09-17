@@ -91,7 +91,8 @@ export default class implements AdapterInterface {
           isEnum: c.typcategory == 'E',
           isPrimaryKey: c.isprimarykey == 1,
           enumSchema: c.typeschema,
-          comment: c.comment
+          comment: c.comment,
+          defaultValue: null, // TODO
         }) as ColumnDefinition)
   }
 }

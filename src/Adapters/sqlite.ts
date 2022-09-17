@@ -26,7 +26,8 @@ export default class implements AdapterInterface {
         optional: c.dflt_value !== null || c.notnull === 0 || c.pk !== 0,
         isEnum: false,
         isPrimaryKey: c.pk !== 0,
-        comment: ''
+        comment: '',
+        defaultValue: c.dflt_value,
       } as ColumnDefinition
     ))
   }
