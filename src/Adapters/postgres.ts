@@ -65,13 +65,17 @@ export default class implements AdapterInterface {
         pg_attribute.atthasdef OR pg_attribute.attidentity <> '' AS hasDefault,
         pg_class.relname AS table,
         pg_type.typcategory AS typcategory,
+        pg_get_expr(pg_attrdef.adbin, pg_attrdef.adrelid) defaultvalue,
         COALESCE(pg_catalog.col_description(pg_class.oid, pg_attribute.attnum), '') as comment,
         CASE WHEN EXISTS (
-          SELECT null FROM pg_index
+          SELECT null 
+          FROM pg_index
           WHERE pg_index.indrelid = pg_attribute.attrelid
           AND  pg_attribute.attnum = any(pg_index.indkey)
-        AND pg_index.indisprimary) THEN 1 ELSE 0 END isPrimaryKey
+          AND pg_index.indisprimary
+        ) THEN 1 ELSE 0 END isPrimaryKey
       FROM pg_attribute
+      LEFT JOIN pg_attrdef ON pg_attribute.attnum = pg_attrdef.adnum
       JOIN pg_class ON pg_class.oid = pg_attribute.attrelid
       JOIN pg_type ON pg_type.oid = pg_attribute.atttypid
       JOIN pg_namespace ON pg_namespace.oid = pg_class.relnamespace
@@ -92,7 +96,7 @@ export default class implements AdapterInterface {
           isPrimaryKey: c.isprimarykey == 1,
           enumSchema: c.typeschema,
           comment: c.comment,
-          defaultValue: null, // TODO
+          defaultValue: c.defaultvalue?.toString() ?? null,
         }) as ColumnDefinition)
   }
 }
@@ -106,7 +110,8 @@ interface PostgresColumn {
   typeschema: string,
   typname: string,
   isprimarykey: number,
-  comment: string
+  comment: string,
+  defaultvalue: string | null
 }
 
 interface PostgresEnum {

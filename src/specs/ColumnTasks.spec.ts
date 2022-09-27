@@ -18,7 +18,7 @@ describe('ColumnTasks', () => {
           isEnum: false,
           isPrimaryKey: true,
           comment: 'cname comment',
-          defaultValue: null,
+          defaultValue: 'default value',
         }
       ]
       const mockAdapter = {
@@ -67,7 +67,8 @@ describe('ColumnTasks', () => {
             optional: false,
             isEnum: false,
             isPrimaryKey: true,
-            comment: 'cname comment'
+            comment: 'cname comment',
+            defaultValue: 'default value'
           } as Column
         ])
         done()

@@ -20,12 +20,12 @@ export async function getColumnsForTable (db: Knex, table: TableDefinition, conf
   const adapter = AdapterFactory.buildAdapter(db.client.dialect)
   const columns = await adapter.getAllColumns(db, config, table.name, table.schema)
   columns.sort((a, b) => a.name.localeCompare(b.name))
-  return columns.map(c => (
+  return columns.map(column => (
     {
-      ...c,
-      propertyName: SharedTasks.convertCase(c.name.replace(/ /g,''), config.columnNameCasing),
-      propertyType: convertType(c, table, config, (db.client as Knex.Client).dialect),
-      optional: getOptionality(c, table, config)
+      ...column,
+      propertyName: SharedTasks.convertCase(column.name.replace(/ /g,''), config.columnNameCasing),
+      propertyType: convertType(column, table, config, (db.client as Knex.Client).dialect),
+      optional: getOptionality(column, table, config)
     } as Column))
 }
 
@@ -34,6 +34,7 @@ export async function getColumnsForTable (db: Knex, table: TableDefinition, conf
  *
  * @export
  * @param {ColumnDefinition} column The column to generate optionality for.
+ * @param {TableDefinition} table The table the column is in.
  * @param {Config} config The configuration object.
  * @returns {boolean} The optionality of the specified column.
  */
@@ -71,11 +72,12 @@ export function generateFullColumnName (tableName: string, schemaName: string, c
 
 /**
  * Converts a database type to that of a JavaScript type.
- * 
+ *
  * @export
  * @param {Column} column The column definition to convert.
  * @param {Table} table The table that the column belongs to.
  * @param {Config} config The configuration object.
+ * @param dialect The dialect of the database.
  * @returns {string}
  */
  export function convertType (column: ColumnDefinition, table: TableDefinition, config: Config, dialect: string): string {

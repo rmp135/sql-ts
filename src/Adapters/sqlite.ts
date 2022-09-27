@@ -9,11 +9,13 @@ export default class implements AdapterInterface {
   }
 
   async getAllTables(db: Knex, schemas: string[]): Promise<TableDefinition[]> {
-    return (await db('sqlite_master')
-    .select('tbl_name AS name')
-    .whereNot({ tbl_name: 'sqlite_sequence' })
-    .whereIn('type', ['table', 'view']))
-    .map((t: { name: string }) => ({ name: t.name, schema: 'main', comment: '' } as TableDefinition))
+    const sql = `
+      SELECT tbl_name from sqlite_master
+      WHERE tbl_name <> 'sqlite_sequence'
+      AND type IN ('table', 'view')
+    `
+    return (await db.raw(sql))
+    .map((t: { tbl_name: string }) => ({ name: t.tbl_name, schema: 'main', comment: '' } as TableDefinition))
   }
 
   async getAllColumns(db: Knex, config: Config, table: string, schema: string): Promise<ColumnDefinition[]> {
@@ -27,7 +29,7 @@ export default class implements AdapterInterface {
         isEnum: false,
         isPrimaryKey: c.pk !== 0,
         comment: '',
-        defaultValue: c.dflt_value,
+        defaultValue: c.dflt_value?.toString() ?? null,
       } as ColumnDefinition
     ))
   }

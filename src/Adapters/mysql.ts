@@ -26,6 +26,7 @@ export default class implements AdapterInterface {
         column_name as name,
         is_nullable as isNullable,
         column_comment as comment,
+        COLUMN_DEFAULT AS defaultValue,
         CASE WHEN LOCATE('auto_increment', extra) <> 0 OR COLUMN_DEFAULT IS NOT NULL THEN 1 ELSE 0 END isOptional,
         CASE WHEN EXISTS(
           SELECT NULL FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu
@@ -49,7 +50,7 @@ export default class implements AdapterInterface {
           isEnum: false,
           isPrimaryKey: c.isPrimaryKey == 1,
           comment: c.comment,
-          defaultValue: null, // TODO
+          defaultValue: c.defaultValue?.toString() ?? null,
         }
       ) as ColumnDefinition)
   }
@@ -61,5 +62,6 @@ interface MySQLColumn {
   isNullable: 'YES' | 'NO',
   isOptional: 1 | 0,
   isPrimaryKey: 1 | 0,
-  comment: string
+  comment: string,
+  defaultValue: string | null
 }

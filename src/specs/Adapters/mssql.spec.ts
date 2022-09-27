@@ -14,7 +14,7 @@ describe('mssql', () => {
       Mockmssql.__with__({
         SharedAdapterTasks: mockSharedAdapterTasks
       })(async () => {
-          const adapter = new Mockmssql.default();
+          const adapter = new Mockmssql.default()
           const mockConfig = {
             tableEnums: {
               'schema.table': {
@@ -36,7 +36,7 @@ describe('mssql', () => {
       const mockRawReturn = []
       const mockRaw = jasmine.createSpy('raw').and.returnValue(Promise.resolve(mockRawReturn))
       const mockdb = { raw: mockRaw }
-      const adapter = new Mockmssql.default();
+      const adapter = new Mockmssql.default()
       const res = await adapter.getAllTables(mockdb as any, [])
       expect(mockRaw.calls.first().args[0]).not.toContain('WHERE TABLE_SCHEMA IN')
       expect(res).toEqual(mockRawReturn as any)
@@ -45,7 +45,7 @@ describe('mssql', () => {
       const mockRawReturn = []
       const mockRaw = jasmine.createSpy('raw').and.returnValue(Promise.resolve(mockRawReturn))
       const mockdb = { raw: mockRaw }
-      const adapter = new Mockmssql.default();
+      const adapter = new Mockmssql.default()
       const res = await adapter.getAllTables(mockdb as any, ['schema1', 'schema2'])
       expect(mockRaw.calls.first().args[0]).toContain('WHERE TABLE_SCHEMA IN (:schemas)')
       expect(mockRaw.calls.first().args[1]).toEqual({ schemas: ['schema1', 'schema2'] })
@@ -62,7 +62,8 @@ describe('mssql', () => {
           isOptional: 1,
           isEnum: false,
           isPrimaryKey: 1,
-          comment: 'comment'
+          comment: 'comment',
+          defaultValue: 'default1'
         },
         {
           name: 'name2',
@@ -71,7 +72,8 @@ describe('mssql', () => {
           isOptional: 1,
           isEnum: false,
           isPrimaryKey: 0,
-          comment: 'comment2'
+          comment: 'comment2',
+          defaultValue: 'default2'
         },
         {
           name: 'name3',
@@ -80,7 +82,8 @@ describe('mssql', () => {
           isOptional: 0,
           isEnum: false,
           isPrimaryKey: 0,
-          comment: 'comment3'
+          comment: 'comment3',
+          defaultValue: null
         },
         {
           name: 'name4',
@@ -89,12 +92,13 @@ describe('mssql', () => {
           isOptional: 0,
           isEnum: false,
           isPrimaryKey: 0,
-          comment: 'comment4'
+          comment: 'comment4',
+          defaultValue: null
         },
       ]
       const mockRaw = jasmine.createSpy('raw').and.returnValue(Promise.resolve(mockRawReturn))
       const mockdb = { raw: mockRaw }
-      const adapter = new Mockmssql.default();
+      const adapter = new Mockmssql.default()
       const mockConfig = {} as Config
       const res = await adapter.getAllColumns(mockdb as any, mockConfig, 'table', 'schema')
       expect(mockRaw.calls.first().args[0]).toContain('TABLE_NAME = :table')
@@ -109,7 +113,7 @@ describe('mssql', () => {
           isEnum: false,
           isPrimaryKey: true,
           comment: 'comment',
-          defaultValue: null,
+          defaultValue: 'default1',
         },
         {
           name: 'name2',
@@ -119,7 +123,7 @@ describe('mssql', () => {
           isEnum: false,
           isPrimaryKey: false,
           comment: 'comment2',
-          defaultValue: null,
+          defaultValue: 'default2',
         },
         {
           name: 'name3',

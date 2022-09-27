@@ -677,6 +677,13 @@ SQL Server | Extended property with name "MS_Description"
 Postgres   | "Comment" field
 SQLite     | Not supported
 
+## Default Values
+
+The default values of columns will be returned as part of the column definition. The value of this field will depend on the database provider but in all cases will return the raw value that the database stores defaults as.
+
+For example, Postgres stores character varying defaults as `"'default value'::character varying"` so this is what will populate the field. It is up to the library consumer to parse this value.
+
+Fields without a default will return `null`.
 
 ## Object Name Format
 
@@ -723,8 +730,9 @@ The inputs to this file are as followed.
               "nullable": false, // Whether the column is nullable.
               "optional": true, // Whether the column is optional for insertion (has a default value).
               "isEnum": false, // Whether the column is an enum type (currently only Postgres).
-              "isPrimaryKey": true // Whether the column is a primary key.
-              "comment": "a comment" // A column comment (see Comments below).
+              "isPrimaryKey": true, // Whether the column is a primary key.
+              "comment": "a comment", // A column comment (see Comments above).
+              "defaultValue": "'default'" // The raw default value of the column, or null (see Default Values above).
             }
           ]
         }

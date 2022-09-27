@@ -30,6 +30,7 @@ export default class implements AdapterInterface {
 				COLUMN_NAME as name,
 				IS_NULLABLE AS isNullable,
 				DATA_TYPE as type,
+        COLUMN_DEFAULT as defaultValue,
 				CASE WHEN EXISTS(
 					SELECT NULL FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS t
 					JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE k 
@@ -58,7 +59,7 @@ export default class implements AdapterInterface {
           isEnum: false,
           isPrimaryKey: c.isPrimaryKey == 1,
           comment: c.comment,
-          defaultValue: null, // TODO
+          defaultValue: c.defaultValue?.toString() ?? null,
       }) as ColumnDefinition)
   }
 }
@@ -69,5 +70,6 @@ interface MSSQLColumn {
   isOptional: 1 | 0,
   isNullable: 'YES' | 'NO',
   isPrimaryKey: 1 | 0,
-  comment: string
+  comment: string,
+  defaultValue: string | null
 }

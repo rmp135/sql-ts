@@ -14,7 +14,7 @@ describe('mysql', () => {
       Mockmysql.__with__({
         SharedAdapterTasks: mockSharedAdapterTasks
       })(async () => {
-          const adapter = new Mockmysql.default();
+          const adapter = new Mockmysql.default()
           const mockConfig = {
             tableEnums: {
               'schema.table': {
@@ -36,7 +36,7 @@ describe('mysql', () => {
       const mockRawReturn = [[]]
       const mockRaw = jasmine.createSpy('raw').and.returnValue(Promise.resolve(mockRawReturn))
       const mockdb = { raw: mockRaw }
-      const adapter = new Mockmysql.default();
+      const adapter = new Mockmysql.default()
       const res = await adapter.getAllTables(mockdb as any, [])
       expect(mockRaw.calls.first().args[0]).not.toContain('AND TABLE_SCHEMA IN (:schemas)')
       expect(res).toEqual([] as any)
@@ -45,7 +45,7 @@ describe('mysql', () => {
       const mockRawReturn = [[]]
       const mockRaw = jasmine.createSpy('raw').and.returnValue(Promise.resolve(mockRawReturn))
       const mockdb = { raw: mockRaw }
-      const adapter = new Mockmysql.default();
+      const adapter = new Mockmysql.default()
       const res = await adapter.getAllTables(mockdb as any, ['schema1', 'schema2'])
       expect(mockRaw.calls.first().args[0]).toContain('AND TABLE_SCHEMA IN (:schemas)')
       expect(mockRaw.calls.first().args[1]).toEqual({ schemas: ['schema1', 'schema2'] })
@@ -76,7 +76,7 @@ describe('mysql', () => {
       ]]
       const mockRaw = jasmine.createSpy('raw').and.returnValue(Promise.resolve(mockRawReturn))
       const mockdb = { raw: mockRaw }
-      const adapter = new Mockmysql.default();
+      const adapter = new Mockmysql.default()
       const mockConfig = {} as Config
       const res = await adapter.getAllColumns(mockdb as any, mockConfig, 'table', 'schema')
       expect(mockRaw.calls.first().args[1]).toEqual({ table: 'table', schema: 'schema' })
