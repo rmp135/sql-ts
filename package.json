@@ -1,6 +1,6 @@
 {
   "name": "@rmp135/sql-ts",
-  "version": "1.15.0",
+  "version": "1.15.1",
   "main": "./dist/index.js",
   "license": "MIT",
   "description": "Generate TypeScript definitions from database schemas.",
@@ -14,6 +14,8 @@
     "/dist"
   ],
   "scripts": {
+    "prepublishOnly": "npm run build",
+    "prepack": "npm run build",
     "build": "tsc",
     "prebuild": "copyfiles -f ./src/template.handlebars ./dist/",
     "pretest": "tsc -p tsconfig.test.json",
