@@ -75,8 +75,9 @@ export default class implements AdapterInterface {
           AND pg_index.indisprimary
         ) THEN 1 ELSE 0 END isPrimaryKey
       FROM pg_attribute
-      LEFT JOIN pg_attrdef ON pg_attribute.attnum = pg_attrdef.adnum
       JOIN pg_class ON pg_class.oid = pg_attribute.attrelid
+      LEFT JOIN pg_attrdef ON pg_attrdef.adrelid = pg_class.oid
+          AND pg_attribute.attnum = pg_attrdef.adnum
       JOIN pg_type ON pg_type.oid = pg_attribute.atttypid
       JOIN pg_namespace ON pg_namespace.oid = pg_class.relnamespace
       JOIN pg_namespace AS typns ON typns.oid = pg_type.typnamespace
