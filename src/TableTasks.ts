@@ -21,7 +21,14 @@ export async function getAllTables (db: Knex, config: Config): Promise<Table[]> 
   const adapter = AdapterFactory.buildAdapter(db.client.dialect)
   const allTables = (await adapter.getAllTables(db, schemas))
     .filter(table => tables.length == 0 || tables.includes(`${table.schema}.${table.name}`))
-    .filter(table => !excludedTables.includes(`${table.schema}.${table.name}`))
+    .filter(table => {
+      if (Array.isArray(excludedTables)) {
+        return !excludedTables.includes(`${table.schema}.${table.name}`)
+      } else if(typeof excludedTables === 'function') {
+        return !excludedTables(table)
+      }
+    })
+
   return await Promise.all(allTables.map(async table => ({
     columns: await ColumnTasks.getColumnsForTable(db, table, config),
     interfaceName: TableTasks.generateInterfaceName(table.name, config),

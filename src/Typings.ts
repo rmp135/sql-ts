@@ -10,7 +10,7 @@ import { ColumnDefinition, TableDefinition } from './Adapters/AdapterInterface'
  */
 export interface Config extends Knex.Config {
   tables?: string[],
-  excludedTables?: string[],
+  excludedTables?: string[] | ((tableDefinition: TableDefinition) => boolean),
   filename?: string,
   folder?: string,
   interfaceNameFormat?: string,

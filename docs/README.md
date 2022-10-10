@@ -197,6 +197,33 @@ Excluding a table takes precedence over including it. Specifying a table in both
   ]
 }
 ```
+
+<!-- div:left-panel -->
+
+Alternatively, you can pass a function for `excludedTables` that receives the following object:
+
+```ts
+interface TableDefinition {
+  schema: string;
+  name: string;
+  comment: string;
+}
+
+type excludedTables = (tableDefinition: TableDefinition) => boolean
+```
+
+<!-- div:right-panel -->
+
+And use it like so:
+```ts
+import sqlts from "@rmp135/sql-ts"
+
+const tsString = await sqlts.toTypeScript({
+  // exclude all tables whose name begins with underscore, eg `_users`
+  excludedTables: (tableDefinition) => /^_/.test(tableDefinition.name)
+})
+```
+
 <!-- div:title-panel -->
 ### typeOverrides
 <!-- div:left-panel -->

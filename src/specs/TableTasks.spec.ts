@@ -253,6 +253,68 @@ describe('TableTasks', () => {
         done()
       })
     })
+    it('should allow tables to be excluded with a callback function', (done) => {
+      const mockTables: TableDefinition[] = [
+        {
+          name: 'table1name',
+          schema: 'table2schema',
+          comment: 'table1comment'
+        },
+        {
+          name: 'table2name',
+          schema: 'table2schema',
+          comment: 'table2comment'
+        }
+      ]
+      const mockAdapter = {
+        getAllTables: jasmine.createSpy('getAllTables').and.returnValue(Promise.resolve(mockTables))
+      }
+      const mockAdapterFactory = {
+        buildAdapter: jasmine.createSpy('buildAdapter').and.returnValue(mockAdapter)
+      }
+      const mockColumnTasks = {
+        getColumnsForTable: jasmine.createSpy('getColumnsForTable').and.returnValues(Promise.resolve(['column1']))
+      }
+      const mockTableTasks = {
+        generateInterfaceName: jasmine.createSpy('generateInterfaceName').and.returnValues('genint1name', 'genint2name'),
+        getAdditionalProperties: jasmine.createSpy('getAdditionalProperties').and.returnValue([]),
+        getExtends: jasmine.createSpy('getExtends').and.returnValue('')
+      }
+      MockTableTasks.__with__({
+        AdapterFactory: mockAdapterFactory,
+        ColumnTasks: mockColumnTasks,
+        TableTasks: mockTableTasks
+      })(async () => {
+        const mockDB = {
+          client: {
+            dialect: 'dialect'
+          }
+        }
+        const mockExcludeTables = jasmine.createSpy('excludeTables').and.returnValues(false, true)
+        const mockConfig: Config = {
+          ...defaultConfig,
+          excludedTables: mockExcludeTables
+        }
+        const result = await MockTableTasks.getAllTables(mockDB as any, mockConfig)
+
+        expect(mockAdapter.getAllTables).toHaveBeenCalledWith(mockDB, [])
+        expect(mockAdapterFactory.buildAdapter).toHaveBeenCalledOnceWith('dialect')
+        expect(mockTableTasks.generateInterfaceName.calls.argsFor(0)).toEqual(['table1name', mockConfig])
+        expect(mockColumnTasks.getColumnsForTable.calls.argsFor(0)).toEqual([mockDB, mockTables[0], mockConfig])
+        expect(result).toEqual([
+          {
+            columns: ['column1' as any],
+            name: 'table1name',
+            schema: 'table2schema',
+            extends: '',
+            interfaceName: 'genint1name',
+            additionalProperties: [],
+            comment: 'table1comment'
+          }
+        ] as Table[])
+        done()
+      })
+    })
     it('should include then exclude tables when specified', (done) => {
       const mockTables: TableDefinition[] = [
         {
