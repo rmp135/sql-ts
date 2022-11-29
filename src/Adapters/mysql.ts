@@ -31,8 +31,8 @@ export default class implements AdapterInterface {
         CASE WHEN EXISTS(
           SELECT NULL FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu
           WHERE CONSTRAINT_NAME = 'PRIMARY'
-          AND kcu.TABLE_NAME = c.TABLE_NAME
-          AND kcu.TABLE_SCHEMA = c.TABLE_SCHEMA
+          AND kcu.TABLE_NAME = :table
+          AND kcu.TABLE_SCHEMA = :schema
           AND kcu.COLUMN_NAME = c.COLUMN_NAME
         ) THEN 1 ELSE 0 END isPrimaryKey,
         data_type AS type
