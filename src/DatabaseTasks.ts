@@ -23,7 +23,7 @@ interface Template {
  */
 export function stringifyDatabase (database: Database, config: Config): string {
   const templateString = fs.readFileSync(config.template, 'utf-8')
-  const compiler = Handlebars.compile(templateString)
+  const compiler = Handlebars.compile(templateString, { noEscape: true })
   // For table enums, we want numeric values to not be wrapped in quotes.
   Handlebars.registerHelper('handleNumeric', function (aString) {
     return isNumber(aString) ? aString : new Handlebars.SafeString(`'${aString}'`)

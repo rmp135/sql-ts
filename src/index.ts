@@ -7,7 +7,7 @@ import { Knex } from 'knex'
 /**
  * Generates a Database definition as a plain JavaScript object.
  *
- * @param {Config} rawConfig The configuration to generate this database with.
+ * @param {Config} config The configuration to generate this database with.
  * @param {Knex} db The optional Knex context to use.
  * @returns {Promise<Database>} The Database definition as a plain JavaScript object.
  */
@@ -26,6 +26,7 @@ async function toObject(config: Config, db?: Knex): Promise<Database> {
  * Generates a Database definition as a series of TypeScript interfaces.
  *
  * @param {Config} config The configuration to generate this database with.
+ * @param {Knex} db The optional Knex context to use.
  * @returns {Promise<string>} The Database definition as a series of TypeScript interfaces.
  */
 async function toTypeScript(config: Config, db?: Knex): Promise<string> {

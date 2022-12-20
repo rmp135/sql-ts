@@ -2,6 +2,7 @@ import 'jasmine'
 import { Config } from '../'
 import * as DatabaseTasks from '../DatabaseTasks'
 import rewire from 'rewire'
+import { compile } from 'handlebars'
 
 const MockDatabaseTasks = rewire<typeof DatabaseTasks>('../DatabaseTasks')
 
@@ -63,9 +64,31 @@ describe('DatabaseTasks', () => {
         }
         const result = MockDatabaseTasks.stringifyDatabase(mockDatabase as any, mockConfig as any)
         expect(mockFs.readFileSync).toHaveBeenCalledWith('template', 'utf-8')
-        expect(mockHandlebars.compile).toHaveBeenCalledWith('defaultTemplate')
+        expect(mockHandlebars.compile).toHaveBeenCalledWith('defaultTemplate', { noEscape: true })
         expect(mockCompileReturn).toHaveBeenCalled()
         expect(result).toBe(`compiledTemplate`)
+      })
+    })
+    it('should not escape HTML', () => {
+      const mockFs = {
+        readFileSync: jasmine.createSpy('readFileSync').and.returnValue('{{custom.test}}')
+      }
+      const mockHandlebars = {
+        compile: jasmine.createSpy('compile', compile).and.callThrough(),
+        registerHelper: jasmine.createSpy('registerHelper')
+      }
+      MockDatabaseTasks.__with__({
+        fs: mockFs,
+        Handlebars: mockHandlebars
+      })(() => {
+        const mockConfig: Config = {
+          template: 'template',
+          custom: {
+            test: 'Record<OfferingValue, string[]>'
+          }
+        }
+        const result = MockDatabaseTasks.stringifyDatabase(mockDatabase as any, mockConfig as any)
+        expect(result).toBe(`Record<OfferingValue, string[]>`)
       })
     })
     it('should use supplied template', () => {
@@ -87,7 +110,7 @@ describe('DatabaseTasks', () => {
         }
         const result = MockDatabaseTasks.stringifyDatabase(mockDatabase as any, mockConfig as any)
         expect(mockFs.readFileSync).toHaveBeenCalledWith('userdefinedtemplate', 'utf-8')
-        expect(mockHandlebars.compile).toHaveBeenCalledWith('template')
+        expect(mockHandlebars.compile).toHaveBeenCalledWith('template', { noEscape: true })
         expect(mockCompileReturn).toHaveBeenCalled()
         expect(result).toBe(`compiledTemplate`)
       })
@@ -114,7 +137,7 @@ describe('DatabaseTasks', () => {
         }
         const result = MockDatabaseTasks.stringifyDatabase(mockDatabase as any, mockConfig as any)
         expect(mockFs.readFileSync).toHaveBeenCalledWith('userdefinedtemplate', 'utf-8')
-        expect(mockHandlebars.compile).toHaveBeenCalledWith('template')
+        expect(mockHandlebars.compile).toHaveBeenCalledWith('template', { noEscape: true })
         expect(mockCompileReturn).toHaveBeenCalledWith({
           grouped: {
             schema1: 
