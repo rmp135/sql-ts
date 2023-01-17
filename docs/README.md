@@ -149,7 +149,7 @@ const tsString = await sqlts.toTypeScript(config)
 
 // If you have a knex connection already, you can pass that along with the schema.
 const db = knex({ ... })
-const tsString = await sqlts.toObject(config, db)
+const tsString = await sqlts.toTypeScript(config, db)
 
 ```
 
