@@ -75,8 +75,7 @@ The most basic MySQL setup is below, modify as appropriate. Additional options c
   "connection": {
     "host": "localhost",
     "user": "user",
-    "password": "password",
-    "database" : "my_database"
+    "password": "password"
   }
 }
 ```
