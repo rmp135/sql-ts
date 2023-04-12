@@ -33,7 +33,8 @@ export interface Config extends Knex.Config {
   globalOptionality?: 'optional' | 'required' | 'dynamic'
   columnOptionality?: {
     [key: string]: 'optional' | 'required' | 'dynamic'
-  }
+  },
+  sortColumn: 'origin' | 'alphabet',
   typeMap?: {
     [key: string]: string[]
   }
