@@ -47,8 +47,8 @@ describe('mssql', () => {
       const mockdb = { raw: mockRaw }
       const adapter = new Mockmssql.default()
       const res = await adapter.getAllTables(mockdb as any, ['schema1', 'schema2'])
-      expect(mockRaw.calls.first().args[0]).toContain('WHERE TABLE_SCHEMA IN (:schemas)')
-      expect(mockRaw.calls.first().args[1]).toEqual({ schemas: ['schema1', 'schema2'] })
+      expect(mockRaw.calls.first().args[0]).toContain('WHERE TABLE_SCHEMA IN (?,?)')
+      expect(mockRaw.calls.first().args[1]).toEqual(['schema1', 'schema2'])
       expect(res).toEqual(mockRawReturn as any)
     })
   })

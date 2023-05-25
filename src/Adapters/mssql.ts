@@ -20,8 +20,8 @@ export default class implements AdapterInterface {
           UNION
           SELECT TOP 1 value FROM fn_listextendedproperty (NULL, 'schema', TABLE_SCHEMA, 'view', TABLE_NAME, null, null) EP WHERE EP.name = 'MS_Description'
         ) EP 
-      ${schemas.length > 0 ? `WHERE TABLE_SCHEMA IN (:schemas)` : ''}`
-    return await db.raw(sql, { schemas })
+      ${schemas.length > 0 ? `WHERE TABLE_SCHEMA IN (${schemas.map(_ => '?').join(',')})` : ''}`
+    return await db.raw(sql, schemas)
   }
   
   async getAllColumns(db: Knex, config: Config, table: string, schema: string): Promise<ColumnDefinition[]> {
