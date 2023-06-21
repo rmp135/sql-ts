@@ -19,7 +19,7 @@ import * as SchemaTasks from './SchemaTasks'
 export async function getColumnsForTable (db: Knex, table: TableDefinition, config: Config): Promise<Column[]> {
   const adapter = AdapterFactory.buildAdapter(db.client.dialect)
   const columns = await adapter.getAllColumns(db, config, table.name, table.schema)
-  if (config.sortColumn === 'alphabet') {
+  if (config.columnSortOrder === 'alphabetical') {
     columns.sort((a, b) => a.name.localeCompare(b.name))
   }
   return columns.map(column => (
@@ -64,7 +64,7 @@ export function getOptionality (column: ColumnDefinition, table: TableDefinition
  * @param {string} columnName The name of the column.
  * @returns {string} The full table name.
  */
-export function generateFullColumnName (tableName: string, schemaName: string, columnName: string): string {
+export function generateFullColumnName (tableName: string, schemaName: string | null, columnName: string): string {
   let result = tableName
   if  (schemaName != null && schemaName !== '') {
     result = `${schemaName}.${result}`

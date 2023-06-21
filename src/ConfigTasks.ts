@@ -13,7 +13,7 @@ export function applyConfigDefaults(config: Config): Config {
     globalOptionality: 'dynamic',
     columnOptionality: {},
     tableEnums: {},
-    sortColumn: 'alphabet',
+    columnSortOrder: 'alphabetical',
     folder: '.',
     tables: [],
     excludedTables: [],

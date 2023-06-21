@@ -540,6 +540,25 @@ Useful if the dynamic optionality detection is not working as intended.
 
 <!-- div:title-panel -->
 
+### columnSortOrder
+
+<!-- div:left-panel -->
+Determines the order that the columns are sorted when applied to the template. Available options are `source` and `alphabetical`. Defaults to `alphabetical`.
+
+- `source`: The order the columns are fetched from the database.
+- `alphabetical`: Alphabetical order based on column name.
+
+<!-- div:right-panel -->
+```json
+{
+  "client": "...",
+  "connection": {},
+  "columnSortOrder": "alphabetical"
+}
+```
+
+<!-- div:title-panel -->
+
 ### tableEnums
 
 <!-- div:left-panel -->

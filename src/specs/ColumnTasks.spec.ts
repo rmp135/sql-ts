@@ -8,11 +8,21 @@ const MockColumnTasks = rewire<typeof ColumnTasks>('../ColumnTasks')
 
 describe('ColumnTasks', () => {
   describe('getColumnsForTable', () => {
-    it('should return all columns for a table', (done) => {
+    it('should return all columns for a table sorted alphabetically', (done) => {
       const mockColumns: ColumnDefinition[] = [
         {
           nullable: false,
-          name: 'cname',
+          name: 'cnameB',
+          type: 'ctype',
+          optional: false,
+          isEnum: false,
+          isPrimaryKey: true,
+          comment: 'cname comment',
+          defaultValue: 'default value',
+        },
+        {
+          nullable: false,
+          name: 'cnameA',
           type: 'ctype',
           optional: false,
           isEnum: false,
@@ -49,18 +59,20 @@ describe('ColumnTasks', () => {
         }
         const config: Config = {
           dialect: 'configDialect',
-          columnNameCasing: 'camel'
+          columnNameCasing: 'camel',
+          columnSortOrder: 'alphabetical',
         }
         const result = await MockColumnTasks.getColumnsForTable(db as any, table as TableDefinition, config)
         expect(mockAdapterFactory.buildAdapter).toHaveBeenCalledWith('dialect')
         expect(mockAdapter.getAllColumns).toHaveBeenCalledWith(db, config, 'name', 'schema')
-        expect(mockSharedTasks.convertCase).toHaveBeenCalledWith('cname', 'camel')
+        expect(mockSharedTasks.convertCase).toHaveBeenCalledWith('cnameA', 'camel')
+        expect(mockSharedTasks.convertCase).toHaveBeenCalledWith('cnameB', 'camel')
         expect(mockConvertType).toHaveBeenCalledWith(mockColumns[0], table, config, 'dialect')
         expect(mockGetOptionality).toHaveBeenCalledWith(mockColumns[0], table, config)
         expect(result).toEqual([
           {
             nullable: false,
-            name: 'cname',
+            name: 'cnameA',
             propertyName: 'newname',
             propertyType: 'newType',
             type: 'ctype',
@@ -69,7 +81,109 @@ describe('ColumnTasks', () => {
             isPrimaryKey: true,
             comment: 'cname comment',
             defaultValue: 'default value'
-          } as Column
+          },
+          {
+            nullable: false,
+            name: 'cnameB',
+            propertyName: 'newname',
+            propertyType: 'newType',
+            type: 'ctype',
+            optional: false,
+            isEnum: false,
+            isPrimaryKey: true,
+            comment: 'cname comment',
+            defaultValue: 'default value'
+          }
+        ] as Column[])
+        done()
+      })
+    })
+    it('should return all columns for a table sorted by source', (done) => {
+      const mockColumns: ColumnDefinition[] = [
+        {
+          nullable: false,
+          name: 'cnameB',
+          type: 'ctype',
+          optional: false,
+          isEnum: false,
+          isPrimaryKey: true,
+          comment: 'cname comment',
+          defaultValue: 'default value',
+        },
+        {
+          nullable: false,
+          name: 'cnameA',
+          type: 'ctype',
+          optional: false,
+          isEnum: false,
+          isPrimaryKey: true,
+          comment: 'cname comment',
+          defaultValue: 'default value',
+        }
+      ]
+      const mockAdapter = {
+        getAllColumns: jasmine.createSpy('getAllColumns').and.returnValue(mockColumns)
+      }
+      const mockAdapterFactory = {
+        buildAdapter: jasmine.createSpy('buildAdapter').and.returnValue(mockAdapter)
+      }
+      const mockSharedTasks = {
+        convertCase: jasmine.createSpy('convertCase').and.returnValue('newname'),
+      }
+      const mockConvertType = jasmine.createSpy('convertType').and.returnValue('newType')
+      const mockGetOptionality = jasmine.createSpy('getOptionality').and.returnValue(false)
+      MockColumnTasks.__with__({
+        AdapterFactory: mockAdapterFactory,
+        SharedTasks: mockSharedTasks,
+        convertType: mockConvertType,
+        getOptionality: mockGetOptionality
+      })(async () => {
+        const db = {
+          client: {
+            dialect: 'dialect'
+          }
+        }
+        const table = {
+          name: 'name',
+          schema: 'schema'
+        }
+        const config: Config = {
+          dialect: 'configDialect',
+          columnNameCasing: 'camel',
+          columnSortOrder: 'source'
+        }
+        const result = await MockColumnTasks.getColumnsForTable(db as any, table as TableDefinition, config)
+        expect(mockAdapterFactory.buildAdapter).toHaveBeenCalledWith('dialect')
+        expect(mockAdapter.getAllColumns).toHaveBeenCalledWith(db, config, 'name', 'schema')
+        expect(mockSharedTasks.convertCase).toHaveBeenCalledWith('cnameB', 'camel')
+        expect(mockSharedTasks.convertCase).toHaveBeenCalledWith('cnameA', 'camel')
+        expect(mockConvertType).toHaveBeenCalledWith(mockColumns[0], table, config, 'dialect')
+        expect(mockGetOptionality).toHaveBeenCalledWith(mockColumns[0], table, config)
+        expect(result).toEqual([
+          {
+            nullable: false,
+            name: 'cnameB',
+            propertyName: 'newname',
+            propertyType: 'newType',
+            type: 'ctype',
+            optional: false,
+            isEnum: false,
+            isPrimaryKey: true,
+            comment: 'cname comment',
+            defaultValue: 'default value'
+          },
+          {
+            nullable: false,
+            name: 'cnameA',
+            propertyName: 'newname',
+            propertyType: 'newType',
+            type: 'ctype',
+            optional: false,
+            isEnum: false,
+            isPrimaryKey: true,
+            comment: 'cname comment',
+            defaultValue: 'default value'
+          }
         ])
         done()
       })
