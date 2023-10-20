@@ -39,6 +39,7 @@ export default class implements AdapterInterface {
         FROM information_schema.columns c
         WHERE TABLE_NAME = :table
         AND c.TABLE_SCHEMA = :schema
+        order by ordinal_position
       `
     return (await db.raw(sql, { table, schema }))[0]
       .map((c: MySQLColumn) => (
