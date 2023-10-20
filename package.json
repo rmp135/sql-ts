@@ -1,12 +1,12 @@
 {
-  "name": "@zydmayday/sql-ts",
+  "name": "@rmp135/sql-ts",
   "version": "1.18.1",
   "main": "./dist/index.js",
   "license": "MIT",
   "description": "Generate TypeScript definitions from database schemas.",
   "bin": "./bin/sql-ts",
   "types": "dist/index.d.ts",
-  "repository": "zydmayday/sql-ts",
+  "repository": "rmp135/sql-ts",
   "author": {
     "name": "Ryan Poole"
   },
