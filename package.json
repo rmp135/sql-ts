@@ -4,9 +4,14 @@
   "main": "./dist/index.js",
   "license": "MIT",
   "description": "Generate TypeScript definitions from database schemas.",
-  "bin": "./bin/sql-ts",
+  "bin": {
+    "sql-ts": "bin/sql-ts"
+  },
   "types": "dist/index.d.ts",
-  "repository": "rmp135/sql-ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rmp135/sql-ts.git"
+  },
   "author": {
     "name": "Ryan Poole"
   },
