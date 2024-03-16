@@ -18,12 +18,12 @@ interface ClientWithDatabase {
    * @param identifer <schema>.<table> identifier of the table to map
    * @param func Function to call for this table. The function should return a new table object
    */
-  mapTable(identifer: string, func: (table: Table) => Table): ClientWithDatabase
+  mapTable(identifer: string, func: (table: Table, schema: Schema) => Table): ClientWithDatabase
   /**
    * Maps all tables to a new table definition
    * @param func Function to call for each table. The function should return a new table object
    */
-  mapTables(func: (table: Table) => Table): ClientWithDatabase
+  mapTables(func: (table: Table, schema: Schema) => Table): ClientWithDatabase
   /**
    * Maps a single column to a new column definition
    * @param identifier <schema>.<table>.<column> identifier of the column to map
