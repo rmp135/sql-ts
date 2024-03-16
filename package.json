@@ -1,6 +1,6 @@
 {
   "name": "@rmp135/sql-ts",
-  "version": "1.18.1",
+  "version": "2.0.0",
   "main": "./dist/index.js",
   "license": "MIT",
   "description": "Generate TypeScript definitions from database schemas.",
