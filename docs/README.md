@@ -4,6 +4,7 @@
 
 [![npm (scoped)](https://img.shields.io/npm/v/@rmp135/sql-ts)](https://www.npmjs.com/package/@rmp135/sql-ts)
 [![npm](https://img.shields.io/npm/dw/@rmp135/sql-ts)](https://www.npmjs.com/package/@rmp135/sql-ts)
+[![Run Tests](https://github.com/rmp135/sql-ts/actions/workflows/test.yml/badge.svg)](https://github.com/rmp135/sql-ts/actions/workflows/test.yml)
 
 </div>
 
