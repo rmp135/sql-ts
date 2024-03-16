@@ -17,6 +17,7 @@ beforeEach(() => {
 beforeAll(async () => {
   const config = {
     client: 'better-sqlite3',
+    useNullAsDefault: true,
     connection: {
       filename: ':memory:'
     }
