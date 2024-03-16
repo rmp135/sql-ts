@@ -123,7 +123,7 @@ const definition = await Client
   .toTypescript()
 ```
 
-To output the database as an object for processing before converting to TypeScript use `toObject`.
+To output the database as an object for processing before converting to TypeScript use `toObject` and continue with `fromObject`.
 
 ```js
 const asObject = await Client
@@ -134,7 +134,7 @@ const asObject = await Client
 // Process asObject here. 
 
 const definition = await Client
-  .fromObject(asObject)
+  .fromObject(asObject, config)
   .toTypescript()
 ```
 

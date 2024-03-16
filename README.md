@@ -4,8 +4,7 @@
 
 [![npm (scoped)](https://img.shields.io/npm/v/@rmp135/sql-ts)](https://www.npmjs.com/package/@rmp135/sql-ts)
 [![npm](https://img.shields.io/npm/dw/@rmp135/sql-ts)](https://www.npmjs.com/package/@rmp135/sql-ts)
-[![Build Status](https://app.travis-ci.com/rmp135/sql-ts.svg?branch=master)](https://app.travis-ci.com/rmp135/sql-ts)
-
+[![Run Tests](https://github.com/rmp135/sql-ts/actions/workflows/test.yml/badge.svg)](https://github.com/rmp135/sql-ts/actions/workflows/test.yml)
 
 </div>
 
@@ -46,7 +45,7 @@ Install into your project using npm / yarn.
 
 `npm install @rmp135/sql-ts`
 
-Install your relevant SQL driver. Refer to the [knex documentation](http://knexjs.org/#Installation-node) to determine which driver you should install. For example `npm install mysql`.
+Install your relevant SQL driver. Refer to the [knex documentation](http://knexjs.org/#Installation-node) to determine which driver you should install. For example `npm install mysql2`.
 
 Create a configuration file, for example `mysql.json`. This will mirror connection details from knex. The `client` property will determine the SQL provider.
 
@@ -54,7 +53,7 @@ The most basic MySQL setup is below, modify as appropriate. Additional options c
 
 ```json
 {
-  "client":"mysql2",
+  "client": "mysql2",
   "connection": {
     "host": "localhost",
     "user": "user",
@@ -76,5 +75,5 @@ The file will be exported with the filename `Database.ts` (or with the name spec
 
 ### Node Module
 
-For finer grained control of the exported types, you can use the node API. See how in the [documentation](https://rmp135.github.io/sql-ts/#/?id=usage).
+For finer grained control of the exported types, you can use the node API. See how in the [documentation](https://rmp135.github.io/sql-ts/#/?id=node-module).
 
