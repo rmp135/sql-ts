@@ -17,15 +17,8 @@ export function convertDatabaseToTypescript(database: Database, config: Config):
   const templateString = fs.readFileSync(config.template, 'utf-8')
   const compiler = Handlebars.compile(templateString, { noEscape: true })
   Handlebars.registerHelper('handleNumeric', handleNumeric)
-  // TODO: Move this somewhere more appropriate
-  // database.schemas = database.schemas.map(schema => ({
-  //   ...schema,
-  //   tables: schema.tables.sort((tableA, tableB) => tableA.name.localeCompare(tableB.name)),
-  //   enums: schema.enums.sort((enumA, enumB) => enumB.name.localeCompare(enumA.name))
-  // }))
   return compiler({
     database,
-    custom: config.custom,
     config
   })
 }
@@ -56,6 +49,7 @@ export async function generateDatabase(config: Config, db: Knex): Promise<Databa
   const database = {
     schemas: Array.from(schemas).map(schema => ({
       name: schema,
+      namespaceName: schema,
       tables: tables.filter(table => table.schema === schema),
       enums: enums.filter(enumm => enumm.schema === schema)
     })),

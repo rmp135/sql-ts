@@ -21,6 +21,7 @@ it('should output typescript from a database', async () => {
     schemas: [
       {
         name: 'public',
+        namespaceName: 'public',
         tables: [],
         enums: [],
       }
@@ -45,6 +46,7 @@ it('should skip database generation if provided', async () => {
     schemas: [
       {
         name: 'public',
+        namespaceName: 'public',
         tables: [],
         enums: [],
       }
@@ -71,6 +73,7 @@ it('should fetch a database object with no provided db', async () => {
     schemas: [
       {
         name: 'public',
+        namespaceName: 'public',
         tables: [],
         enums: [],
       }
@@ -99,6 +102,7 @@ it('should fetch a database object with a provided db', async () => {
     schemas: [
       {
         name: 'public',
+        namespaceName: 'public',
         tables: [],
         enums: [],
       }
@@ -192,11 +196,13 @@ it('should apply mappings to all schemas', async () => {
     schemas: [
       {
         name: 'public',
+        namespaceName: 'public_one',
         tables: [{ name: 'users', columns: [] }, { name: 'posts', columns: [] }],
         enums: [],
       },
       {
         name: 'public 2',
+        namespaceName: 'public_two',
         tables: [{ name: 'users', columns: [] }, { name: 'posts', columns: [] }],
         enums: [],
       },
@@ -230,11 +236,13 @@ it('should apply mappings to specified schema', async () => {
     schemas: [
       {
         name: 'public',
+        namespaceName: 'public_one',
         tables: [{ name: 'users', columns: [] }, { name: 'posts', columns: [] }],
         enums: [],
       },
       {
         name: 'public 2',
+        namespaceName: 'public_two',
         tables: [{ name: 'users', columns: [] }, { name: 'posts', columns: [] }],
         enums: [],
       },

@@ -31,7 +31,7 @@ export enum {{convertedName}} {
 */
 {{#if config.schemaAsNamespace}}
 {{#each database.schemas as |schema|}}
-export namespace {{schema.name}} {
+export namespace {{schema.namespaceName}} {
   {{> schemaPartial schema}}
 }
 {{/each}}

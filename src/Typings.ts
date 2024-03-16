@@ -34,10 +34,15 @@ export interface Config extends Knex.Config {
   custom?: Record<string, any>
 } 
 
-export interface Schema {
+
+export interface SchemaDefinition {
   name: string
   tables: Table[]
   enums: Enum[]
+}
+
+export interface Schema extends SchemaDefinition {
+  namespaceName: string
 }
 
 /**
