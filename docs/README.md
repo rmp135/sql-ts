@@ -4,7 +4,6 @@
 
 [![npm (scoped)](https://img.shields.io/npm/v/@rmp135/sql-ts)](https://www.npmjs.com/package/@rmp135/sql-ts)
 [![npm](https://img.shields.io/npm/dw/@rmp135/sql-ts)](https://www.npmjs.com/package/@rmp135/sql-ts)
-[![Build Status](https://app.travis-ci.com/rmp135/sql-ts.svg?branch=master)](https://app.travis-ci.com/rmp135/sql-ts)
 
 </div>
 
@@ -63,15 +62,15 @@ Install into your project using npm / yarn.
 
 Install your relevant SQL driver. Refer to the [knex documentation](http://knexjs.org/#Installation-node) to determine which driver you should install.
 
-For example `npm install mysql`.
+For example `npm install mysql2`.
 
-Create a configuration file, for example `mysql.json`. This will mirror connection details from knex. The `client` property will determine the SQL type.
+Create a configuration file, for example `mysql.json`. This will mirror connection details from knex. 
 
 The most basic MySQL setup is below, modify as appropriate. Additional options can be applied by referring to the [Config](#config).
 
 ```json
 {
-  "client":"mysql",
+  "client": "mysql2",
   "connection": {
     "host": "localhost",
     "user": "user",
@@ -92,69 +91,74 @@ The file will be exported with the filename `Database.ts` (or with the name spec
 
 !> Warning: if this file exists, it will be overwritten.
 
----
-Alternatively, use as a node module, passing the configuration object as the first argument.
+### Node Module
 
-Both `toObject` and `toTypeScript` accept a knex connection object as the second argument. If this is passed it will be used to generate the file, and you will not require any knex related options in your config object. If this is not passed, a temporary connection will be made using the config.
+Alternatively, use as a node module, importing the `Client` and chaining together your operations.
 
-For those using TypeScript, you can import the Config definition.
+?>The Node module will be exported as an ES module package and will require your consuming package to also be of type module.
 
-### toObject
+Import the `Client` and create a configuration (see [config](#config)).
 
-Retrieves the database schema as a simple object.
+```js
+import { Client } from '@rmp135/sql-ts'
 
-```javascript
-import sqlts from '@rmp135/sql-ts'
-
-const config = {
-  ...
-}
-
-const definitions = await sqlts.toObject(config)
-
-// If you have a knex connections already, you can pass that along with the schema.
-const db = knex({ ... })
-const definition = await sqlts.toObject(config, db)
+const config = { } // Config as before.
 ```
 
-### fromObject
+If you're fetching using only a config, use `fetchDatabase`.
 
-Converts the object returned from `toObject` into a TypeScript definition. This can be used to manipulate the database definitions before they are converted into strings or files, which allows for greater control over the generated typescript.
-
-```javascript
-import sqlts from '@rmp135/sql-ts'
-
-const config = {
-  ...
-}
-
-const definitions = await sqlts.toObject(config)
-
-const tsString = sqlts.fromObject(definitions, config)
+```js
+const definition = await Client
+  .fromConfig(config)
+  .fetchDatabase()
+  .toTypescript()
 ```
 
-### toTypeScript
+If you have a knex database already, you can omit the knex specific options and specify the connection here.
 
-Retrieves the raw TypeScript string from a config file. Essentially combining the two functions above. 
-
-```javascript
-import sqlts from '@rmp135/sql-ts'
-
-const config = {
-  ...
-}
-
-const tsString = await sqlts.toTypeScript(config)
-
-// If you have a knex connection already, you can pass that along with the schema.
-const db = knex({ ... })
-const tsString = await sqlts.toTypeScript(config, db)
-
+```js
+const definition = await Client
+  .fromConfig(config) // knex config omitted.
+  .fetchDatabase(knexDb) // Pre-existing knex connection.
+  .toTypescript()
 ```
+
+To output the database as an object for processing before converting to TypeScript use `toObject`.
+
+```js
+const asObject = await Client
+  .fromConfig(config)
+  .fetchDatabase(knexDb)
+  .toObject()
+
+// Process asObject here. 
+
+const definition = await Client
+  .fromObject(asObject)
+  .toTypescript()
+```
+
+To simplify processing, a series of mapping functions are available: `mapSchema`, `mapSchemas`, `mapTable`, `mapTables`, `mapColumn` and `mapColumns`. The plural versions operate on all of the specified object, the singular ones operate on a specifically named object. See [Object Name Format](#object-name-format).
+
+This is performed after the database definition has been fetched and the config options applied.
+
+```js
+const definition = await Client
+  .fromConfig(config)
+  .fetchDatabase()
+  .mapSchema('public', (schema) => { // Maps to schema with name public.
+    schema.namespaceName = 'new_name' // Change the output namespace name.
+    return schema // Return the mapped schema.
+  })
+  .mapTables((table, schema) => ({...table, interfaceName: `${schema.name}${table.name}Table`})) // Change the interface name of all tables.
+  .mapColumn('public.users.name', (column, table, schema) => ({...column, optional: true })) // Change optionality of column named "name" in table "users" in schema "public".
+  .toTypescript()
+```
+?> Note: Execution of the fetching and mapping functions are deferred until either `toTypescript` or `toObject` are called.
 
 ## Config
 
-The configuration extends the [knex configuration](http://knexjs.org/#Installation-client) with some additional properties. If you're using your own knex object, the knex related information is not required.
+The configuration extends the [knex configuration](http://knexjs.org/#Installation-client) with some additional properties. If you're passing a knex connection into `fetchDatabase`, the knex related information is not required.
 
 <!-- panels:start -->
 <!-- div:title-panel -->
@@ -248,26 +252,6 @@ Specifies the filepath and name that the file should be saved as, in relation to
 ```
 
 <!-- div:title-panel -->
-### folder
-
-<!-- div:left-panel -->
-
-!> Deprecated. Use `filename` with a path instead.
-
-Specifies a folder where the file will be generated. This will be relative to the current working directory if no absolute path is given. Folders will not be created and will error if they do not exist.
-
-For unix systems, the home shortcut `~`  will not work, use the fully qualified path name.
-
-<!-- div:right-panel -->
-```json
-{
-  "client": "...",
-  "connection": {},
-  "folder": "outputdir/subdir"
-}
-```
-
-<!-- div:title-panel -->
 ### interfaceNameFormat
 
 <!-- div:left-panel -->
@@ -316,7 +300,7 @@ Defaults to `_${key}`.
 {
   "client": "...",
   "connection": {},
-  "enumNumericKeyFormat": "$${key}" // "2" becomes "$2"
+  "enumNumericKeyFormat": "_${key}" // "2" becomes "_2"
 }
 ```
 
@@ -391,7 +375,7 @@ Determines the casing for enum keys. Keys are wrapped in quotes to allow for any
 ### singularTableNames
 
 <!-- div:left-panel -->
-Removes the "s" from the end of table names before being passed into the name generator. Defaults `false`.
+Uses the [pluralize](https://github.com/plurals/pluralize) library to attempt to singularise the table names. Defaults `false`.
 
 <!-- div:right-panel -->
 ```json
@@ -606,9 +590,9 @@ For further information, see [Table Generated Enums](#table-generated-enums).
 ### custom
 
 <!-- div:left-panel -->
-A simple object that is passed through to the template. Useful for defining items at runtime.
+A simple object that is can be used in the template. Useful for defining arbitrary values at runtime.
 
-The default template does not use this field, it requires modifying the template to your needs.
+The default template does not use this field, it requires modifying the template to your needs. The entire config is passed into the template and can be found via the `config.custom` key.
 
 <!-- div:right-panel -->
 ```json
@@ -623,9 +607,17 @@ The default template does not use this field, it requires modifying the template
 
 <!-- panels:end -->
 
+## Enums
+
+Enums are supported for Postgres and MySQL, but they work in different ways.
+
+In Postgres, an ENUM type can be created, references by a column which will become a TypeScript enum type and referenced as the property type. This allows multiple properties to share the same enum.
+
+In MySQL, enums are string literal unions. The column named `LogType` of `ENUM('warning', 'verbose')` becomes `LogType: 'warning' | 'verbose'`.
+
 ## Table Generated Enums
 
-TypeScript enums can be generated from data stored in a table and set as the type on another property, allowing for static enum data to be shared between database and TypeScript code as well as providing intellisense during development.
+TypeScript enums can also be generated from data stored in a table and set as the type on another property, allowing for static enum data to be shared between database and TypeScript code as well as providing intellisense during development.
 
 Take for example, a Log and LogLevel table. The Log table references LogLevel by foreign key and the LogLevel contains a static list of levels.
 
@@ -705,7 +697,7 @@ Fields without a default will return `null`.
 
 ## Object Name Format
 
-Objects are typically referred to using the pattern `{schema}.{table}.{column}`, or `{schema}.{table}` if the column is not required. 
+Objects are typically referred to using the pattern `{schema}.{table}.{column}`, or `{schema}.{table}` if the column is not required, or simply `{schema}` if only the schema is required. 
 
 Table and column are fairly obvious but schemas are used differently depending on the database provider. The below table lists how the schema is read for each provider.
 
@@ -727,53 +719,51 @@ The inputs to this file are as followed.
 
 ```js
 {
-  "grouped": { // Tables and enums grouped by schema.
-    "dbo": { // Key is schema name.
-      "tables": [ // List of all non-filtered tables.
-        {
-          "name": "User", // The original database table name.
-          "schema": "dbo", // The schema the table belongs to.
-          "additionalProperties": { // Any additional properties that should be added.
-            "PropertyName": "number" // Property name and type.
-          },
-          "extends": "DBEntity", // The superclass, if any, that should be extended.
-          "interfaceName": "UserEntity", // The computed interface name.
-          "comment": "a table comment", // A table comment (see Comments below).
-          "columns": [ // List of columns in this table.
-            {
-              "name": "ID", // The original database column name.
-              "type": "int", // The original database type.
-              "propertyName": "ID", // The computed Typescript property name 
-              "propertyType": "number", // The computed Typescript type 
-              "nullable": false, // Whether the column is nullable.
-              "optional": true, // Whether the column is optional for insertion (has a default value).
-              "isEnum": false, // Whether the column is an enum type (currently only Postgres).
-              "isPrimaryKey": true, // Whether the column is a primary key.
-              "comment": "a comment", // A column comment (see Comments above).
-              "defaultValue": "'default'" // The raw default value of the column, or null (see Default Values above).
-            }
-          ]
-        }
-      ],
-      "enums": [ // List of enums, including table defined.
-        { 
-          "name": "Severity", // The original database enum name.
-          "convertedName": "SeverityEnum", // The converted name of the enum.
-          "schema": "dbo", // The schema the enum belongs to.
-          "values": [
-            {
-              "originalKey": "very high", // The original database key that represents the enum.
-              "convertedKey": "veryhigh", // Converted value name.
-              "value": "Very High" // Value this enum represents.
-            }
-          ]
-        }
-      ]
-    }
-  },
-  "tables": [], // See grouped[schema].tables above. For ease of use.
-  "enums": [],  // See grouped[schemaa].enums above. For ease of use.
-  "custom": { } // The custom block defined in the configuration.
+  "schemas": [{
+    "name": "dbo", // Original name of the schema.
+    "namespaceName": "dbo", // The computed schema name (default same as name).
+    "tables": [ // List of all non-filtered tables.
+      {
+        "name": "User", // The original database table name.
+        "schema": "dbo", // The schema the table belongs to.
+        "additionalProperties": { // Any additional properties that should be added.
+          "PropertyName": "number" // Property name and type.
+        },
+        "extends": "DBEntity", // The superclass, if any, that should be extended.
+        "interfaceName": "UserEntity", // The computed interface name.
+        "comment": "a table comment", // A table comment (see Comments below).
+        "columns": [ // List of columns in this table.
+          {
+            "name": "ID", // The original database column name.
+            "type": "int", // The original database type.
+            "propertyName": "ID", // The computed Typescript property name 
+            "propertyType": "number", // The computed Typescript type 
+            "nullable": false, // Whether the column is nullable.
+            "optional": true, // Whether the column is optional for insertion (has a default value).
+            "isEnum": false, // Whether the column is an enum type (currently only Postgres).
+            "isPrimaryKey": true, // Whether the column is a primary key.
+            "comment": "a comment", // A column comment (see Comments above).
+            "defaultValue": "'default'" // The raw default value of the column, or null (see Default Values above).
+          }
+        ]
+      }
+    ],
+    "enums": [ // List of enums, including table defined.
+      { 
+        "name": "Severity", // The original database enum name.
+        "convertedName": "SeverityEnum", // The converted name of the enum.
+        "schema": "dbo", // The schema the enum belongs to.
+        "values": [
+          {
+            "originalKey": "very high", // The original database key that represents the enum.
+            "convertedKey": "veryhigh", // Converted value name.
+            "value": "Very High" // Value this enum represents.
+          }
+        ]
+      }
+    ]
+  }],
+  "config": { } // The user supplied configuration.
 }
 ```
 
@@ -794,26 +784,5 @@ To resolve this, you can use the [optionality](#optionality), [filename](#filena
   "optionality": "required",
   "interfaceNameFormat": "${table}ReadEntity",
   "filename": "ReadDatabase.ts"
-}
-```
-
-
-## Bespoke Configuration
-
-### Windows MSSQL Native Client
-
-Windows authentication for the `mssql` client should be configured with with the `msnodesqlv8` driver (Windows only).
-
-For instructions to setup the SQL Server Native client installed see [mode-mssql/issue/338](https://github.com/patriksimek/node-mssql/issues/338#issuecomment-278400345)
-
-Sample configuration (replace the `HostName` and `DatabaseName` accordingly).
-
-```json
-{
-    "client": "mssql",
-    "connection": {
-      "driver": "msnodesqlv8",
-      "connectionString": "Driver={SQL Server Native Client 10.0};Server=HostName;Database=DatabaseName;Trusted_Connection=yes;"
-    }
 }
 ```

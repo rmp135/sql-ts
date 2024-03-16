@@ -54,7 +54,7 @@ The most basic MySQL setup is below, modify as appropriate. Additional options c
 
 ```json
 {
-  "client":"mysql",
+  "client":"mysql2",
   "connection": {
     "host": "localhost",
     "user": "user",
