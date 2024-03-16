@@ -46,7 +46,7 @@ beforeAll(async () => {
     CREATE TABLE schema_two.table_two (
     );
   `);
-})
+}, 60000)
 
 afterAll(async () => {
   await db?.destroy()
