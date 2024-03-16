@@ -1,227 +1,301 @@
-import 'jasmine'
-import { Config } from '../'
+import { it, describe, expect, vi } from 'vitest'
 import * as DatabaseTasks from '../DatabaseTasks'
-import rewire from 'rewire'
-import { compile } from 'handlebars'
+import { Database, Config, Table, Enum } from '../Typings'
+import * as path from 'path'
+import * as TableTasks from '../TableTasks'
+import * as EnumTasks from '../EnumTasks'
+import { Knex } from 'knex'
 
-const MockDatabaseTasks = rewire<typeof DatabaseTasks>('../DatabaseTasks')
+vi.mock('../TableTasks')
+vi.mock('../EnumTasks')
 
-describe('DatabaseTasks', () => {
-  let mockDatabase
-
-  beforeEach(() => {
-    mockDatabase = {
-      enums: [],
-      tables: [
-      {
-        name: 'tname1',
-        schema: 'schema1',
-        columns: [
-          {
-            name: 'col1',
-            type: 'type1'
-          }
-        ]
-      },{
-        name: 'tname2',
-        schema: 'schema1',
-        columns: [
-          {
-            name: 'col2',
-            type: 'type2'
-          }
-        ]
-      },{
-        name: 'tname3',
-        schema: 'schema2',
-        columns: [
-          {
-            name: 'col3',
-            type: 'type3'
-          }
-        ]
-      }]
-    }
-  })
-
-  describe('stringifyDatabase', () => {
-    it('should use default template', () => {
-      const mockFs = {
-        readFileSync: jasmine.createSpy('readFileSync').and.returnValue('defaultTemplate')
-      }
-      const mockCompileReturn = jasmine.createSpy().and.returnValue('compiledTemplate')
-      const mockHandlebars = {
-        compile: jasmine.createSpy('compile').and.returnValue(mockCompileReturn),
-        registerHelper: jasmine.createSpy('registerHelper')
-      }
-      MockDatabaseTasks.__with__({
-        fs: mockFs,
-        Handlebars: mockHandlebars
-      })(() => {
-        const mockConfig: Config = {
-          template: 'template',
-          schemaAsNamespace: true
-        }
-        const result = MockDatabaseTasks.stringifyDatabase(mockDatabase as any, mockConfig as any)
-        expect(mockFs.readFileSync).toHaveBeenCalledWith('template', 'utf-8')
-        expect(mockHandlebars.compile).toHaveBeenCalledWith('defaultTemplate', { noEscape: true })
-        expect(mockCompileReturn).toHaveBeenCalled()
-        expect(result).toBe(`compiledTemplate`)
-      })
-    })
-    it('should not escape HTML', () => {
-      const mockFs = {
-        readFileSync: jasmine.createSpy('readFileSync').and.returnValue('{{custom.test}}')
-      }
-      const mockHandlebars = {
-        compile: jasmine.createSpy('compile', compile).and.callThrough(),
-        registerHelper: jasmine.createSpy('registerHelper')
-      }
-      MockDatabaseTasks.__with__({
-        fs: mockFs,
-        Handlebars: mockHandlebars
-      })(() => {
-        const mockConfig: Config = {
-          template: 'template',
-          custom: {
-            test: 'Record<OfferingValue, string[]>'
-          }
-        }
-        const result = MockDatabaseTasks.stringifyDatabase(mockDatabase as any, mockConfig as any)
-        expect(result).toBe(`Record<OfferingValue, string[]>`)
-      })
-    })
-    it('should use supplied template', () => {
-      const mockFs = {
-        readFileSync: jasmine.createSpy('readFileSync').and.returnValue('template')
-      }
-      const mockCompileReturn = jasmine.createSpy().and.returnValue('compiledTemplate')
-      const mockHandlebars = {
-        compile: jasmine.createSpy('compile').and.returnValue(mockCompileReturn),
-        registerHelper: jasmine.createSpy('registerHelper')
-      }
-      MockDatabaseTasks.__with__({
-        fs: mockFs,
-        Handlebars: mockHandlebars
-      })(() => {
-        const mockConfig = {
-          schemaAsNamespace: true,
-          template: 'userdefinedtemplate'
-        }
-        const result = MockDatabaseTasks.stringifyDatabase(mockDatabase as any, mockConfig as any)
-        expect(mockFs.readFileSync).toHaveBeenCalledWith('userdefinedtemplate', 'utf-8')
-        expect(mockHandlebars.compile).toHaveBeenCalledWith('template', { noEscape: true })
-        expect(mockCompileReturn).toHaveBeenCalled()
-        expect(result).toBe(`compiledTemplate`)
-      })
-    })
-    it('should call the compiler with the correct schema', () => {
-      const mockFs = {
-        readFileSync: jasmine.createSpy('readFileSync').and.returnValue('template')
-      }
-      const mockCompileReturn = jasmine.createSpy().and.returnValue('compiledTemplate')
-      const mockHandlebars = {
-        compile: jasmine.createSpy('compile').and.returnValue(mockCompileReturn),
-        registerHelper: jasmine.createSpy('registerHelper')
-      }
-      MockDatabaseTasks.__with__({
-        fs: mockFs,
-        Handlebars: mockHandlebars
-      })(() => {
-        const mockConfig = {
-          schemaAsNamespace: true,
-          template: 'userdefinedtemplate',
-          custom: {
-            customKey: 'customValue'
-          }
-        }
-        const result = MockDatabaseTasks.stringifyDatabase(mockDatabase as any, mockConfig as any)
-        expect(mockFs.readFileSync).toHaveBeenCalledWith('userdefinedtemplate', 'utf-8')
-        expect(mockHandlebars.compile).toHaveBeenCalledWith('template', { noEscape: true })
-        expect(mockCompileReturn).toHaveBeenCalledWith({
-          grouped: {
-            schema1: 
+describe('convertDatabaseToTypescript', () => {
+  it('should generate basic TypeScript file', () => {
+    const database: Database = {
+      schemas: [
+        {
+          name: 'schema_one',
+          tables: [
             {
-              enums: [],
-              tables: [
+              name: 'table_one',
+              schema: 'schema_one',
+              interfaceName: 'interface_name_one',
+              comment: 'table_comment_one',
+              columns: [
                 {
-                  name: 'tname1',
-                  schema: 'schema1',
-                  columns: [
-                    {
-                      name: 'col1',
-                      type: 'type1'
-                    }
-                  ]
+                  nullable: false,
+                  optional: false,
+                  columnType: 'StringEnum',
+                  comment: 'column_comment_one',
+                  propertyName: 'property_one',
+                  propertyType: '\'a\' | \'b\'',
+                  // Irrelevant fields
+                  type: 'type1',
+                  isPrimaryKey: true,
+                  defaultValue: 'default1',
+                  enumSchema: 'enumSchema1',
+                  name: 'col1',
                 },
                 {
-                  name: 'tname2',
-                  schema: 'schema1',
-                  columns: [
-                    {
-                      name: 'col2',
-                      type: 'type2'
-                    }
-                  ]
-                }
-              ]
-            },
-            schema2: {
-              enums: [],
-              tables: [
-                {
-                  name: 'tname3',
-                  schema: 'schema2',
-                  columns: [
-                    {
-                      name: 'col3',
-                      type: 'type3'
-                    }
-                  ]
-                }
-              ]
-            }            
-          },
-          tables: [ 
-            {
-              name: 'tname1',
-              schema: 'schema1',
-              columns: [
-                {
+                  nullable: false,
+                  optional: false,
+                  columnType: 'StringEnum',
+                  comment: '',
+                  propertyName: 'property_two',
+                  propertyType: 'type_two',
+                  // Irrelevant fields
+                  type: 'type1',
+                  isPrimaryKey: true,
+                  defaultValue: 'default1',
+                  enumSchema: 'enumSchema1',
                   name: 'col1',
-                  type: 'type1'
-                }
+                },
               ]
             },
             {
-              name: 'tname2',
-              schema: 'schema1',
+              name: 'table_two',
+              schema: 'schema_one',
+              interfaceName: 'interface_name_two',
+              comment: '',
               columns: [
                 {
-                  name: 'col2',
-                  type: 'type2'
+                  nullable: false,
+                  optional: false,
+                  columnType: 'StringEnum',
+                  comment: 'column_comment_one',
+                  propertyName: 'property_one',
+                  propertyType: '\'a\' | \'b\'',
+                  // Irrelevant fields
+                  type: 'type1',
+                  isPrimaryKey: true,
+                  defaultValue: 'default1',
+                  enumSchema: 'enumSchema1',
+                  name: 'col1',
                 }
-              ]
-            },
-            {
-              name: 'tname3',
-              schema: 'schema2',
-              columns: [
-                {
-                  name: 'col3',
-                  type: 'type3'
-                }
-              ]
+              ],
             }
           ],
-          enums: [],
-          config: mockConfig,
-          custom: { 
-            customKey: 'customValue'
-          }
-        })
-        expect(result).toBe(`compiledTemplate`)
-      })
-    })
+          enums: [{
+            name: 'enum_one',
+            convertedName: 'converted_enum_one',
+            schema: 'schema_one',
+            values: [{
+              originalKey: 'key_one',
+              convertedKey: 'converted_key_one',
+              value: 'value_one'
+            }]
+          }]
+        }
+      ]
+    }
+    const config: Config = {
+      template: path.join(import.meta.dirname, '../template.handlebars')
+    }
+    
+    const expected = `/*
+* This file was generated by a tool.
+* Rerun sql-ts to regenerate this file.
+*/
+
+/** table_comment_one */
+export interface interface_name_one {
+  
+  /** column_comment_one */
+  'property_one': 'a' | 'b';
+  'property_two': type_two;
+}
+export interface interface_name_two {
+  
+  /** column_comment_one */
+  'property_one': 'a' | 'b';
+}
+export enum converted_enum_one {
+  'converted_key_one' = 'value_one',
+}
+`
+    
+    const result = DatabaseTasks.convertDatabaseToTypescript(database as any, config as any)
+    expect(result).toBe(expected)
+  })
+  it('should generate basic TypeScript file using schema as namespace', () => {
+    const database: Database = {
+      schemas: [
+        {
+          name: 'schema_one',
+          tables: [
+            {
+              name: 'table_one',
+              schema: 'schema_one',
+              interfaceName: 'interface_name_one',
+              comment: 'table_comment_one',
+              columns: [
+                {
+                  nullable: false,
+                  optional: false,
+                  columnType: 'StringEnum',
+                  comment: 'column_comment_one',
+                  propertyName: 'property_one',
+                  propertyType: '\'a\' | \'b\'',
+                  // Irrelevant fields
+                  type: 'type1',
+                  isPrimaryKey: true,
+                  defaultValue: 'default1',
+                  enumSchema: 'enumSchema1',
+                  name: 'col1',
+                },
+                {
+                  nullable: false,
+                  optional: false,
+                  columnType: 'StringEnum',
+                  comment: '',
+                  propertyName: 'property_two',
+                  propertyType: 'type_two',
+                  // Irrelevant fields
+                  type: 'type1',
+                  isPrimaryKey: true,
+                  defaultValue: 'default1',
+                  enumSchema: 'enumSchema1',
+                  name: 'col1',
+                },
+              ]
+            },
+            {
+              name: 'table_two',
+              schema: 'schema_one',
+              interfaceName: 'interface_name_two',
+              comment: '',
+              columns: [
+                {
+                  nullable: false,
+                  optional: false,
+                  columnType: 'StringEnum',
+                  comment: 'column_comment_one',
+                  propertyName: 'property_one',
+                  propertyType: '\'a\' | \'b\'',
+                  // Irrelevant fields
+                  type: 'type1',
+                  isPrimaryKey: true,
+                  defaultValue: 'default1',
+                  enumSchema: 'enumSchema1',
+                  name: 'col1',
+                }
+              ],
+            }
+          ],
+          enums: [{
+            name: 'enum_one',
+            convertedName: 'converted_enum_one',
+            schema: 'schema_one',
+            values: [{
+              originalKey: 'key_one',
+              convertedKey: 'converted_key_one',
+              value: 'value_one'
+            }]
+          }]
+        }
+      ]
+    }
+    const config: Config = {
+      template: path.join(import.meta.dirname, '../template.handlebars'),
+      schemaAsNamespace: true
+    }
+    
+    const expected = `/*
+* This file was generated by a tool.
+* Rerun sql-ts to regenerate this file.
+*/
+export namespace schema_one {
+  
+  /** table_comment_one */
+  export interface interface_name_one {
+    
+    /** column_comment_one */
+    'property_one': 'a' | 'b';
+    'property_two': type_two;
+  }
+  export interface interface_name_two {
+    
+    /** column_comment_one */
+    'property_one': 'a' | 'b';
+  }
+  export enum converted_enum_one {
+    'converted_key_one' = 'value_one',
+  }
+}
+`
+    
+    const result = DatabaseTasks.convertDatabaseToTypescript(database as any, config as any)
+    expect(result).toBe(expected)
+  })
+})
+
+describe('handleNumeric', () => {
+  it('should handle string', () => {
+    const result = DatabaseTasks.handleNumeric('test')
+    expect(result).toBe('\'test\'')
+  })
+  it('should handle number', () => {
+    const result = DatabaseTasks.handleNumeric(1)
+    expect(result).toBe('1')
+  })
+})
+
+describe('generateDatabase', () => {
+  it('should split into schemas', async () => {
+    const config: Config = {
+      template: path.join(import.meta.dirname, '../template.handlebars')
+    }
+    const tables: Table[] = [
+      {
+        schema: 'schema_one',
+        name: 'table_one',
+        columns: [],
+        comment: '',
+        interfaceName: ''
+      },
+      {
+        schema: 'schema_one',
+        name: 'table_two',
+        columns: [],
+        comment: '',
+        interfaceName: ''
+      },
+      {
+        schema: 'schema_two',
+        name: 'table_three',
+        columns: [],
+        comment: '',
+        interfaceName: ''
+      },
+    ]
+    const enums: Enum[] = [
+      {
+        schema: 'schema_one',
+        name: 'enum_one',
+        values: [],
+        convertedName: 'converted_one'
+      }
+    ]
+    const expected: Database = {
+      schemas: [
+        {
+          name: 'schema_one',
+          tables: [tables[0], tables[1]],
+          enums
+        },
+        {
+          name: 'schema_two',
+          tables: [tables[2]],
+          enums: []
+        }
+      ]
+    }
+    const db = {} as Knex
+    const mockedGetAllTables = vi.mocked(TableTasks.getAllTables).mockResolvedValue(tables)
+    const mockedEnumGetAllEnums = vi.mocked(EnumTasks.getAllEnums).mockResolvedValue(enums)
+    const result = await DatabaseTasks.generateDatabase(config, db)
+    expect(mockedGetAllTables).toHaveBeenCalledWith(db, config)
+    expect(mockedEnumGetAllEnums).toHaveBeenCalledWith(db, config)
+    expect(result).toEqual(expected)
   })
 })

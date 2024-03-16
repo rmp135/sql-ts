@@ -1,5 +1,5 @@
 import knex, { Knex } from 'knex'
-import { Config } from './Typings'
+import { Config } from './Typings.js'
 
 /**
  * Runs a function with a temporary database context.
@@ -10,7 +10,7 @@ import { Config } from './Typings'
  * @param {(d: Knex) => T} func The function to run.
  * @returns {T}
  */
-export async function createAndRun<T> (config: Config, func: (d: Knex) => Promise<T>): Promise<T> {
+export async function createAndRun<T>(config: Config, func: (d: Knex) => Promise<T>): Promise<T> {
   let db: Knex
   try {
     db = knex(config)

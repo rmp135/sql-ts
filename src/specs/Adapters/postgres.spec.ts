@@ -1,181 +1,207 @@
-import * as postgres from '../../Adapters/postgres'
-import { Config } from '../..'
-import rewire from 'rewire'
+import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@testcontainers/postgresql'
+import postgres from '../../Adapters/postgres'
+import { vi, expect, it, describe, beforeAll, afterAll, beforeEach } from 'vitest'
+import { Knex, knex } from 'knex'
+import { Config } from '../../Typings'
+import { ColumnDefinition, EnumDefinition } from '../../Adapters/AdapterInterface'
+import * as SharedAdapterTasks from '../../Adapters/SharedAdapterTasks'
 
-const Mockpostgres = rewire<typeof postgres>('../../Adapters/postgres')
+vi.mock('../../Adapters/SharedAdapterTasks')
 
-describe('postgres', () => {
-  describe('getAllEnums', () => {
-    it('should get all enums from all schemas', (done) => {
-      const mockRawReturn = { rows: [] }
-      const mockRaw = jasmine.createSpy('raw').and.returnValue(Promise.resolve(mockRawReturn))
-      const mockdb = { raw: mockRaw }
-      const mockSharedAdapterTasks = {
-        getTableEnums: jasmine.createSpy('getTableEnums').and.returnValue(Promise.resolve([]))
+let postgresContainer: StartedPostgreSqlContainer
+let db: Knex
+
+beforeEach(() => {
+  vi.restoreAllMocks()
+})
+
+beforeAll(async () => {
+  postgresContainer = await new PostgreSqlContainer().start()
+
+  const config = {
+    client:"pg",
+    connection: postgresContainer.getConnectionUri()
+  }
+
+  db = knex(config) 
+  
+  await db.raw(`CREATE SCHEMA schema_one`);
+  await db.raw(`CREATE SCHEMA schema_two`);
+  
+  await db.raw(`
+    CREATE TYPE schema_one.enum_one AS ENUM ('one', 'two', 'three');
+
+    CREATE TYPE schema_two.enum_two AS ENUM ('four', 'five', 'six');
+
+    CREATE TABLE schema_one.table_one (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(255),
+      enum_column schema_one.enum_one
+    );
+
+    COMMENT ON COLUMN schema_one.table_one.id IS 'schema_one.id comment';
+
+    COMMENT ON TABLE schema_one.table_one IS 'schema_one.users comment';
+
+    CREATE TABLE schema_two.table_two (
+    );
+  `);
+})
+
+afterAll(async () => {
+  await db?.destroy()
+  await postgresContainer.stop();
+})
+
+describe('getAllTables', () => {
+  it('should return all schemas if not specified', async () => {
+    const tables = await postgres.getAllTables(db, [])
+
+    expect(tables.length).toEqual(2)
+    expect(tables).toEqual([
+      {
+        name: 'table_one',
+        schema: 'schema_one',
+        comment: 'schema_one.users comment'
+      },
+      {
+        name: 'table_two',
+        schema: 'schema_two',
+        comment: ''
       }
-      Mockpostgres.__with__({
-        SharedAdapterTasks: mockSharedAdapterTasks
-      })(async () => {
-        const adapter = new Mockpostgres.default();
-        const mockConfig = {
-          schemas: []
-        } as Config
-        const res = await adapter.getAllEnums(mockdb as any, mockConfig)
-        expect(mockRaw.calls.first().args[0]).not.toContain('WHERE pg_namespace.nspname = ANY(:schemas)')
-        expect(mockRaw.calls.first().args[1]).toEqual({ schemas: [] })
-        expect(mockSharedAdapterTasks.getTableEnums).toHaveBeenCalledOnceWith(mockdb, mockConfig)
-        expect(res).toEqual([] as any)
-        done()
-      })
-    })
-    it('should get all enums from specified schemas', (done) => {
-      const mockRawReturn = { rows: [] }
-      const mockRaw = jasmine.createSpy('raw').and.returnValue(Promise.resolve(mockRawReturn))
-      const mockdb = { raw: mockRaw }
-      const mockSharedAdapterTasks = {
-        getTableEnums: jasmine.createSpy('getTableEnums').and.returnValue(Promise.resolve([]))
-      }
-      Mockpostgres.__with__({
-        SharedAdapterTasks: mockSharedAdapterTasks
-      })(async () => {
-        const adapter = new Mockpostgres.default();
-        const mockConfig = {
-          schemas: ['schema1', 'schema2']
-        } as Config
-        const res = await adapter.getAllEnums(mockdb as any, mockConfig)
-        expect(mockRaw.calls.first().args[0]).toContain('WHERE pg_namespace.nspname = ANY(:schemas)')
-        expect(mockRaw.calls.first().args[1]).toEqual({ schemas: ['schema1', 'schema2'] })
-        expect(mockSharedAdapterTasks.getTableEnums).toHaveBeenCalledOnceWith(mockdb, mockConfig)
-        expect(res).toEqual([] as any)
-        done()
-      })
+    ])
+  })
+
+  it('should return only specified schemas', async () => {
+    const tables = await postgres.getAllTables(db, ['schema_one'])
+
+    expect(tables.length).toEqual(1)
+    expect(tables[0]).toEqual({
+      name: 'table_one',
+      schema: 'schema_one',
+      comment: 'schema_one.users comment'
     })
   })
-  describe('getAllTables', () => {
-    it('should get all tables from all schemas', async () => {
-      const mockRawReturn = { rows: [] }
-      const mockRaw = jasmine.createSpy('raw').and.returnValue(Promise.resolve(mockRawReturn))
-      const mockdb = { raw: mockRaw }
-      const adapter = new Mockpostgres.default();
-      const res = await adapter.getAllTables(mockdb as any, [])
-      expect(mockRaw.calls.first().args[0]).not.toContain('AND nspname = ANY(:schemas)')
-      expect(res).toEqual([] as any)
-    })
-    it('should get tables from specified schemas', async () => {
-      const mockRawReturn = { rows: [] }
-      const mockRaw = jasmine.createSpy('raw').and.returnValue(Promise.resolve(mockRawReturn))
-      const mockdb = { raw: mockRaw }
-      const adapter = new Mockpostgres.default();
-      const res = await adapter.getAllTables(mockdb as any, ['schema1', 'schema2'])
-      expect(mockRaw.calls.first().args[0]).toContain('AND nspname = ANY(:schemas)')
-      expect(mockRaw.calls.first().args[1]).toEqual({ schemas: ['schema1', 'schema2'] })
-      expect(res).toEqual([] as any)
-    })
+})
+
+describe('getAllColumns', () => {
+  it('should return all columns', async () => {
+    const config: Config = {
+      schemas: [],
+      tableEnums: {}
+    }
+    const columns = await postgres.getAllColumns(db, config, 'table_one', 'schema_one')
+
+    expect(columns.length).toEqual(3)
+    expect(columns).toEqual<ColumnDefinition[]>([{
+      name: 'id',
+      type: 'int4',
+      nullable: false,
+      defaultValue: 'nextval(\'schema_one.table_one_id_seq\'::regclass)', // <- required?
+      comment: 'schema_one.id comment',
+      columnType: 'Standard',
+      isPrimaryKey: true,
+      optional: true,
+      enumSchema: 'pg_catalog' // <- should be undefined / null
+    }, {
+      name: 'name',
+      type: 'varchar',
+      nullable: true,
+      defaultValue: null,
+      comment: '',
+      columnType: 'Standard',
+      isPrimaryKey: false,
+      optional: true,
+      enumSchema: 'pg_catalog' // <- should be undefined / null
+    }, {
+      name: 'enum_column',
+      type: 'enum_one', // <- should contain the enum schema
+      nullable: true,
+      defaultValue: null,
+      comment: '',
+      columnType: 'NumericEnum',
+      isPrimaryKey: false,
+      optional: true,
+      enumSchema: 'schema_one' // <- should be undefined / null
+    }])
   })
-  describe('getAllColumnsTables', () => {
-    it('should get all columns for a given table and schema', async () => {
-      const mockRawReturn = { 
-        rows: [
-          {
-            name: 'name',
-            type: 'type',
-            notnullable: false,
-            hasdefault: false,
-            typcategory: 'E',
-            typeschema: 'schema',
-            typname: 'typname',
-            isprimarykey: 0,
-            comment: 'comment'
-          },
-          {
-            name: 'name2',
-            type: 'type2',
-            notnullable: true,
-            hasdefault: true,
-            typcategory: 'S',
-            typeschema: 'schema2',
-            typname: 'typname2',
-            isprimarykey: 1,
-            comment: 'comment2'
-          },
-          {
-            name: 'name3',
-            type: 'type3',
-            notnullable: false,
-            hasdefault: true,
-            typcategory: 'E',
-            typeschema: 'schema3',
-            typname: 'typname3',
-            isprimarykey: 0,
-            comment: 'comment3'
-          },
-          {
-            name: 'name4',
-            type: 'type4',
-            notnullable: true,
-            hasdefault: false,
-            typcategory: 'D',
-            typeschema: 'schema4',
-            typname: 'typname4',
-            isprimarykey: 0,
-            comment: ''
-          },
-        ]
+})
+
+describe('getAllEnums', () => {
+  it('should return all enums when schema not specified', async () => {
+    const config: Config = {
+      schemas: []
+    }
+
+    var mockedGetTableEnums = vi.mocked(SharedAdapterTasks.getTableEnums).mockResolvedValue([{
+      name: 'table_one',
+      schema: 'schema_one',
+      values: {
+        enum_column: 'enum_one'
       }
-      const mockRaw = jasmine.createSpy('raw').and.returnValue(Promise.resolve(mockRawReturn))
-      const mockdb = { raw: mockRaw }
-      const adapter = new Mockpostgres.default();
-      const mockConfig = {} as Config
-      const res = await adapter.getAllColumns(mockdb as any, mockConfig, 'table', 'schema')
-      expect(mockRaw.calls.first().args[0]).toContain('pg_class.relname = :table')
-      expect(mockRaw.calls.first().args[0]).toContain('pg_namespace.nspname = :schema')
-      expect(mockRaw.calls.first().args[1]).toEqual({ table: 'table', schema: 'schema' })
-      expect(res).toEqual([
-        {
-          name: 'name',
-          type: 'typname',
-          enumSchema: 'schema',
-          nullable: true,
-          optional: true,
-          isEnum: true,
-          isPrimaryKey: false,
-          comment: 'comment',
-          defaultValue: null,
-        },
-        {
-          name: 'name2',
-          type: 'typname2',
-          enumSchema: 'schema2',
-          nullable: false,
-          optional: true,
-          isEnum: false,
-          isPrimaryKey: true,
-          comment: 'comment2',
-          defaultValue: null,
-        },
-        {
-          name: 'name3',
-          type: 'typname3',
-          enumSchema: 'schema3',
-          nullable: true,
-          optional: true,
-          isEnum: true,
-          isPrimaryKey: false,
-          comment: 'comment3',
-          defaultValue: null,
-        },
-        {
-          name: 'name4',
-          type: 'typname4',
-          enumSchema: 'schema4',
-          nullable: false,
-          optional: false,
-          isEnum: false,
-          isPrimaryKey: false,
-          comment: '',
-          defaultValue: null,
-        },
-      ])
-    })
+    }])
+    
+    const enums = await postgres.getAllEnums(db, config)
+
+    expect(mockedGetTableEnums).toHaveBeenCalledWith(db, config)
+    
+    expect(enums.length).toEqual(3)
+    expect(enums).toEqual([{
+      name: 'enum_one',
+      schema: 'schema_one',
+      values: {
+        one: 'one',
+        two: 'two',
+        three: 'three'
+      }
+    }, {
+      name: 'enum_two',
+      schema: 'schema_two',
+      values: {
+        four: 'four',
+        five: 'five',
+        six: 'six'
+      }
+    }, {
+      name: 'table_one',
+      schema: 'schema_one',
+      values: {
+        enum_column: 'enum_one'
+      }
+    }] as EnumDefinition[])
+  })
+  it('should return enums for the specified schema', async () => {
+    const config: Config = {
+      schemas: ['schema_one']
+    }
+
+    var mockedGetTableEnums = vi.mocked(SharedAdapterTasks.getTableEnums).mockResolvedValue([{
+      name: 'table_one',
+      schema: 'schema_one',
+      values: {
+        enum_column: 'enum_one'
+      }
+    }])
+    
+    const enums = await postgres.getAllEnums(db, config)
+
+    expect(mockedGetTableEnums).toHaveBeenCalledWith(db, config)
+    
+    expect(enums.length).toEqual(2)
+    expect(enums).toEqual([{
+      name: 'enum_one',
+      schema: 'schema_one',
+      values: {
+        one: 'one',
+        two: 'two',
+        three: 'three'
+      }
+    }, {
+      name: 'table_one',
+      schema: 'schema_one',
+      values: {
+        enum_column: 'enum_one'
+      }
+    }] as EnumDefinition[])
   })
 })

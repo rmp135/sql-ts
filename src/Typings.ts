@@ -1,5 +1,5 @@
 import { Knex } from 'knex'
-import { ColumnDefinition, TableDefinition } from './Adapters/AdapterInterface'
+import { ColumnDefinition, TableDefinition } from './Adapters/AdapterInterface.js'
 
 /**
  * The configuration file for creating new databases.
@@ -9,46 +9,36 @@ import { ColumnDefinition, TableDefinition } from './Adapters/AdapterInterface'
  * @extends {knex.Config}
  */
 export interface Config extends Knex.Config {
-  tables?: string[],
-  excludedTables?: string[],
-  filename?: string,
-  folder?: string,
-  interfaceNameFormat?: string,
-  enumNameFormat?: string,
-  tableNameCasing?: string,
-  columnNameCasing?: string,
-  enumNameCasing?: string,
+  tables?: string[]
+  excludedTables?: string[]
+  filename?: string
+  interfaceNameFormat?: string
+  enumNameFormat?: string
+  tableNameCasing?: string
+  columnNameCasing?: string
+  enumNameCasing?: string
   enumKeyCasing?: string
   singularTableNames?: boolean
-  schemaAsNamespace?: boolean,
-  schemas?: string[],
-  template?: string,
-  enumNumericKeyFormat?: string,
-  tableEnums?: {
-    [key: string]: {
-      key: string,
-      value: string
-    }
-  },
+  schemaAsNamespace?: boolean
+  schemas?: string[]
+  template?: string
+  enumNumericKeyFormat?: string
+  tableEnums?: Record<string, { key: string, value: string }>
   globalOptionality?: 'optional' | 'required' | 'dynamic'
-  columnOptionality?: {
-    [key: string]: 'optional' | 'required' | 'dynamic'
-  },
-  columnSortOrder?: 'source' | 'alphabetical',
-  typeMap?: {
-    [key: string]: string[]
-  }
-  typeOverrides?: { 
-    [key: string]: string 
-  },
-  additionalProperties?: { 
-    [key: string]: string[]
-  },
-  extends?: { 
-    [key: string]: string
-  },
+  columnOptionality?: Record<string, 'optional' | 'required' | 'dynamic'>
+  columnSortOrder?: 'source' | 'alphabetical'
+  typeMap?: Record<string, string[]>
+  typeOverrides?: Record<string, string>
+  additionalProperties?: Record<string, string[]>
+  extends?: Record<string, string>
   custom?: Record<string, any>
 } 
+
+export interface Schema {
+  name: string
+  tables: Table[]
+  enums: Enum[]
+}
 
 /**
  * The JSON definition of a table with additional properties
@@ -58,11 +48,11 @@ export interface Config extends Knex.Config {
  */
 export interface Table extends TableDefinition {
   interfaceName: string
-  name: string,
-  schema: string,
+  name: string
+  schema: string
   columns: Column[]
   extends?: string
-  additionalProperties?: string[],
+  additionalProperties?: string[]
   comment: string
 }
 
@@ -73,8 +63,7 @@ export interface Table extends TableDefinition {
  * @interface Database
  */
 export interface Database {
-  tables: Table[]
-  enums: Enum[]
+  schemas: Schema[]
   custom?: Record<string,any>
 }
 
@@ -85,15 +74,15 @@ export interface Database {
  * @interface EnumValue
  */
 export interface EnumValue {
-  originalKey: string;
-  convertedKey: string;
-  value: string | number;
+  originalKey: string
+  convertedKey: string
+  value: string | number
 }
 
 export interface Enum {
-  schema: string;
-  name: string;
-  convertedName: string,
+  schema: string
+  name: string
+  convertedName: string
   values: EnumValue[]
 }
 

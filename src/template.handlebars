@@ -1,8 +1,8 @@
-{{#*inline "dataPartial"}}
+{{#*inline "schemaPartial"}}
 {{#each tables as |table|}}
 {{#if comment}}
 
-/** {{comment}} */
+/* {{comment}} */
 {{/if}}
 export interface {{interfaceName}} {{#if extends}}extends {{extends}} {{/if}}{
   {{#each additionalProperties as |prop|}}
@@ -11,7 +11,7 @@ export interface {{interfaceName}} {{#if extends}}extends {{extends}} {{/if}}{
   {{#each columns}}
   {{#if comment}}
   
-  /** {{comment}} */
+  /* {{comment}} */
   {{/if}}
   '{{propertyName}}'{{#if optional}}?{{/if}}: {{propertyType}}{{#if nullable}} | null{{/if}};
   {{/each}}
@@ -30,13 +30,13 @@ export enum {{convertedName}} {
 * Rerun sql-ts to regenerate this file.
 */
 {{#if config.schemaAsNamespace}}
-{{#each grouped as |group key|}}
-export namespace {{key}} {
-  {{> dataPartial group}}
+{{#each database.schemas as |schema|}}
+export namespace {{schema.name}} {
+  {{> schemaPartial schema}}
 }
 {{/each}}
 {{else}}
-{{#each grouped as |group key|}}
-{{> dataPartial group }}
+{{#each database.schemas as |schema|}}
+{{> schemaPartial schema }}
 {{/each}}
 {{/if}}

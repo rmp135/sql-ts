@@ -1,5 +1,7 @@
 import { Knex } from 'knex'
-import { Config } from '../Typings'
+import { Config } from '../Typings.js'
+
+type ColumnType = 'Standard' | 'NumericEnum' | 'StringEnum'
 
 // Basic definitions that all databases should implement. 
 
@@ -26,10 +28,12 @@ export interface ColumnDefinition {
   type: string;
   nullable: boolean;
   optional: boolean;
-  isEnum: boolean;
+  columnType: ColumnType;
   isPrimaryKey: boolean;
   // The schema the enum belongs to. Currently only used for postgres.
   enumSchema?: string;
+  // The allowed values of the a StringEnum type. Currently only used for mysql.
+  stringEnumValues?: string[];
   comment: string;
   defaultValue: string | null;
 }
@@ -43,7 +47,7 @@ export interface ColumnDefinition {
  export interface EnumDefinition {
   name: string;
   schema: string;
-  values: {[key: string]: string | number}
+  values: Record<string, string | number>
 }
 
 /**

@@ -1,5 +1,5 @@
-import path = require('path')
-import { Config } from './Typings'
+import * as path from 'path'
+import { Config } from './Typings.js'
 
 /**
  * Applies configuration defaults to a given configuration object.
@@ -14,7 +14,6 @@ export function applyConfigDefaults(config: Config): Config {
     columnOptionality: {},
     tableEnums: {},
     columnSortOrder: 'alphabetical',
-    folder: '.',
     tables: [],
     excludedTables: [],
     schemas: [],
@@ -25,7 +24,7 @@ export function applyConfigDefaults(config: Config): Config {
     schemaAsNamespace: false,
     typeOverrides: {},
     typeMap: {},
-    template: path.join(__dirname, './template.handlebars'),
+    template: path.join(import.meta.dirname, './template.handlebars'),
     custom: {}
   }
   return Object.assign(defaultConfig, config)

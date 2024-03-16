@@ -1,23 +1,23 @@
-import * as AdapterFactory from './AdapterFactory'
 import { Knex } from 'knex'
-import { Config, Enum } from './Typings'
-import * as SharedTasks from './SharedTasks'
-import * as SchemaTasks from './SchemaTasks'
-import { toNumber } from 'lodash'
+import * as AdapterFactory from './AdapterFactory.js'
+import { Config, Enum } from './Typings.js'
+import * as SharedTasks from './SharedTasks.js'
+import * as SchemaTasks from './SchemaTasks.js'
 
-export async function getAllEnums (db: Knex, config: Config): Promise<Enum[]> {
+export async function getAllEnums(db: Knex, config: Config): Promise<Enum[]> {
   const adapter = AdapterFactory.buildAdapter(db.client.dialect)
-  const allEnums = (await adapter.getAllEnums(db, config))
-  return allEnums.map(e => ({
-    name: e.name,
-    schema: SchemaTasks.generateSchemaName(e.schema),
-    convertedName: generateEnumName(e.name, config),
-    values: Object.keys(e.values).map(ee => ({
-      originalKey: ee,
-      convertedKey: generateEnumKey(ee, config),
-      value: e.values[ee]
+  return (await adapter.getAllEnums(db, config))
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(e => ({
+      name: e.name,
+      schema: SchemaTasks.generateSchemaName(e.schema),
+      convertedName: generateEnumName(e.name, config),
+      values: Object.keys(e.values).map(ee => ({
+        originalKey: ee,
+        convertedKey: generateEnumKey(ee, config),
+        value: e.values[ee]
+      }))
     }))
-  } as Enum))
 }
 
 /**
@@ -28,7 +28,7 @@ export async function getAllEnums (db: Knex, config: Config): Promise<Enum[]> {
  * @param {Config} config The configuration to use.
  * @returns 
  */
-export function generateEnumName (name: string, config: Config): string {
+export function generateEnumName(name: string, config: Config): string {
   let newName =  name
     .replace(/\W/g, '')
     .replace(/^\d+/g, '')
@@ -44,8 +44,8 @@ export function generateEnumName (name: string, config: Config): string {
  * @param {Config} config The configuration to use.
  * @returns 
  */
-export function generateEnumKey (name: string, config: Config): string {
+export function generateEnumKey(name: string, config: Config): string {
   const newKey = SharedTasks.convertCase(name, config.enumKeyCasing)
   // Numeric keys are not allowed and must be converted to a suitable format.
-  return isNaN(toNumber(newKey)) ? newKey : config.enumNumericKeyFormat.replace('${key}', newKey)
+  return isNaN(Number(newKey)) ? newKey : config.enumNumericKeyFormat.replace('${key}', newKey)
 }

@@ -1,10 +1,10 @@
 import { Knex } from 'knex'
-import { AdapterInterface, TableDefinition, ColumnDefinition, EnumDefinition } from './AdapterInterface'
-import { Config } from '..'
-import { uniqBy } from 'lodash'
-import * as SharedAdapterTasks from './SharedAdapterTasks'
+import { uniqBy } from 'lodash-es'
+import { Config } from '../index.js'
+import { TableDefinition, ColumnDefinition, EnumDefinition } from './AdapterInterface.js'
+import * as SharedAdapterTasks from './SharedAdapterTasks.js'
 
-export default class implements AdapterInterface {
+export default {
   async getAllEnums(db: Knex, config: Config): Promise<EnumDefinition[]> {
     const sql = `
     SELECT 
@@ -32,7 +32,7 @@ export default class implements AdapterInterface {
       }))
     const tableEnums = await SharedAdapterTasks.getTableEnums(db, config)
     return groupedEnums.concat(tableEnums)
-  }
+  },
   
   async getAllTables(db: Knex, schemas: string[]): Promise<TableDefinition[]> {
     const sql = `
@@ -51,7 +51,7 @@ export default class implements AdapterInterface {
     `
     const results = await db.raw(sql, { schemas }) as { rows: TableDefinition[] }
     return results.rows
-  }
+  },
 
   async getAllColumns(db: Knex, config: Config, table: string, schema: string): Promise<ColumnDefinition[]> {
     const sql = `
@@ -93,7 +93,7 @@ export default class implements AdapterInterface {
           type: c.typname,
           nullable: !c.notnullable,
           optional: c.hasdefault || !c.notnullable,
-          isEnum: c.typcategory == 'E',
+          columnType: c.typcategory == 'E' ? 'NumericEnum' : 'Standard',
           isPrimaryKey: c.isprimarykey == 1,
           enumSchema: c.typeschema,
           comment: c.comment,

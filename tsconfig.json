@@ -6,14 +6,11 @@
     "src/**/*.spec.*"
   ],
   "compilerOptions": {
-    "target": "es5",
+    "target": "ESNext",
     "declaration": true,
-    "esModuleInterop": true,
-    "sourceMap": false,
-    "outDir": "dist",
-    "lib": [
-      "es6",
-      "es2016.array.include"
-    ]
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "sourceMap": true,
+    "outDir": "dist"
   }
 }

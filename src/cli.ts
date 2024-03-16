@@ -1,8 +1,8 @@
-import * as fs from 'fs'
+import * as fs from 'fs/promises'
 import yargs from 'yargs/yargs'
 import { hideBin } from 'yargs/helpers'
-import * as path from 'path'
-import sqlts, { Config } from './index'
+import { Config } from './index.js'
+import { Client } from './Client.js'
 
 const args = yargs(hideBin(process.argv))
 .alias('c', 'config')
@@ -10,13 +10,9 @@ const args = yargs(hideBin(process.argv))
 .demandOption(['c'])
 .argv as any
 
-const config = JSON.parse(fs.readFileSync(args.config, 'utf8')) as Config
+const config = JSON.parse(await fs.readFile(args.config, 'utf8')) as Config
 
-;(async () => {
-  const output = await sqlts.toTypeScript(config)
-  const fileName = `${config.filename ?? 'Database'}.ts`
-  const directory = config.folder ?? '.'
-  const outFile = path.join(directory, fileName)
-  fs.writeFileSync(outFile, output)
-  console.log(`Definition file written as ${outFile}`)
-})()
+const output = await Client.fromConfig(config).fetchDatabase().toTypescript()
+const fileName = `${config.filename ?? 'Database'}.ts`
+await fs.writeFile(fileName, output)
+console.log(`Definition file written as ${fileName}`)
