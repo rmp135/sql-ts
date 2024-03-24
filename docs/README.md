@@ -106,7 +106,7 @@ import { Client } from '@rmp135/sql-ts'
 const config = { } // Config as before.
 ```
 
-If you're fetching using only a config, use `fetchDatabase`.
+The most basic syntax is chaining `fromObject`, `fetchDatabase` and `toTypescript`.
 
 ```js
 const definition = await Client
