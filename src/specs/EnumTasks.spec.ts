@@ -18,7 +18,9 @@ describe('getAllEnums', () => {
           name: 'cname',
           schema: 'schema',
           values: {
-            'key 1': 'val1'
+            'key 2': 'warning',
+            'key 3': 'error',
+            'key 1': 'info'
           }
         },
         {
@@ -27,7 +29,7 @@ describe('getAllEnums', () => {
           values: {
             'key 1': 'val1'
           }
-        },
+        }
       ])
     }
     vi.mocked(AdapterFactory.buildAdapter).mockReturnValue(mockAdapter as unknown as AdapterInterface)
@@ -62,7 +64,17 @@ describe('getAllEnums', () => {
           {
             convertedKey: 'key 1',
             originalKey: 'key 1',
-            value: 'val1'
+            value: 'info'
+          },
+          {
+            convertedKey: 'key 2',
+            originalKey: 'key 2',
+            value: 'warning'
+          },
+          {
+            convertedKey: 'key 3',
+            originalKey: 'key 3',
+            value: 'error'
           }
         ]
       },

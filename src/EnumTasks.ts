@@ -7,12 +7,12 @@ import * as SchemaTasks from './SchemaTasks.js'
 export async function getAllEnums(db: Knex, config: Config): Promise<Enum[]> {
   const adapter = AdapterFactory.buildAdapter(db.client.dialect)
   return (await adapter.getAllEnums(db, config))
-    .sort((a, b) => a.name.localeCompare(b.name))
+    .toSorted((a, b) => a.name.localeCompare(b.name))
     .map(e => ({
       name: e.name,
       schema: SchemaTasks.generateSchemaName(e.schema),
       convertedName: generateEnumName(e.name, config),
-      values: Object.keys(e.values).map(ee => ({
+      values: Object.keys(e.values).toSorted((a, b) => a.localeCompare(b)).map(ee => ({
         originalKey: ee,
         convertedKey: generateEnumKey(ee, config),
         value: e.values[ee]
