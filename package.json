@@ -28,6 +28,9 @@
     "test:cover": "vitest --run --coverage",
     "docs:serve": "docsify serve docs"
   },
+  "engines":{
+    "node": ">=20"
+  },
   "peerDependencies": {
     "better-sqlite3": "^9.4.3",
     "mssql": "^10.0.2",
