@@ -90,7 +90,7 @@ describe('convertDatabaseToTypescript', () => {
       ]
     }
     const config: Config = {
-      template: path.join(import.meta.dirname, '../template.handlebars')
+      template: new URL('../template.handlebars', import.meta.url).toString()
     }
     
     const expected = `/*
@@ -198,7 +198,7 @@ export enum converted_enum_one {
       ]
     }
     const config: Config = {
-      template: path.join(import.meta.dirname, '../template.handlebars'),
+      template: new URL('../template.handlebars', import.meta.url).toString(),
       schemaAsNamespace: true
     }
     
@@ -245,7 +245,7 @@ describe('handleNumeric', () => {
 describe('generateDatabase', () => {
   it('should split into schemas', async () => {
     const config: Config = {
-      template: path.join(import.meta.dirname, '../template.handlebars'),
+      template: new URL('../template.handlebars', import.meta.url).pathname,
       custom: {
         test: 'test'
       }
