@@ -6,7 +6,7 @@
     "src/**/*.spec.*"
   ],
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "ES2022",
     "declaration": true,
     "module": "NodeNext",
     "moduleResolution": "NodeNext",

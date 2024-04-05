@@ -1,5 +1,6 @@
 import * as path from 'path'
 import { Config } from './Typings.js'
+import { fileURLToPath } from 'url'
 
 /**
  * Applies configuration defaults to a given configuration object.
@@ -24,7 +25,7 @@ export function applyConfigDefaults(config: Config): Config {
     schemaAsNamespace: false,
     typeOverrides: {},
     typeMap: {},
-    template: path.join(import.meta.dirname, './template.handlebars'),
+    template: path.join(path.dirname(fileURLToPath(import.meta.url)), './template.handlebars'),
     custom: {}
   }
   return Object.assign(defaultConfig, config)
