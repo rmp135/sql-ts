@@ -48,6 +48,7 @@ export default {
         FROM pg_class
             JOIN schemas ON schemas.oid = pg_class.relnamespace
         WHERE pg_class.relkind IN ('r', 'p', 'v', 'm')
+        AND NOT pg_class.relispartition
     `
     const results = await db.raw(sql, { schemas }) as { rows: TableDefinition[] }
     return results.rows
