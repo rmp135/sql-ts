@@ -29,7 +29,7 @@
     "docs:serve": "docsify serve docs"
   },
   "peerDependencies": {
-    "better-sqlite3": "^9.4.3",
+    "better-sqlite3": "^11.2.1",
     "mssql": "^10.0.2",
     "mysql2": "^3.9.2",
     "pg": "^8.11.3",
