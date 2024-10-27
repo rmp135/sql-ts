@@ -20,7 +20,7 @@ beforeAll(async () => {
   sqlContainer = await new MySqlContainer().start()
   
   // Requires root user to create databases which act as schemas for our purposes
-  const connectionString = sqlContainer.getConnectionUri().replace('test:', 'root:')
+  const connectionString = sqlContainer.getConnectionUri().replace('test:', 'root:')  + "?tinyInt1isBit=true"
   const connectionDetails = new URL(connectionString)
 
   const config = {
@@ -45,6 +45,9 @@ beforeAll(async () => {
     CREATE TABLE schema_one.table_one (
       id INT PRIMARY KEY AUTO_INCREMENT COMMENT 'schema_one.id comment',
       name VARCHAR(255),
+      bool BOOLEAN,
+      smallNumber tinyint(3),
+      boolNumber tinyint(1),
       enum_column ENUM('enum_one', 'enum_two')
     ) COMMENT 'schema_one.table_one comment';
   `);
@@ -99,7 +102,7 @@ describe('getAllColumns', () => {
     }
     const columns = await mysql.getAllColumns(db, config, 'table_one', 'schema_one')
 
-    expect(columns.length).toEqual(3)
+    expect(columns.length).toEqual(6)
     expect(columns).toEqual<ColumnDefinition[]>([{
       name: 'id',
       type: 'int',
@@ -112,6 +115,33 @@ describe('getAllColumns', () => {
     }, {
       name: 'name',
       type: 'varchar',
+      nullable: true,
+      defaultValue: null,
+      comment: '',
+      columnType: 'Standard',
+      isPrimaryKey: false,
+      optional: true
+    }, {
+      name: 'bool',
+      type: 'tinyint(1)',
+      nullable: true,
+      defaultValue: null,
+      comment: '',
+      columnType: 'Standard',
+      isPrimaryKey: false,
+      optional: true
+    }, {
+      name: 'smallNumber',
+      type: 'tinyint',
+      nullable: true,
+      defaultValue: null,
+      comment: '',
+      columnType: 'Standard',
+      isPrimaryKey: false,
+      optional: true
+    }, {
+      name: 'boolNumber',
+      type: 'tinyint(1)',
       nullable: true,
       defaultValue: null,
       comment: '',

@@ -13,6 +13,7 @@ export default {
     'string[]' : ['_char', '_varchar', '_bpchar', '_character_data']
   },
   mssql: {
-    string: ['timestamp']
+    string: ['timestamp'],
+    boolean: ['tinyint(1)']
   }
 }

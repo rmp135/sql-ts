@@ -45,7 +45,7 @@ async function getAllColumns(db: Knex, config: Config, table: string, schema: st
     .map((c: MySQLColumn) => (
       {
         name: c.name,
-        type: c.type,
+        type: c.fullType == 'tinyint(1)' ? c.fullType : c.type, // tinyint(1) typically aliased as a boolean
         nullable: c.isNullable == 'YES',
         optional: c.isOptional === 1 || c.isNullable == 'YES',
         columnType: c.type == 'enum' ? 'StringEnum' : 'Standard',
