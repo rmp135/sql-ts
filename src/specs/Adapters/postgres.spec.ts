@@ -30,14 +30,20 @@ beforeAll(async () => {
   
   await db.raw(`
     CREATE TYPE schema_one.enum_one AS ENUM ('one', 'two', 'three');
-
+    
     CREATE TYPE schema_two.enum_two AS ENUM ('four', 'five', 'six');
-
+    
     CREATE TABLE schema_one.table_one (
       id SERIAL PRIMARY KEY,
       name VARCHAR(255),
       enum_column schema_one.enum_one
-    );
+    ) PARTITION BY RANGE (id);
+      
+    CREATE TABLE schema_one.partition_one PARTITION OF schema_one.table_one
+    FOR VALUES FROM (1) TO (100);
+    
+    CREATE TABLE schema_one.partition_two PARTITION OF schema_one.table_one
+    FOR VALUES FROM (101) TO (200);
 
     COMMENT ON COLUMN schema_one.table_one.id IS 'schema_one.id comment';
 
